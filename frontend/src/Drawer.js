@@ -2,23 +2,26 @@ import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
-
+import HomeSharpIcon from '@material-ui/icons/HomeSharp';
+import ContactSupportSharpIcon from '@material-ui/icons/ContactSupportSharp';
+import PersonPinCircleSharpIcon from '@material-ui/icons/PersonPinCircleSharp';
+import SupervisedUserCircleSharpIcon from '@material-ui/icons/SupervisedUserCircleSharp';
+import Logo from './Logo.js';
 const useStyles = makeStyles({
   list: {
     width: 250,
+    textAlign: 'center',
   },
   fullList: {
     width: 'auto',
+    textAlign: 'center',
   },
 });
 
@@ -48,24 +51,32 @@ export default function TemporaryDrawer() {
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
+        
       <List>
-        {['Strona Główna', 'Politycy', 'Partie'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+      <Logo />
+        <ListItem button key="MainPage">
+            <ListItemIcon><HomeSharpIcon fontSize="Large"/></ListItemIcon>
+            <ListItemText primary="Strona Główna" />
+        </ListItem>
+        <ListItem button key="Politycy">
+            <ListItemIcon><PersonPinCircleSharpIcon fontSize="Large"/></ListItemIcon>
+            <ListItemText primary="Politycy"/>
+        </ListItem>
+        <ListItem button key="Partie">
+            <ListItemIcon><SupervisedUserCircleSharpIcon fontSize="Large"/></ListItemIcon>
+            <ListItemText primary="Partie"/>
+        </ListItem>
       </List>
       <Divider />
       <List>
-        {['Pomoc', 'O nas'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <ListItem button key="O nas">
+                <ListItemIcon><ContactSupportSharpIcon fontSize="Large"/></ListItemIcon>
+                <ListItemText primary="O nas"/>
+        </ListItem>
       </List>
+      <footer>
+          <h6>PolitGot 2021</h6>
+      </footer>
     </div>
   );
 

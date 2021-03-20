@@ -19,7 +19,11 @@ function App() {
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <>
         <GlobalStyles />
+          <div style={{textAlign: 'left'}}> 
           <Drawer />
+          </div>
+            
+          
           <footer>
             <Switch onClick={toggleTheme} inputProps={{ 'aria-label': 'primary checkbox' }} />
           </footer>

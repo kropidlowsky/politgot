@@ -12,7 +12,6 @@ import Drawer from './Drawer.js';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    backgroundColor: 'white',
   },
   menuButton: {
     marginRight: theme.spacing(0),
@@ -26,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'center',
     fontFamily: 'Gugi',
     fontSize: 36,
+    color: theme.palette.text.primary,
   },
   search: {
     position: 'relative',
@@ -34,13 +34,13 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: fade(theme.palette.primary.dark, 0.25),
     },
-    color: '#000',
     marginLeft: 0,
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
       width: 'auto',
     },
   },
+
   searchIcon: {
     padding: theme.spacing(0, 2),
     height: '100%',
@@ -51,14 +51,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
   inputRoot: {
-    color: '#000',
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create('width'),
-    color: '#000',
     [theme.breakpoints.up('sm')]: {
       width: '12ch',
       '&:focus': {
@@ -78,8 +76,8 @@ export default function SearchAppBar() {
           <IconButton
             edge="start"
             className={classes.menuButton}
-            color="white"
             aria-label="open drawer"
+            color='#fff'
           >
             <Drawer />
           </IconButton>

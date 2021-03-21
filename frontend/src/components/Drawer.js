@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List';
@@ -28,7 +28,6 @@ const useStyles = makeStyles({
     textAlign: 'center',
   },
   menuButton: {
-    color: 'black',
     borderRadius: 0,
     fontSize: 'large',
   },

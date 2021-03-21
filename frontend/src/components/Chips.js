@@ -39,7 +39,7 @@ export default function Chips() {
 
   return (
     <div className={classes.root}>
-        <Typography variant="h6" component="h2" style={{width: '100%', textAlign: 'center',}}>
+        <Typography variant="h6" component="h2" style={{width: '100%', textAlign: 'center'}}>
           Popularne
         </Typography>
             

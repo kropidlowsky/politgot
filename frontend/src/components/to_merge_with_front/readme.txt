@@ -1,0 +1,1 @@
+routes + implementacja do index.js i App.js i router w layoucie

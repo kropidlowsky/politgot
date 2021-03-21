@@ -5,11 +5,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Drawer from './Drawer.js';
-import {theme} from '../theme'
-import { MuiThemeProvider } from '@material-ui/core/styles'
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
     },
     color: '#000',
     marginLeft: 0,
-    width: '100%',
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(1),
       width: 'auto',
@@ -61,7 +58,6 @@ const useStyles = makeStyles((theme) => ({
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create('width'),
-    width: '100%',
     color: '#000',
     [theme.breakpoints.up('sm')]: {
       width: '12ch',

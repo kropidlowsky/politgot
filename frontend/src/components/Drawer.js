@@ -15,6 +15,9 @@ import PersonPinCircleSharpIcon from '@material-ui/icons/PersonPinCircleSharp';
 import SupervisedUserCircleSharpIcon from '@material-ui/icons/SupervisedUserCircleSharp';
 import Logo from './Logo.js';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import { Link } from 'react-router-dom';
+
+
 const useStyles = makeStyles({
   list: {
     width: 250,
@@ -65,7 +68,8 @@ export default function TemporaryDrawer() {
             <ListItemIcon><HomeSharpIcon fontSize="Large"/></ListItemIcon>
             <ListItemText primary="Strona Główna" />
         </ListItem>
-        <ListItem button key="Politycy">
+        <ListItem button key="Politycy" component={Link} to="/politicians">
+          <Link />
             <ListItemIcon><PersonPinCircleSharpIcon fontSize="Large"/></ListItemIcon>
             <ListItemText primary="Politycy"/>
         </ListItem>

@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
-import { ThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme, MuiTheme, MuiThemeDark} from './theme';
-import { GlobalStyles } from './global';
-import Switch from '@material-ui/core/Switch';
-import Drawer from './Drawer.js';
+import { MuiTheme, MuiThemeDark} from './theme';
 import AppBar from './components/AppBar';
 import {MuiThemeProvider} from '@material-ui/core/styles'
-import Grid from '@material-ui/core/Grid'
-import Paper from '@material-ui/core/Paper'
-import MainPage from './components/MainPage'
-import LeftBar from './components/LeftBar';
 import Content from './components/Content'
+import { BrowserRouter as Router } from 'react-router-dom';
+import BaseRouter from './routes';
+import 'antd/dist/antd.css';
 
 function App() {
   const [theme, setTheme] = useState('light');
@@ -25,10 +20,15 @@ function App() {
     <MuiThemeProvider theme={theme === 'light' ? MuiTheme : MuiThemeDark}>
 
     
-          <AppBar />
-          <div>
-            <Content />
-          </div>
+          
+          <Router>
+            <AppBar />
+            <Content>
+              <BaseRouter />
+            </Content> 
+          </Router>
+            
+
     </MuiThemeProvider>
   );
 }

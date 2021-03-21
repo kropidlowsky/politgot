@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SpacingGrid() {
+const SpacingGrid = (props) => {
   const [spacing, setSpacing] = React.useState(2);
   const classes = useStyles();
 
@@ -40,16 +40,23 @@ export default function SpacingGrid() {
     setSpacing(Number(event.target.value));
   };
 
+  const { main, sidebar } = props.children;
+
   return (
     <Grid container className={classes.root} spacing={2}>
       <Grid item xs={12}>
         <Grid container justify="center" spacing={spacing}>
             <Grid item>
-              <Paper className={classes.leftBar} />
+              <Paper className={classes.leftBar} >
+                  {sidebar}
+                </Paper>
+
             </Grid>
             <Grid item>
               <Paper className={classes.mainBar}>
-                  <MainPage />
+                  <MainPage>
+                    {main}
+                  </MainPage>
               </Paper>
             </Grid>
             <Grid item>
@@ -63,3 +70,4 @@ export default function SpacingGrid() {
     </Grid>
   );
 }
+export default SpacingGrid;

@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     margin: 10,
-    width: '100%',
+    width: '99%',
   },
   mainBar: {
     height: '90vh',

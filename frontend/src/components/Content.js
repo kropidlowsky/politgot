@@ -1,18 +1,15 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
 import Paper from '@material-ui/core/Paper';
 import MainPage from './MainPage'
 import Chips from './Chips';
+import Hidden from '@material-ui/core/Hidden'
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    margin: 10,
+    marginTop: 5,
     width: '99%',
   },
   mainBar: {
@@ -59,12 +56,13 @@ const SpacingGrid = (props) => {
                   </MainPage>
               </Paper>
             </Grid>
-            <Grid item>
-              <Paper className={classes.rightBar}>
-                  <Chips />
-              </Paper>
-            </Grid>
-          
+            <Hidden lgDown>
+              <Grid item>
+                <Paper className={classes.rightBar}>
+                    <Chips />
+                </Paper>
+              </Grid>
+            </Hidden>
         </Grid>
       </Grid>
     </Grid>

@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       display: 'block',
     },
-    alignSelf: 'center',
     fontFamily: 'Gugi',
     fontSize: 36,
     color: theme.palette.text.primary,
@@ -48,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
     pointerEvents: 'none',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   inputRoot: {
   },
@@ -72,18 +70,22 @@ export default function SearchAppBar() {
   return (
         <div className={classes.root}>
       <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            aria-label="open drawer"
-            color='#fff'
-          >
-            <Drawer />
-          </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            PolitGot
-          </Typography>
+          <Toolbar>
+
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              aria-label="open drawer"
+              color='#fff'
+            >
+              
+              <Drawer />
+            </IconButton>
+            <Typography className={classes.title} variant="h6" noWrap>
+                PolitGot
+              </Typography>
+
+          
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />

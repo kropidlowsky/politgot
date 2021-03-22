@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List';
@@ -14,9 +14,8 @@ import ContactSupportSharpIcon from '@material-ui/icons/ContactSupportSharp';
 import PersonPinCircleSharpIcon from '@material-ui/icons/PersonPinCircleSharp';
 import SupervisedUserCircleSharpIcon from '@material-ui/icons/SupervisedUserCircleSharp';
 import Logo from './Logo.js';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { Link } from 'react-router-dom';
-
+import Typography from '@material-ui/core/Typography'
 
 const useStyles = makeStyles({
   list: {
@@ -84,9 +83,9 @@ export default function TemporaryDrawer() {
                 <ListItemText primary="O nas"/>
         </ListItem>
       </List>
-      <footer>
-          <h6>PolitGot 2021</h6>
-      </footer>
+      <Typography variant="h8" color="textSecondary">
+              PolitGot 2021
+      </Typography>
     </div>
   );
 
@@ -94,7 +93,7 @@ export default function TemporaryDrawer() {
     <div>
       {['left'].map((anchor) => (
         <React.Fragment key={anchor}>
-          <IconButton onClick={toggleDrawer(anchor, true)}><ArrowForwardIosIcon className={classes.menuButton}/></IconButton>
+          <IconButton onClick={toggleDrawer(anchor, true)}><MenuIcon /></IconButton>
           <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
             {list(anchor)}
           </Drawer>

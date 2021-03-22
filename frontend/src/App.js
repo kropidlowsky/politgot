@@ -9,7 +9,6 @@ import 'antd/dist/antd.css';
 import { Switch } from '@material-ui/core';
 import NightsStayIcon from '@material-ui/icons/NightsStay';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
-import Container from '@material-ui/core/Container'
 
 function App() {
   const [theme, setTheme] = useState(true);

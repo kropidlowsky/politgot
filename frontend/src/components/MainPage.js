@@ -10,8 +10,8 @@ import Grid from '@material-ui/core/Grid'
 
 const useStyles = makeStyles({
   root: {
-    width: 500,
-    margin: 10,
+    width: '70%',
+    margin: 20,
     //background: '#f0f0f0'
   },
   bullet: {
@@ -42,10 +42,10 @@ export default function SimpleCard() {
         <Typography className={classes.title} color="textSecondary" gutterBottom>
             @AndrzejDuda
         </Typography>
-        <Typography variant="h6" component="h2">
+        <Typography variant="h6" component="h3" color="textPrimary">
           Kancelaria Prezydenta
         </Typography>
-        <Typography variant="body2" component="p">
+        <Typography variant="body2" component="p" color="textSecondary">
         Z okazji Międzynarodowego Dnia Lasów Prezydent 
 @AndrzejDuda
  sadząc drzewa w Leśnictwie Bączki (Nadleśnictwo Garwolin), zainaugurował ogólnopolską akcję „Łączą nas drzewa”.

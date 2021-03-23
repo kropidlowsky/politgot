@@ -3,7 +3,7 @@ import scrapy
 
 class RepresentativeSpider(scrapy.Spider):
 
-    name: str = "rep"
+    name: str = "representative"
     start_urls = [
         'https://www.sejm.gov.pl/Sejm9.nsf/poslowie.xsp'
     ]
@@ -37,6 +37,22 @@ class RepresentativeSpider(scrapy.Spider):
         yield from response.follow_all(representatives, self.parse_profile)
 
     def parse_profile(self, response):
+        """
+        name:           imie i naziwsko
+        elect_date:     dzien wyboru
+        register:       lista wyborcza
+        votes:          liczba głosów
+        constituency:   okręg wyborczy
+        vow_date:       data ślubowwania {dd-mm-yyyy}
+        period:         staż parlamentarny
+        clubs:          kluby/kołą
+
+        DOB:            data urodzenia
+        POB:            miejsce urodzenia
+        education:      wykształcenie
+        schools:        ukończone szkoły
+        profession:     zawód
+        """
         yield {
             'name': self.__extract_css(response, 'div[id*="title_content"] h1::text'),
             'elect_date': self.__extract_css(response, 'p[class*="right"]::text'),
@@ -44,7 +60,7 @@ class RepresentativeSpider(scrapy.Spider):
             'votes': self.__extract_nested_css(response, 'p[class*="right"]::text')[3],
             'constituency': self.__extract_css(response, 'p[id*="okreg"]::text'),
             'vow_date': self.__extract_nested_css(response, 'p[class*="right"]::text')[4],
-            'period': self.__extract_nested_css(response, 'p[class*="right"]::text')[5].split(', '),
+            'period': self.__extract_nested_css(response, 'p[class*="right"]::text')[5],
             'clubs': self.__extract_css(response, 'a[id*="view:_id1:_id2:facetMain:_id109:klub"]::text').split(', '),
 
             'DOB': self.__extract_css(response, 'p[id*="urodzony"]::text').split(', ')[0],

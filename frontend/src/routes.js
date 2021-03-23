@@ -7,9 +7,9 @@ import TwitterTweetsList from './components/TwitterTweetsList'
 
 const BaseRouter = () => (
     <div>
-        <Route exact path='/' component={PoliticianList} />
+        <Route exact path='/' component={TwitterTweetsList} />
         <Route exact path='/:tweeters' component={TwitterAccPage} />
-        <Route path="/politicians" components={{main: TwitterTweetsList, sidebar: PoliticianList}}/>
+        <Route path="/politicians" component={TwitterTweetsList}/>
     </div>
 );
 

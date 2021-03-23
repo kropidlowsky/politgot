@@ -5,6 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import MainPage from './MainPage'
 import Chips from './Chips';
 import Hidden from '@material-ui/core/Hidden'
+import LeftBar from './LeftBar'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,7 +38,7 @@ const SpacingGrid = (props) => {
     setSpacing(Number(event.target.value));
   };
 
-  const { main, sidebar } = props.children;
+  const { sidebar } = props.children;
 
   return (
     <Grid container className={classes.root} spacing={2}>
@@ -45,18 +46,18 @@ const SpacingGrid = (props) => {
         <Grid container justify="center" spacing={spacing}>
             <Grid item>
               <Paper className={classes.leftBar} >
-                  {sidebar}
+                  <LeftBar />
                 </Paper>
 
             </Grid>
             <Grid item>
               <Paper className={classes.mainBar}>
-                  <MainPage>
-                    {main}
+                {props.children}
+                  <MainPage>    
                   </MainPage>
               </Paper>
             </Grid>
-            <Hidden lgDown>
+            <Hidden mdDown>
               <Grid item>
                 <Paper className={classes.rightBar}>
                     <Chips />

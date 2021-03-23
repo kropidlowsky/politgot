@@ -17,13 +17,14 @@ const Politician = (props) => {
         }}
         dataSource={props.data}
         renderItem={item => (
-        <List.Item
+        <List.Item>
+            <List.Item.Meta 
+        
+            title={item.name}
+            description={item.register}
 
-            //imie i nazwisko
-            key={item.surname + item.name}
-            
-            
-        >
+        />
+          
         </List.Item>
         )}
     />

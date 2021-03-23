@@ -5,6 +5,7 @@
   "dependencies": {
     "@fontsource/aladin": "^4.2.2",
     "@material-ui/core": "^4.11.3",
+    "@material-ui/data-grid": "^4.0.0-alpha.23",
     "@material-ui/icons": "^4.11.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
@@ -15,8 +16,11 @@
     "react": "^17.0.1",
     "react-burger-menu": "^3.0.6",
     "react-dom": "^17.0.1",
+    "react-infinite-scroller": "^1.2.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-scrollable-list": "^1.3.0",
+    "reqwest": "^2.0.5",
     "styled-components": "^5.2.1",
     "web-vitals": "^1.1.1"
   },

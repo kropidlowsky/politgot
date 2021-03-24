@@ -8,6 +8,9 @@ import { List, message, Avatar, Spin } from 'antd';
 import reqwest from 'reqwest';
 import InfiniteScroll from 'react-infinite-scroller';
 import Politician from './Politician';
+import { ThemeProvider } from '@material-ui/styles';
+import { useTheme } from '@material-ui/core';
+
 
 class PoliticianList extends React.Component {
     state = {
@@ -72,14 +75,16 @@ class PoliticianList extends React.Component {
               useWindow={false}
             >
               <List
+                
                 dataSource={this.state.data}
                 renderItem={item => (
-                  <List.Item key={item.id}>
+                  <List.Item key={item.id} 
+                             className="listItem">
                     <List.Item.Meta
                     //   avatar={
                     //     <Avatar src="" />
                     //   }
-                      title={<a href="https://ant.design">{item.name}</a>}
+                      title={<a style={{color:'black'}} href="https://ant.design">{item.name}</a>}
                       description={item.register}
                     />
                     <div>.</div>

@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/icons": "^1.0.9",
+    "@chakra-ui/react": "^1.5.0",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "@fontsource/aladin": "^4.2.2",
     "@material-ui/core": "^4.11.3",
     "@material-ui/data-grid": "^4.0.0-alpha.23",
@@ -12,6 +16,7 @@
     "@testing-library/user-event": "^12.8.3",
     "antd": "^4.14.1",
     "axios": "^0.21.1",
+    "framer-motion": "^4",
     "hamburger-react": "^2.4.0",
     "react": "^17.0.1",
     "react-burger-menu": "^3.0.6",
@@ -22,6 +27,7 @@
     "react-scrollable-list": "^1.3.0",
     "reqwest": "^2.0.5",
     "styled-components": "^5.2.1",
+    "typescript": "^4.2.4",
     "web-vitals": "^1.1.1"
   },
   "scripts": {

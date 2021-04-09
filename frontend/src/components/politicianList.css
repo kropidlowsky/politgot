@@ -11,10 +11,6 @@
     bottom: 40px;
     width: 100%;
     text-align: center;
-    -webkit-box-shadow: inset 0px 0px 54px -15px rgba(0,0,0,0.75);
--moz-box-shadow: inset 0px 0px 54px -15px rgba(0,0,0,0.75);
-box-shadow: inset 0px 0px 54px -15px rgba(0,0,0,0.75);
-    
   }
   .listItem {
     border-radius: 2px;

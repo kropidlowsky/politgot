@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
 import PoliticianList from './PoliticianList'
 import TwitterTweetsList from './TwitterTweetsList'
 
@@ -14,7 +13,7 @@ import {
 const routes = [
   { path: '/',
     exact: true,
-    sidebar: () => <h1>Lista</h1>,
+    sidebar: () => <></>,
     
   },
   { path: '/politicians/:tweeters',

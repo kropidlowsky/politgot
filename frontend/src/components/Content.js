@@ -6,6 +6,15 @@ import MainPage from './MainPage'
 import Chips from './Chips';
 import Hidden from '@material-ui/core/Hidden'
 import LeftBar from './LeftBar'
+import PageContent from './PageContent'
+import {
+        Box,
+        Flex,
+        Center,
+        Text,
+        Square,
+        Container
+      } from '@chakra-ui/react'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,32 +50,18 @@ const SpacingGrid = (props) => {
   const { sidebar } = props.children;
 
   return (
-    <Grid container className={classes.root} spacing={2}>
-      <Grid item xs={12}>
-        <Grid container justify="center" spacing={spacing}>
-            <Grid item>
-              <Paper className={classes.leftBar} >
-                  <LeftBar />
-                </Paper>
-
-            </Grid>
-            <Grid item>
-              <Paper className={classes.mainBar}>
-                {props.children}
-                  <MainPage>    
-                  </MainPage>
-              </Paper>
-            </Grid>
-            <Hidden mdDown>
-              <Grid item>
-                <Paper className={classes.rightBar}>
-                    <Chips />
-                </Paper>
-              </Grid>
-            </Hidden>
-        </Grid>
-      </Grid>
-    </Grid>
+    <Flex h="100%">
+  <Box w="20vw" h="100vh">
+    <LeftBar />
+  </Box>
+  
+  <Box w="60vw" h="100vh">
+    <PageContent />
+  </Box>
+  <Center w="20vw">
+    <Text>Box 1</Text>
+  </Center>
+</Flex>
   );
 }
 export default SpacingGrid;

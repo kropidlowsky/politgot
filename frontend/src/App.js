@@ -6,29 +6,21 @@ import Content from './components/Content'
 import { BrowserRouter as Router } from 'react-router-dom';
 import BaseRouter from './routes';
 import 'antd/dist/antd.css';
-import { Switch } from '@material-ui/core';
-import NightsStayIcon from '@material-ui/icons/NightsStay';
-import WbSunnyIcon from '@material-ui/icons/WbSunny';
+import {ChakraProvider} from "@chakra-ui/react";
+import Navbar from './components/Navbar.tsx';
+
 
 function App() {
   const [theme, setTheme] = useState(true);
-  const icon = !theme ? <WbSunnyIcon /> : <NightsStayIcon />
-  const appliedTheme = createMuiTheme(theme ? light : dark)
   return (
-    <ThemeProvider theme={appliedTheme}>     
-          <Router>
-            <div style={{backgroundColor: appliedTheme.palette.primary.secondary}}>
-            <AppBar />
-            <Content>
-              <BaseRouter />
-            </Content> 
-            <Switch onClick={() => setTheme(!theme)} />
-            </div>
-            
-          </Router>
-            
-
-    </ThemeProvider>
+    <ChakraProvider>
+      <Router>
+        <Navbar />
+        <Content>
+          <BaseRouter />
+        </Content> 
+      </Router>
+    </ChakraProvider>
   );
 }
 

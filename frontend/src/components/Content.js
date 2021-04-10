@@ -52,19 +52,21 @@ const SpacingGrid = (props) => {
   const { sidebar } = props.children;
 
   return (
-    <Flex h="100%">
+    <Flex h="100%" pt={25}>
+
       <Box w="20vw" h="100vh">
         <PoliticianDrawer />
         <Skeleton h="90vh" isLoaded><LeftBar /></Skeleton>
       </Box>
-  
-  <Box w="60vw" h="100vh">
-      <PageContent />
-  </Box>
-  <Center w="20vw">
-    <Text>Box 1</Text>
-  </Center>
-</Flex>
+      {sidebar}
+      <Box w="60vw" h="100vh">
+          <PageContent />
+      </Box>
+
+      <Center w="20vw">
+        <Text>Box 1</Text>
+      </Center>
+    </Flex>
   );
 }
 export default SpacingGrid;

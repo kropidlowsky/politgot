@@ -22,7 +22,7 @@ function PoliticianDrawer() {
     return (
       <>
         <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-          Open
+          Wybierz polityka
         </Button>
         <Drawer
           isOpen={isOpen}

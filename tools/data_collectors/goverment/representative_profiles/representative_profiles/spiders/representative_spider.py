@@ -2,10 +2,9 @@ import scrapy
 
 
 class RepresentativeSpider(scrapy.Spider):
-
     name: str = "representative"
     start_urls = [
-        'https://www.sejm.gov.pl/Sejm9.nsf/poslowie.xsp'
+        'http://www.sejm.gov.pl/Sejm9.nsf/poslowie.xsp'
     ]
 
     def __extract_css(self, response, query):

@@ -7,13 +7,15 @@ import Chips from './Chips';
 import Hidden from '@material-ui/core/Hidden'
 import LeftBar from './LeftBar'
 import PageContent from './PageContent'
+import PoliticianDrawer from './PoliticianDrawer'
 import {
         Box,
         Flex,
         Center,
         Text,
         Square,
-        Container
+        Container,
+        Skeleton
       } from '@chakra-ui/react'
 
 const useStyles = makeStyles((theme) => ({
@@ -51,12 +53,13 @@ const SpacingGrid = (props) => {
 
   return (
     <Flex h="100%">
-  <Box w="20vw" h="100vh">
-    <LeftBar />
-  </Box>
+      <Box w="20vw" h="100vh">
+        <PoliticianDrawer />
+        <Skeleton h="90vh" isLoaded><LeftBar /></Skeleton>
+      </Box>
   
   <Box w="60vw" h="100vh">
-    <PageContent />
+      <PageContent />
   </Box>
   <Center w="20vw">
     <Text>Box 1</Text>

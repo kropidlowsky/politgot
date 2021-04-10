@@ -30,7 +30,7 @@ import {
     const { isOpen, onToggle } = useDisclosure();
   
     return (
-      <Box>
+      <Box position="fixed" w="99vw" zIndex="1" bg={useColorModeValue("white", "gray.800")}>
         <Flex
           minH={'60px'}
           py={{ base: 2 }}
@@ -87,7 +87,7 @@ import {
   
   const DesktopNav = () => {
     return (
-      <Stack direction={'row'} spacing={4}>
+      <Stack direction={'row'} spacing={4} >
         {NAV_ITEMS.map((navItem) => (
           <Box key={navItem.label}>
             <Popover trigger={'hover'} placement={'bottom-start'}>
@@ -132,7 +132,7 @@ import {
   const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
     return (
       <Link
-        href={href}
+        href={href ?? ''}
         role={'group'}
         display={'block'}
         p={2}
@@ -185,7 +185,7 @@ import {
         <Flex
           py={2}
           as={Link}
-          href={href ?? '#'}
+          href={href ?? ''}
           justify={'space-between'}
           align={'center'}
           _hover={{

@@ -7,6 +7,7 @@ import {
     Icon,
     SimpleGrid,
     useColorModeValue,
+    Skeleton
   } from '@chakra-ui/react';
   
   const testimonials = [
@@ -62,71 +63,74 @@ import {
   function TestmonialCard(props: TestimonialCardProps) {
     const { name, role, content, avatar, index } = props;
     return (
-      <Flex
-        boxShadow={'lg'}
-        maxW={'640px'}
-        direction={{ base: 'column-reverse', md: 'row' }}
-        width={'full'}
-        rounded={'xl'}
-        p={10}
-        justifyContent={'space-between'}
-        position={'relative'}
-        bg={useColorModeValue('gray.50', 'gray.800')}
-        border={useColorModeValue('none', '1px solid #aaa')}
-        _after={{
-          content: '""',
-          position: 'absolute',
-          height: '21px',
-          width: '29px',
-          left: '35px',
-          top: '-10px',
-          backgroundSize: 'cover',
-          backgroundImage: 'url(./../icons/twitter.png)'}}
-        _before={{
-          content: '""',
-          position: 'absolute',
-          zIndex: '-1',
-          height: 'full',
-          maxW: '640px',
-          width: 'full',
-          filter: 'blur(50px)',
-          transform: 'scale(0.68)',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-          top: 0,
-          left: 0,
-          bg: 'white'
-        }}>
+      <Skeleton isLoaded>
         <Flex
-          direction={'column'}
-          textAlign={'left'}
-          justifyContent={'space-between'}>
-          <chakra.p
-            fontFamily={'Inter'}
-            fontWeight={'medium'}
-            fontSize={'15px'}
-            pb={4}>
-            {content}
-          </chakra.p>
-          <chakra.p fontFamily={'Work Sans'} fontWeight={'bold'} fontSize={14}>
-            {name}
-            <chakra.span
+          boxShadow={'lg'}
+          maxW={'640px'}
+          direction={{ base: 'column-reverse', md: 'row' }}
+          width={'full'}
+          rounded={'xl'}
+          p={10}
+          justifyContent={'space-between'}
+          position={'relative'}
+          bg={useColorModeValue('gray.50', 'gray.800')}
+          border={useColorModeValue('none', '1px solid #aaa')}
+          _after={{
+            content: '""',
+            position: 'absolute',
+            height: '21px',
+            width: '29px',
+            left: '35px',
+            top: '-10px',
+            backgroundSize: 'cover',
+            backgroundImage: 'url(./../icons/twitter.png)'}}
+          _before={{
+            content: '""',
+            position: 'absolute',
+            zIndex: '-1',
+            height: 'full',
+            maxW: '640px',
+            width: 'full',
+            filter: 'blur(50px)',
+            transform: 'scale(0.68)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            top: 0,
+            left: 0,
+            bg: 'white'
+          }}>
+          <Flex
+            direction={'column'}
+            textAlign={'left'}
+            justifyContent={'space-between'}>
+            <chakra.p
               fontFamily={'Inter'}
               fontWeight={'medium'}
-              color={'gray.500'}>
-              {' '}
-              - {role}
-            </chakra.span>
-          </chakra.p>
+              fontSize={'15px'}
+              pb={4}>
+              {content}
+            </chakra.p>
+            <chakra.p fontFamily={'Work Sans'} fontWeight={'bold'} fontSize={14}>
+              {name}
+              <chakra.span
+                fontFamily={'Inter'}
+                fontWeight={'medium'}
+                color={'gray.500'}>
+                {' '}
+                - {role}
+              </chakra.span>
+            </chakra.p>
+          </Flex>
+          <Avatar
+            src={avatar}
+            height={'80px'}
+            width={'80px'}
+            alignSelf={'center'}
+            m={{ base: '0 0 35px 0', md: '0 0 0 50px' }}
+          />
         </Flex>
-        <Avatar
-          src={avatar}
-          height={'80px'}
-          width={'80px'}
-          alignSelf={'center'}
-          m={{ base: '0 0 35px 0', md: '0 0 0 50px' }}
-        />
-      </Flex>
+      </Skeleton>
+
     );
   }
   

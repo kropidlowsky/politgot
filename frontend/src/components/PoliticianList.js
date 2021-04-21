@@ -1,15 +1,9 @@
 import React from 'react';
-import axios from 'axios';
 import representatives from '../jsons/politycy'
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './politicianList.css';
-import { List, message, Avatar, Spin } from 'antd';
-import reqwest from 'reqwest';
+import { List, message,  Spin } from 'antd';
 import InfiniteScroll from 'react-infinite-scroller';
-import Politician from './Politician';
-import { ThemeProvider } from '@material-ui/styles';
-import { useTheme } from '@material-ui/core';
 
 
 class PoliticianList extends React.Component {

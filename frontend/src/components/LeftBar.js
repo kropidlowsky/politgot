@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core/styles';
 import Politicians from './Politicians'
 
 
@@ -25,26 +24,7 @@ const routes = [
   }
 ]
 
-const useStyles = makeStyles({
-  root: {
-    width: '30vw',
-    height: '90vh'
-  },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginBottom: 12,
-  },
-});
-
 const LeftBar = () => {
-  const classes = useStyles();
   return <Router>
           {routes.map((route, index) => (
         <Route

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Content from './components/Content'
 import { BrowserRouter as Router } from 'react-router-dom';
 import BaseRouter from './routes';
@@ -7,7 +6,6 @@ import {ChakraProvider} from "@chakra-ui/react";
 import Navbar from './components/Navbar.tsx';
 
 function App() {
-  const [theme, setTheme] = useState(true);
   return (
     <ChakraProvider>
       <Router>

@@ -1,4 +1,4 @@
-import { Container, List, ListItem, Text } from "@chakra-ui/layout";
+import { Link, Text, Wrap } from "@chakra-ui/layout";
 import representatives from "../jsons/politycy.json";
 import { useColorModeValue } from "@chakra-ui/react";
 
@@ -9,30 +9,33 @@ interface PoliticiansConfig {
 
 const PoliticianItem = ({ name, register }: PoliticiansConfig) => {
   return (
-    <ListItem
-      bg={useColorModeValue("gray.50", "blackAlpha.300")}
-      p="3"
-      m="3"
-      borderRadius="8"
-      _hover={{ bg: useColorModeValue("red", "blue") }}
-      justifyContent="center"
-      shadowBox="Inner"
+    <Link
+      bg={useColorModeValue("white", "#3F444E")}
+      w="md"
+      borderRadius="10"
+      boxShadow="md"
+      p="5"
+      m="10"
+      align="center"
+      _hover={{
+        bg: useColorModeValue("cyan.200", "cyan.600"),
+        color: useColorModeValue("black", "white"),
+      }}
+      href="#"
     >
-      <Text>{name}</Text> <br />
+      <Text fontWeight="bold">{name}</Text> <br />
       <Text>{register}</Text>
-    </ListItem>
+    </Link>
   );
 };
 
 const Politicians = () => {
   return (
-    <Container h="100vh">
-      <List maxH="80vh" mt="2em">
-        {representatives.map((representatives) => (
-          <PoliticianItem {...representatives} />
-        ))}
-      </List>
-    </Container>
+    <Wrap mt="5em" maxW="30vw" maxH="100vh">
+      {representatives.map((representatives) => (
+        <PoliticianItem {...representatives} />
+      ))}
+    </Wrap>
   );
 };
 export default Politicians;

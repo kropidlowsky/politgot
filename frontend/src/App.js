@@ -13,6 +13,7 @@ function App() {
         <Content>
           <BaseRouter />
         </Content> 
+
       </Router>
     </ChakraProvider>
   );

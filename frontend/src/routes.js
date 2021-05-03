@@ -1,11 +1,10 @@
 import { Route } from 'react-router-dom';
-import TwitterAccPage from './components/TwitterAccPage';
-import PoliticianDrawer from './components/PoliticianDrawer'
+import Politicians from './components/Politicians'
 
 const BaseRouter = () => (
     <div>
-        <Route exact path='/:tweeters' component={TwitterAccPage} />
-        <Route path="/politicians" component={PoliticianDrawer}/>
+        {/* <Route exact path='/:tweeters' component={TwitterAccPage} /> */}
+        <Route path="/politicians" component={Politicians}/>
     </div>
 );
 

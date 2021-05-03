@@ -39,7 +39,7 @@ export default function WithSubnavigation() {
         minH={"60px"}
         py={{ base: 2 }}
         px={{ base: 4 }}
-        borderBottom={1}
+        borderBottom={0}
         borderStyle={"solid"}
         align={"center"}
       >
@@ -101,7 +101,7 @@ const DesktopNav = () => {
                 <Link
                   p={5}
                   href={navItem.href ?? "#"}
-                  fontSize={"md"}
+                  fontSize={"xl"}
                   fontWeight={500}
                   _hover={{
                     textDecoration: "none",

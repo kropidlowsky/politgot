@@ -1,13 +1,23 @@
 import { Container, List, ListItem, Text } from "@chakra-ui/layout";
-import representatives from "../jsons/politycy.json";
 import { useColorModeValue } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 interface PoliticiansConfig {
   name?: string;
-  register?: string;
+  surname?: string;
 }
 
-const PoliticianItem = ({ name, register }: PoliticiansConfig) => {
+interface Politician {
+  name: string;
+  surname: string;
+}
+
+interface ResData {
+  result: Politician[];
+}
+
+const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
   return (
     <ListItem
       bg={useColorModeValue("gray.50", "blackAlpha.300")}
@@ -19,17 +29,33 @@ const PoliticianItem = ({ name, register }: PoliticiansConfig) => {
       shadowBox="Inner"
     >
       <Text>{name}</Text> <br />
-      <Text>{register}</Text>
+      <Text>{surname}</Text>
     </ListItem>
   );
 };
 
 const Politicians = () => {
+  const [data, setData] = useState<Politician[]>([]);
+
+  const fetchData = () => {
+    axios
+      .get<ResData>("http://127.0.0.1:5000/polit")
+      .then(function (response) {
+        setData(response.data.result);
+      })
+      .catch(function (error: any) {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <Container h="100vh">
       <List maxH="80vh" mt="2em">
-        {representatives.map((representatives) => (
-          <PoliticianItem {...representatives} />
+        {data.map((data) => (
+          <PoliticianItem {...data} />
         ))}
       </List>
     </Container>

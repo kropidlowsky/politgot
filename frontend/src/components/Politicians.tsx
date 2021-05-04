@@ -59,8 +59,8 @@ const Politicians = () => {
 
   return (
     <Wrap mt="5em" maxW="30vw" maxH="100vh">
-      {data.map((data) => (
-        <PoliticianItem {...data} />
+      {data.map((data, index) => (
+        <PoliticianItem key={index} {...data} />
       ))}
     </Wrap>
   );

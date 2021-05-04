@@ -18,6 +18,7 @@ interface ResData {
 }
 
 const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
+  let link = "/politicians/" + name + "_" + surname;
   return (
     <Link
       bg={useColorModeValue("white", "#3F444E")}
@@ -31,7 +32,7 @@ const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
         bg: useColorModeValue("cyan.200", "cyan.600"),
         color: useColorModeValue("black", "white"),
       }}
-      href="#"
+      href={link}
     >
       <Text fontWeight="bold">{name}</Text> <br />
       <Text>{surname}</Text>

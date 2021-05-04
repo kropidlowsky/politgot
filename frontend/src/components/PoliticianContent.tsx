@@ -112,11 +112,6 @@ function TestmonialCard({
   );
 }
 
-interface Tweet {
-  date: Date;
-  message: string;
-}
-
 interface ResData {
   result: TestimonialCardProps[];
 }

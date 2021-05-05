@@ -1,2 +1,6 @@
 scrapy
 gunicorn
+functools
+flask
+psycopg2
+flasgger

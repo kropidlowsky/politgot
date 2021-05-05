@@ -252,5 +252,9 @@ def page_not_found():
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
 
-if __name__ == '__main__':
+def main():
     app.run(debug=True)  # na prodzie off
+
+
+if __name__ == '__main__':
+    main()

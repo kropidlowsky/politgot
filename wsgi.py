@@ -1,3 +1,3 @@
-from API import tweets_controller
+from API.tweets_controller import create_app
 
-app = tweets_controller
+app = create_app()

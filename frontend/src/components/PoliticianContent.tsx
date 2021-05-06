@@ -18,6 +18,7 @@ interface TestimonialCardProps {
   avatar: string;
   index: number;
   date: Date;
+  error: string;
 }
 
 function TestmonialCard({
@@ -26,6 +27,7 @@ function TestmonialCard({
   message,
   avatar,
   date,
+  error,
 }: TestimonialCardProps) {
   const { tweeters } = useParams<{ tweeters: string }>();
   return (
@@ -55,7 +57,7 @@ function TestmonialCard({
           justifyContent={"space-between"}
         >
           <chakra.p fontWeight={"medium"} fontSize={"15px"} pb={4}>
-            {message}
+            {message + error}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
             {tweeters}
@@ -88,14 +90,18 @@ export default function GridBlurredBackdrop() {
 
   useEffect(() => {
     axios
-      .get<ResData>("http://127.0.0.1:5000/tweets?politic=" + tweeters)
+      .get<ResData>(
+        "https://politgot-umk.herokuapp.com/tweets?politic=" + tweeters
+      )
       .then(function (response) {
+        //temporary fix for errors
+        console.log(response.data.result[0].error);
         setData(response.data.result);
       })
       .catch(function (error: any) {
         console.log(error);
       });
-  }, []);
+  }, [tweeters]);
 
   return (
     <Flex

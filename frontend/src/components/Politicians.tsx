@@ -40,12 +40,17 @@ const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
   );
 };
 
+// const username = "admin";
+// const password = "secret";
+// const token = `${username}:${password}`;
+// const encodedToken = Buffer.from(token).toString("base64");
+
 const Politicians = () => {
   const [data, setData] = useState<Politician[]>([]);
 
   const fetchData = () => {
     axios
-      .get<ResData>("http://127.0.0.1:5000/polit")
+      .get<ResData>("https://politgot-umk.herokuapp.com/polit")
       .then(function (response) {
         setData(response.data.result);
       })

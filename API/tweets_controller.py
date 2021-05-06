@@ -126,7 +126,12 @@ def get_politic_tweets():
     date_from = request.args.get('date_from', False)
     date_to = request.args.get('date_to', False)
     if not politic:
-        return jsonify({'error': 'Bad parameter'}), 400
+        response = jsonify(result={'error': 'Bad parameter'})
+        response.headers.set('Access-Control-Allow-Origin', '*')
+        response.headers.set('Access-Control-Allow-Credentials', True)
+        response.headers.set('Access-Control-Allow-Method', 'GET')
+        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+        return response, 400
     try:
         politic = politic.strip()
         politic = politic.replace('"', '').replace("'", '')
@@ -139,11 +144,21 @@ def get_politic_tweets():
         if not politic_name or not politic_surname:
             raise
     except:
-        return jsonify({'error': 'Bad parameter'}), 400
+        response = jsonify(result={'error': 'Bad parameter'})
+        response.headers.set('Access-Control-Allow-Origin', '*')
+        response.headers.set('Access-Control-Allow-Credentials', True)
+        response.headers.set('Access-Control-Allow-Method', 'GET')
+        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+        return response, 400
 
     connection = get_connection_database()
     if connection.get('error'):
-        return jsonify('Error during connection'), 500
+        response = jsonify(result={'error': 'Error during connection'})
+        response.headers.set('Access-Control-Allow-Origin', '*')
+        response.headers.set('Access-Control-Allow-Credentials', True)
+        response.headers.set('Access-Control-Allow-Method', 'GET')
+        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+        return response, 500
     connection = connection['connection']
     cursor = connection.cursor()
     cursor.execute(f"SELECT politicians_twitter_accounts.id, name, surname "
@@ -153,7 +168,12 @@ def get_politic_tweets():
                    f"WHERE name = '{politic_name}' AND surname = '{politic_surname}';")
     result = cursor.fetchone()
     if not result or not result[0]:
-        return jsonify({'error': 'No politic found or no twitter account found'})
+        response = jsonify(result={'error': 'No politic found or no twitter account found'})
+        response.headers.set('Access-Control-Allow-Origin', '*')
+        response.headers.set('Access-Control-Allow-Credentials', True)
+        response.headers.set('Access-Control-Allow-Method', 'GET')
+        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+        return response, 200
     query = f"SELECT message, date, tags, url_photo, url_video, url_tweet FROM politicians_tweets " \
             f'WHERE "user" = {int(result[0])}'
     if date_to:
@@ -258,7 +278,12 @@ def get_politicians_twitter_accounts():
                          })
     cursor.close()
     connection.close()
-    return jsonify(result=response)
+    response = jsonify(result=response)
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set('Access-Control-Allow-Credentials', True)
+    response.headers.set('Access-Control-Allow-Method', 'GET')
+    response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+    return response
 
 
 @app.errorhandler(404)

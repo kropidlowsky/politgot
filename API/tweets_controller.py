@@ -183,7 +183,13 @@ def get_politic_tweets():
                          })
     cursor.close()
     connection.close()
-    return jsonify(result=response)
+    response = jsonify(result=response)
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set('Access-Control-Allow-Credentials', True)
+    response.headers.set('Access-Control-Allow-Method', 'GET')
+    response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+    # TODO sprawdzic czy to teraz zadziala w reakcie z tymi headerami
+    return response
 
 
 @app.route('/polit', methods=['GET'])
@@ -218,7 +224,7 @@ def get_politicians():
     response.headers.set('Access-Control-Allow-Credentials', True)
     response.headers.set('Access-Control-Allow-Method', 'GET')
     response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-    #TODO sprawdzic czy to sie nadpisuje czy dopisuje
+    #TODO sprawdzic czy to teraz zadziala w reakcie z tymi headerami
     return response
 
 
@@ -242,7 +248,7 @@ def get_politicians_twitter_accounts():
     cursor.execute(f"SELECT username, name, surname "
                    f"FROM politicians "
                    f"LEFT JOIN politicians_twitter_accounts "
-                   f"ON politicians_twitter_accounts.politician = politicians.id;")
+                   f"ON politicians_twitter_accounts.politician = politicians.id WHERE username IS NOT NULL;")
     result = cursor.fetchall()
     response = []
     for row in result:

@@ -52,11 +52,11 @@ swagger = Swagger(app, template=template, config=DEFAULT_CONFIG)
 
 def get_connection_database():
     try:
-        connection = psycopg2.connect(user="",
-                                      password="",
-                                      host="",
-                                      port="",
-                                      database="")
+        connection = psycopg2.connect(user="mcpixzcwkhrrio",
+                                      password="9141440570eff0a8d538498b8a95a407ad364d9297712891184913c19192ee26",
+                                      host="ec2-54-229-68-88.eu-west-1.compute.amazonaws.com",
+                                      port="5432",
+                                      database="d704bc62gosle7")
 
     except (Exception, Error) as error:
         return {'error': error}

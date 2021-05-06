@@ -211,7 +211,9 @@ def get_politicians():
                          })
     cursor.close()
     connection.close()
-    return jsonify(result=response)
+    response = jsonify(result=response)
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    return response
 
 
 @app.route('/polit_twitter_acc', methods=['GET'])

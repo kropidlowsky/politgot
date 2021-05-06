@@ -82,9 +82,11 @@ def requires_auth(f):
 
     return decorated
 
+# @app.route('/tweets', methods=['GET'])
+# @requires_auth
+
 
 @app.route('/tweets', methods=['GET'])
-@requires_auth
 def get_politic_tweets():
     """Endpoint returning a list of tweets by given politic name
         ---
@@ -213,6 +215,10 @@ def get_politicians():
     connection.close()
     response = jsonify(result=response)
     response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set('Access-Control-Allow-Credentials', True)
+    response.headers.set('Access-Control-Allow-Method', 'GET')
+    response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+    #TODO sprawdzic czy to sie nadpisuje czy dopisuje
     return response
 
 

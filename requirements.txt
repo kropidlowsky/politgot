@@ -1,1 +1,5 @@
 scrapy
+gunicorn
+flask
+psycopg2
+flasgger

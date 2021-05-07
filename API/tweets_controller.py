@@ -7,6 +7,7 @@ from flasgger import Swagger
 import hashlib
 import psycopg2
 
+
 HEADERS = {'Access-Control-Allow-Origin': '*',
            'Access-Control-Allow-Credentials': True,
            'Access-Control-Allow-Method': 'GET',
@@ -100,6 +101,9 @@ def requires_auth(f):
         return f(*args, **kwargs)
 
     return decorated
+
+# @app.route('/tweets', methods=['GET'])
+# @requires_auth
 
 
 # @app.route('/tweets', methods=['GET'])
@@ -419,6 +423,8 @@ def find_politic_tweets():
 @app.errorhandler(404)
 def page_not_found():
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
+
+
 
 
 if __name__ == '__main__':

@@ -1,11 +1,18 @@
 from functools import wraps
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from psycopg2 import Error
 from datetime import datetime
 from flasgger import Swagger
 
+import hashlib
 import psycopg2
 
+
+HEADERS = {'Access-Control-Allow-Origin': '*',
+           'Access-Control-Allow-Credentials': True,
+           'Access-Control-Allow-Method': 'GET',
+           'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept'
+           }
 
 app = Flask(__name__)
 app.config['SWAGGER'] = {
@@ -65,8 +72,21 @@ def get_connection_database():
 
 
 def check_auth(username, password):
-    # TODO sprawdzac w bazie danych usera
-    return username == 'admin' and password == 'secret'
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    username = hashlib.md5(username.encode()).hexdigest()
+    password = hashlib.md5(password.encode()).hexdigest()
+    cursor.execute(f"SELECT COUNT(*) "
+                   f"FROM api_user "
+                   f"WHERE username_mdhex = '{username}' AND password_mdhex = '{password}';")
+    result = cursor.fetchone()
+    if result:
+        return True
+    return False
 
 
 def requires_auth(f):
@@ -86,6 +106,8 @@ def requires_auth(f):
 # @requires_auth
 
 
+# @app.route('/tweets', methods=['GET'])
+# @requires_auth
 @app.route('/tweets', methods=['GET'])
 def get_politic_tweets():
     """Endpoint returning a list of tweets by given politic name
@@ -126,12 +148,8 @@ def get_politic_tweets():
     date_from = request.args.get('date_from', False)
     date_to = request.args.get('date_to', False)
     if not politic:
-        response = jsonify(result={'error': 'Bad parameter'})
-        response.headers.set('Access-Control-Allow-Origin', '*')
-        response.headers.set('Access-Control-Allow-Credentials', True)
-        response.headers.set('Access-Control-Allow-Method', 'GET')
-        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-        return response, 400
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
     try:
         politic = politic.strip()
         politic = politic.replace('"', '').replace("'", '')
@@ -144,21 +162,13 @@ def get_politic_tweets():
         if not politic_name or not politic_surname:
             raise
     except:
-        response = jsonify(result={'error': 'Bad parameter'})
-        response.headers.set('Access-Control-Allow-Origin', '*')
-        response.headers.set('Access-Control-Allow-Credentials', True)
-        response.headers.set('Access-Control-Allow-Method', 'GET')
-        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-        return response, 400
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
 
     connection = get_connection_database()
     if connection.get('error'):
-        response = jsonify(result={'error': 'Error during connection'})
-        response.headers.set('Access-Control-Allow-Origin', '*')
-        response.headers.set('Access-Control-Allow-Credentials', True)
-        response.headers.set('Access-Control-Allow-Method', 'GET')
-        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-        return response, 500
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
     connection = connection['connection']
     cursor = connection.cursor()
     cursor.execute(f"SELECT politicians_twitter_accounts.id, name, surname "
@@ -168,12 +178,8 @@ def get_politic_tweets():
                    f"WHERE name = '{politic_name}' AND surname = '{politic_surname}';")
     result = cursor.fetchone()
     if not result or not result[0]:
-        response = jsonify(result={'error': 'No politic found or no twitter account found'})
-        response.headers.set('Access-Control-Allow-Origin', '*')
-        response.headers.set('Access-Control-Allow-Credentials', True)
-        response.headers.set('Access-Control-Allow-Method', 'GET')
-        response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-        return response, 200
+        response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
+        return response
     query = f"SELECT message, date, tags, url_photo, url_video, url_tweet FROM politicians_tweets " \
             f'WHERE "user" = {int(result[0])}'
     if date_to:
@@ -181,13 +187,15 @@ def get_politic_tweets():
             date_to = datetime.strptime(date_to, '%Y-%m-%d')
             query += f" AND date <= '{date_to.strftime('%Y-%m-%d')}' "
         except:
-            return jsonify({'error': 'Bad parameter'}), 400
+            response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+            return response
     if date_from:
         try:
             date_from = datetime.strptime(date_from, '%Y-%m-%d')
             query += f" AND date >= '{date_from.strftime('%Y-%m-%d')}' "
         except:
-            return jsonify({'error': 'Bad parameter'}), 400
+            response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+            return response
 
     query += ' ORDER BY date'
     cursor.execute(query + ';')
@@ -203,13 +211,9 @@ def get_politic_tweets():
                          })
     cursor.close()
     connection.close()
-    response = jsonify(result=response)
-    response.headers.set('Access-Control-Allow-Origin', '*')
-    response.headers.set('Access-Control-Allow-Credentials', True)
-    response.headers.set('Access-Control-Allow-Method', 'GET')
-    response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-    # TODO sprawdzic czy to teraz zadziala w reakcie z tymi headerami
+    response = make_response({'result': response}, 200, HEADERS)
     return response
+
 
 
 @app.route('/polit', methods=['GET'])
@@ -226,11 +230,12 @@ def get_politicians():
         """
     connection = get_connection_database()
     if connection.get('error'):
-        return jsonify('Error during connection'), 500
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
     connection = connection['connection']
     cursor = connection.cursor()
     cursor.execute(f"SELECT name, surname "
-                   f"FROM politicians;")
+                   f"FROM politicians ORDER BY surname;")
     result = cursor.fetchall()
     response = []
     for row in result:
@@ -239,12 +244,7 @@ def get_politicians():
                          })
     cursor.close()
     connection.close()
-    response = jsonify(result=response)
-    response.headers.set('Access-Control-Allow-Origin', '*')
-    response.headers.set('Access-Control-Allow-Credentials', True)
-    response.headers.set('Access-Control-Allow-Method', 'GET')
-    response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-    #TODO sprawdzic czy to teraz zadziala w reakcie z tymi headerami
+    response = make_response({'result': response}, 200, HEADERS)
     return response
 
 
@@ -262,7 +262,8 @@ def get_politicians_twitter_accounts():
         """
     connection = get_connection_database()
     if connection.get('error'):
-        return jsonify('Error during connection'), 500
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
     connection = connection['connection']
     cursor = connection.cursor()
     cursor.execute(f"SELECT username, name, surname "
@@ -278,12 +279,145 @@ def get_politicians_twitter_accounts():
                          })
     cursor.close()
     connection.close()
-    response = jsonify(result=response)
-    response.headers.set('Access-Control-Allow-Origin', '*')
-    response.headers.set('Access-Control-Allow-Credentials', True)
-    response.headers.set('Access-Control-Allow-Method', 'GET')
-    response.headers.set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
+    response = make_response({'result': response}, 200, HEADERS)
     return response
+
+@app.route('/find_tweet', methods=['GET'])
+def find_politic_tweets():
+    """Endpoint returning a list of tweets searched by text
+        ---
+        tags:
+          - Twitter
+        parameters:
+          - name: text
+            in: query
+            type: string
+            required: true
+            description: looking phrase in tweets (use _ instead of white space)
+          - name: limit
+            in: query
+            type: integer
+            required: false
+            description: TOP limit of returned tweets
+          - name: offset
+            in: query
+            type: integer
+            required: false
+            description: offset of returned tweets
+          - name: politic
+            in: query
+            type: string
+            required: false
+            description: Politic name in format - name_surname
+
+
+        responses:
+          200:
+            description: A list of tweets (may be filtered by politic and may be limited) max 300
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
+
+    text = request.args.get('text', False)
+    limit = request.args.get('limit', False)
+    offset = request.args.get('offset', False)
+    politic = request.args.get('politic', False)
+    if not text:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    try:
+        text = str(text).replace('"', '').replace("'", '').replace(' ', '_')
+        if len(text.split('_')) > 1 and text.split('_')[len(text.split('_')) - 1] == '':
+            text = text.split('_')
+            text.pop()
+        else:
+            text = text.split('_')
+        text = ' & '.join(text)
+
+        if limit:
+            limit = int(limit)
+        if offset:
+            offset = int(offset)
+        if not limit or limit > 300:
+            limit = 300
+        if not offset:
+            offset = 0
+        if politic:
+            politic = politic.strip()
+            politic = politic.replace('"', '').replace("'", '')
+            politic_name, politic_surname = politic.split('_')
+            politic_name = politic_name.capitalize()
+            politic_surname = politic_surname.capitalize()
+            if '-' in politic_surname:
+                index = politic_surname.index('-')
+                politic_surname = politic_surname[:index] + '-' + politic_surname[index + 1:].capitalize()
+            if not politic_name or not politic_surname:
+                raise
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    if politic:
+        cursor.execute(f"SELECT politicians_twitter_accounts.id, name, surname "
+                       f"FROM politicians "
+                       f"LEFT JOIN politicians_twitter_accounts "
+                       f"ON politicians_twitter_accounts.politician = politicians.id "
+                       f"WHERE name = '{politic_name}' AND surname = '{politic_surname}';")
+        result = cursor.fetchone()
+        if not result or not result[0]:
+            response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
+            return response
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
+            f" polit.name, polit.surname FROM politicians_tweets " \
+            f' LEFT JOIN politicians_twitter_accounts AS polit_acc ON polit_acc.id = politicians_tweets."user" ' \
+            f"LEFT JOIN politicians AS polit ON polit.id = polit_acc.politician " \
+            f"WHERE finder @@ to_tsquery('{text}') "
+
+    if politic:
+        query += f' AND "user" = {int(result[0])}'
+    query += f' ORDER BY date OFFSET {offset} LIMIT {limit}'
+    cursor.execute(query + ';')
+    result = cursor.fetchall()
+    response = []
+    for row in result:
+        response.append({'message': row[0],
+                         'date': row[1],
+                         'tags': row[2],
+                         'url_photo': row[3],
+                         'url_video': row[4],
+                         'url_tweet': row[5],
+                         'twitter_username': row[6],
+                         'name': row[7],
+                         'surname': row[8],
+                         })
+
+
+    for word in text.split(' & '):
+        query = f"SELECT id, qty, word FROM find_statistics WHERE word = '{word.lower()}' LIMIT 1"
+        cursor.execute(query + ';')
+        result = cursor.fetchone()
+        if result:
+            cursor.execute(
+                f'UPDATE find_statistics SET qty = {result[1] + 1} WHERE id = {result[0]};')
+            connection.commit()
+        else:
+            cursor.execute(
+                f'INSERT INTO find_statistics (qty, word) '
+                f"VALUES(1, '{word.lower()}');")
+            connection.commit()
+
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response, 'limit': limit, 'offset': offset}, 200, HEADERS)
+    return response
+
 
 
 @app.errorhandler(404)

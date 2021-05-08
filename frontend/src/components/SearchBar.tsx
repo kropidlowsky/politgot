@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { Link } from "@chakra-ui/layout";
+import { useHistory } from "react-router-dom";
 
 const SearchBar = () => {
   const [link, setLink] = useState("");
 
+  const history = useHistory();
+
+  const redirect = () => {
+    history.push("/politicians/s=" + link);
+  };
+
   return (
-    <form action="/" method="get">
+    <form onSubmit={redirect}>
       <label htmlFor="header-search">
         <span className="visually-hidden">Search blog posts</span>
       </label>
@@ -16,7 +23,7 @@ const SearchBar = () => {
         name="s"
         onChange={(e) => setLink(e.target.value)}
       />
-      <Link href={"/politicians/s=" + link}>Search</Link>
+      <button onClick={redirect}>Search</button>
     </form>
   );
 };

@@ -63,13 +63,16 @@ const Politicians = () => {
 
   return (
     <Wrap
+      bg={useColorModeValue("blackAlpha.50", "#2f323b")}
+      borderRadius="15"
+      ml="10"
       maxH="85vh"
       maxW="md"
       mt="100"
       overflowY="auto"
       overflowX="hidden"
       position="fixed"
-      pl="3rem"
+      pl="1rem"
       py="5"
     >
       {data.map((data, index) => (

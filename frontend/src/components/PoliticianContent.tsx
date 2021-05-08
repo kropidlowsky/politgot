@@ -6,6 +6,8 @@ import {
   SimpleGrid,
   useColorModeValue,
   Skeleton,
+  Text,
+  Center,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -108,14 +110,16 @@ export default function GridBlurredBackdrop() {
   return (
     <Flex
       textAlign={"center"}
-      pt={10}
       justifyContent={"center"}
       direction={"column"}
       width={"full"}
     >
+      <Text fontSize="3xl" pt="10">
+        {tweeters}
+      </Text>
       <SimpleGrid
         columns={{ base: 1, xl: 1 }}
-        spacing={"20"}
+        spacing={"10"}
         mt={16}
         mx={"auto"}
       >
@@ -123,7 +127,9 @@ export default function GridBlurredBackdrop() {
           <TestmonialCard key={index} {...cardInfo} index={index} />
         ))}
       </SimpleGrid>
-      <Box></Box>
+      <Box pt="30">
+        <Center>Brak więcej wpisów</Center>
+      </Box>
     </Flex>
   );
 }

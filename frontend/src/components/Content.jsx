@@ -1,7 +1,7 @@
 import LeftBar from "./LeftBar";
 import PageContent from "./PageContent";
 import PoliticianContent from "./PoliticianContent";
-import { Box, Flex, Center, Text } from "@chakra-ui/react";
+import { Box, Flex, Center, Text, useColorModeValue } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const routes = [
@@ -28,7 +28,7 @@ const Content = (props) => {
         <LeftBar />
       </Box>
       {sidebar}
-      <Box w="60vw">
+      <Box w="40vw" my="100" pb="10" borderRadius="15"       bg={useColorModeValue("blackAlpha.50", "#2f323b")}>
         {/* <PageContent /> */}
         <Router>
           {routes.map((route, index) => (

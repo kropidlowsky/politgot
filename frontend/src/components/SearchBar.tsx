@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "@chakra-ui/layout";
+import { IconButton } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
+import { SearchIcon } from "@chakra-ui/icons";
 
 const SearchBar = () => {
   const [link, setLink] = useState("");
@@ -14,16 +15,20 @@ const SearchBar = () => {
   return (
     <form onSubmit={redirect}>
       <label htmlFor="header-search">
-        <span className="visually-hidden">Search blog posts</span>
+        <span className="visually-hidden">Szukaj</span>
       </label>
       <input
         type="text"
         id="header-search"
-        placeholder="Search blog posts"
+        placeholder="Szukaj"
         name="s"
         onChange={(e) => setLink(e.target.value)}
       />
-      <button onClick={redirect}>Search</button>
+      <IconButton
+        onClick={redirect}
+        aria-label="Search database"
+        icon={<SearchIcon />}
+      />
     </form>
   );
 };

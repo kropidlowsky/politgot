@@ -9,11 +9,11 @@ const SearchBar = () => {
   const history = useHistory();
 
   const redirect = () => {
-    history.push("/politicians/s=" + link);
+    history.push("/politicians/tweety/s=" + link);
   };
 
   return (
-    <form onSubmit={redirect}>
+    <form>
       <HStack>
         <FormLabel htmlFor="header-search" placeholder="Szukaj" />
         <Input

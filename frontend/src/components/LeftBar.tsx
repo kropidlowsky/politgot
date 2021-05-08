@@ -1,41 +1,30 @@
-import Politicians from './Politicians'
+import Politicians from "./Politicians";
 
-
-import {
-  BrowserRouter as Router,
-  Route,
-} from 'react-router-dom'
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const routes = [
-  { path: '/',
+  { path: "/", exact: true, sidebar: () => <Politicians /> },
+  {
+    path: "/politicians/:tweeters",
     exact: true,
-    sidebar: () => <></>,
-    
-  },
-  { path: '/politicians/:tweeters',
-  exact: true,
     sidebar: () => <Politicians />,
-    
   },
-  { path: '/politicians',
-  exact: true,
-    sidebar: () => <Politicians />,
-    
-  }
-]
+  { path: "/politicians", sidebar: () => <Politicians /> },
+];
 
 const LeftBar = () => {
-  return <Router>
-          {routes.map((route, index) => (
+  return (
+    <Router>
+      {routes.map((route, index) => (
         <Route
           key={index}
           path={route.path}
           exact={route.exact}
           component={route.sidebar}
         />
-      ))
-      }
-</Router>
-}
+      ))}
+    </Router>
+  );
+};
 
 export default LeftBar;

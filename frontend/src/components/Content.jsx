@@ -23,12 +23,12 @@ const Content = (props) => {
   const { sidebar } = props.children;
 
   return (
-    <Flex pt="5">
-      <Box minW="20vw" maxW="20vw" m="8">
+    <Flex pt="5" >
+      <Box minW="30vw">
         <LeftBar />
       </Box>
       {sidebar}
-      <Box w="60vw" h="100vh">
+      <Box w="60vw">
         {/* <PageContent /> */}
         <Router>
           {routes.map((route, index) => (
@@ -43,7 +43,7 @@ const Content = (props) => {
       </Box>
 
       <Center w="20vw">
-        <Text>Box 1</Text>
+        
       </Center>
     </Flex>
   );

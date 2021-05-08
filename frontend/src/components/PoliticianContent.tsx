@@ -57,7 +57,7 @@ function TestmonialCard({
           justifyContent={"space-between"}
         >
           <chakra.p fontWeight={"medium"} fontSize={"15px"} pb={4}>
-            {message + error}
+            {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
             {tweeters}

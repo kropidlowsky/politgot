@@ -82,9 +82,9 @@ export default function WithSubnavigation() {
           spacing={6}
         >
           <ThemeButton />
+          <SearchBar />
         </Stack>
       </Flex>
-      <SearchBar />
 
       <Collapse in={isOpen} animateOpacity>
         <MobileNav />

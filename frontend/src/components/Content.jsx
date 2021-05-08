@@ -14,7 +14,7 @@ const routes = [
     pageContent: () => <PageContent />,
   },
   {
-    path: "/politicians/:tweeters",
+    path: "/politicians/p/:tweeters",
     exact: true,
     pageContent: () => <PoliticianContent />,
   },

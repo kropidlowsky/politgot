@@ -9,26 +9,24 @@ const SearchBar = () => {
   const history = useHistory();
 
   const redirect = () => {
-    history.push("/politicians/tweety/s=" + link);
+    history.push("/politicians/tweety/s=" + link + "?");
+    history.go(0);
   };
 
   return (
-    <form>
+    <form onSubmit={redirect}>
       <HStack>
-        <FormLabel htmlFor="header-search" placeholder="Szukaj" />
         <Input
           type="text"
           minW="10vw"
           maxW="10vw"
-          id="header-search"
           placeholder="Szukaj"
-          name="s"
           onChange={(e) => setLink(e.target.value)}
         />
         <IconButton
-          onClick={redirect}
           aria-label="Search database"
           icon={<SearchIcon />}
+          onClick={redirect}
         />
       </HStack>
     </form>

@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 
 interface TestimonialCardProps {
   name: string;
+  surname: string;
   role: string;
   message: string;
   avatar: string;
@@ -23,6 +24,7 @@ interface TestimonialCardProps {
 
 function TestmonialCard({
   name,
+  surname,
   role,
   message,
   avatar,

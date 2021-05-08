@@ -24,6 +24,8 @@ import {
 
 import ThemeButton from "./ThemeButton";
 
+import SearchBar from "./SearchBar";
+
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
 
@@ -82,6 +84,7 @@ export default function WithSubnavigation() {
           <ThemeButton />
         </Stack>
       </Flex>
+      <SearchBar />
 
       <Collapse in={isOpen} animateOpacity>
         <MobileNav />

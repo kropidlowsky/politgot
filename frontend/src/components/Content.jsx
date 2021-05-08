@@ -5,13 +5,18 @@ import { Box, Flex, Center, Text } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const routes = [
-  { path: "/", exact: true, pageContent: () => <PageContent /> },
+  { path: "/", exact: true, pageContent: () => <h1>Main</h1> },
   {
     path: "/politicians/:tweeters",
     exact: true,
     pageContent: () => <PoliticianContent />,
   },
-  { path: "/politicians", exact: true, pageContent: () => <PageContent /> },
+  { path: "/politicians", exact: true, pageContent: () => <h1>Main</h1> },
+  {
+    path: "/politicians/s=:search",
+    exact: true,
+    pageContent: () => <PageContent />,
+  },
 ];
 
 const Content = (props) => {

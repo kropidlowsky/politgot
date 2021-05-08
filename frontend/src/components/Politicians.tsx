@@ -1,4 +1,4 @@
-import { Link, Text, Wrap } from "@chakra-ui/layout";
+import { Center, Flex, Link, Text, Wrap, Container } from "@chakra-ui/layout";
 import { useColorModeValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -18,24 +18,23 @@ interface ResData {
 }
 
 const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
-  let link = "/politicians/" + name + "_" + surname;
   return (
     <Link
       bg={useColorModeValue("white", "#3F444E")}
-      w="md"
+      w="95%"
+      p="2"
       borderRadius="10"
       boxShadow="md"
-      p="5"
-      m="10"
       align="center"
       _hover={{
-        bg: useColorModeValue("cyan.200", "cyan.600"),
-        color: useColorModeValue("black", "white"),
+        bg: useColorModeValue("red.500", "red.500"),
+        color: useColorModeValue("white", "white"),
       }}
-      href={link}
+      href={"/politicians/" + name + "_" + surname}
     >
-      <Text fontWeight="bold">{name}</Text> <br />
-      <Text>{surname}</Text>
+      <Text fontWeight="400" fontSize="lg">
+        {name} {surname}
+      </Text>
     </Link>
   );
 };
@@ -63,7 +62,16 @@ const Politicians = () => {
   }, []);
 
   return (
-    <Wrap mt="5em" maxW="30vw" maxH="100vh">
+    <Wrap
+      maxH="85vh"
+      maxW="md"
+      mt="100"
+      overflowY="auto"
+      overflowX="hidden"
+      position="fixed"
+      pl="3rem"
+      py="5"
+    >
       {data.map((data, index) => (
         <PoliticianItem key={index} {...data} />
       ))}

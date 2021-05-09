@@ -428,4 +428,4 @@ def page_not_found():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)  # na prodzie off
+    app.get_data(debug=True)  # na prodzie off

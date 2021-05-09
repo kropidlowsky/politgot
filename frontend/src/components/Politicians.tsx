@@ -20,7 +20,7 @@ interface ResData {
 const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
   return (
     <Link
-      bg={useColorModeValue("white", "#3F444E")}
+      bg={useColorModeValue("white", "blackAlpha.200")}
       w="95%"
       p="2"
       borderRadius="10"
@@ -63,7 +63,7 @@ const Politicians = () => {
 
   return (
     <Wrap
-      bg={useColorModeValue("blackAlpha.50", "#2f323b")}
+      bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       borderRadius="15"
       ml="10"
       maxH="85vh"

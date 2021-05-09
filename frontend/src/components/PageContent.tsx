@@ -43,7 +43,7 @@ function TestmonialCard({
         p={10}
         justifyContent={"space-between"}
         position={"relative"}
-        bg={useColorModeValue("white", "#3F444E")}
+        bg={useColorModeValue("white", "blackAlpha.200")}
         _after={{
           message: '""',
           position: "absolute",

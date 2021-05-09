@@ -7,51 +7,31 @@ import {
   useColorModeValue,
   Skeleton,
 } from "@chakra-ui/react";
-
-const testimonials = [
-  {
-    name: "Brandon P.",
-    role: "Chief Marketing Officer",
-    content:
-      "It really saves me time and effort. It is exactly what our business has been lacking. EEZY is the most valuable business resource we have EVER purchased. After using EEZY my business skyrocketed!",
-    avatar:
-      "https://images.unsplash.com/photo-1603415526960-f7e0328c63b1?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80",
-  },
-  {
-    name: "Krysta B.",
-    role: "Entrepreneur",
-    content:
-      "I didn't even need training. We've used EEZY for the last five years. I have gotten at least 50 times the value from EEZY. I made back the purchase price in just 48 hours!",
-    avatar:
-      "https://images.unsplash.com/photo-1598550874175-4d0ef436c909?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80",
-  },
-  {
-    name: "Darcy L.",
-    role: "Movie star",
-    content:
-      "Thank you for making it painless, pleasant and most of all, hassle free! I'm good to go. No matter where you go, EEZY is the coolest, most happening thing around! I love EEZY!",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=334&q=80",
-  },
-  {
-    name: "Daniel T.",
-    role: "Musician",
-    content:
-      "I am so pleased with this product. EEZY is both attractive and highly adaptable. Without EEZY, we would have gone bankrupt by now. Thank you for creating this product!",
-    avatar:
-      "https://images.unsplash.com/photo-1606513542745-97629752a13b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80",
-  },
-];
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 interface TestimonialCardProps {
   name: string;
+  surname: string;
   role: string;
-  content: string;
+  message: string;
   avatar: string;
   index: number;
+  date: Date;
+  error: string;
 }
 
-function TestmonialCard({ name, role, content, avatar }: TestimonialCardProps) {
+function TestmonialCard({
+  name,
+  surname,
+  role,
+  message,
+  avatar,
+  date,
+  error,
+}: TestimonialCardProps) {
+  const { tweeters } = useParams<{ tweeters: string }>();
   return (
     <Skeleton isLoaded>
       <Flex
@@ -65,7 +45,7 @@ function TestmonialCard({ name, role, content, avatar }: TestimonialCardProps) {
         position={"relative"}
         bg={useColorModeValue("white", "#3F444E")}
         _after={{
-          content: '""',
+          message: '""',
           position: "absolute",
           height: "21px",
           width: "29px",
@@ -79,13 +59,13 @@ function TestmonialCard({ name, role, content, avatar }: TestimonialCardProps) {
           justifyContent={"space-between"}
         >
           <chakra.p fontWeight={"medium"} fontSize={"15px"} pb={4}>
-            {content}
+            {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
-            {name}
+            {name + " " + surname}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
-              - {role}
+              - {date}
             </chakra.span>
           </chakra.p>
         </Flex>
@@ -101,7 +81,31 @@ function TestmonialCard({ name, role, content, avatar }: TestimonialCardProps) {
   );
 }
 
+interface ResData {
+  result: TestimonialCardProps[];
+}
+
 export default function GridBlurredBackdrop() {
+  const { search } = useParams<{ search: string }>();
+
+  const [data, setData] = useState<TestimonialCardProps[]>([]);
+
+  useEffect(() => {
+    console.log(search);
+    axios
+      .get<ResData>(
+        "https://politgot-umk.herokuapp.com/find_tweet?text=" + search
+      )
+      .then(function (response) {
+        //temporary fix for errors
+        console.log(response.data.result[0].error);
+        setData(response.data.result);
+      })
+      .catch(function (error: any) {
+        console.log(error);
+      });
+  }, [search]);
+
   return (
     <Flex
       textAlign={"center"}
@@ -116,7 +120,7 @@ export default function GridBlurredBackdrop() {
         mt={16}
         mx={"auto"}
       >
-        {testimonials.map((cardInfo, index) => (
+        {data.map((cardInfo, index) => (
           <TestmonialCard key={index} {...cardInfo} index={index} />
         ))}
       </SimpleGrid>

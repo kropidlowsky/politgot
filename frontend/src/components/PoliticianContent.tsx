@@ -6,6 +6,8 @@ import {
   SimpleGrid,
   useColorModeValue,
   Skeleton,
+  Text,
+  Center,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -13,6 +15,7 @@ import { useParams } from "react-router-dom";
 
 interface TestimonialCardProps {
   name: string;
+  surname: string;
   role: string;
   message: string;
   avatar: string;
@@ -23,6 +26,7 @@ interface TestimonialCardProps {
 
 function TestmonialCard({
   name,
+  surname,
   role,
   message,
   avatar,
@@ -57,7 +61,7 @@ function TestmonialCard({
           justifyContent={"space-between"}
         >
           <chakra.p fontWeight={"medium"} fontSize={"15px"} pb={4}>
-            {message + error}
+            {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
             {tweeters}
@@ -106,14 +110,16 @@ export default function GridBlurredBackdrop() {
   return (
     <Flex
       textAlign={"center"}
-      pt={10}
       justifyContent={"center"}
       direction={"column"}
       width={"full"}
     >
+      <Text fontSize="3xl" pt="10">
+        {tweeters}
+      </Text>
       <SimpleGrid
         columns={{ base: 1, xl: 1 }}
-        spacing={"20"}
+        spacing={"10"}
         mt={16}
         mx={"auto"}
       >
@@ -121,7 +127,9 @@ export default function GridBlurredBackdrop() {
           <TestmonialCard key={index} {...cardInfo} index={index} />
         ))}
       </SimpleGrid>
-      <Box></Box>
+      <Box pt="30">
+        <Center>Brak więcej wpisów</Center>
+      </Box>
     </Flex>
   );
 }

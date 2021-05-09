@@ -67,6 +67,7 @@ export default function WithSubnavigation() {
               textAlign={useBreakpointValue({ base: "center", md: "left" })}
               fontFamily={"Gugi"}
               fontSize={"4xl"}
+              _hover={{ color: "red.500" }}
             >
               PolitGot
             </Link>

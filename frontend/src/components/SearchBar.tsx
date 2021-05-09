@@ -24,7 +24,7 @@ const SearchBar = () => {
         <FormLabel htmlFor="header-search" placeholder="Szukaj" />
         <Input
           type="text"
-          w={useBreakpointValue({ xl: "10vw", xs: "90%" })}
+          w={useBreakpointValue({ xl: "10vw", xs: "89%" })}
           id="header-search"
           placeholder="Szukaj"
           name="s"

@@ -110,7 +110,7 @@ def requires_auth(f):
 # @requires_auth
 @app.route('/tweets', methods=['GET'])
 def get_politic_tweets():
-    """Endpoint returning a list of tweets by given politic name
+    """Endpoint return a list of tweets by given politic name
         ---
         tags:
           - Twitter
@@ -208,7 +208,24 @@ def get_politic_tweets():
                          'url_photo': row[3],
                          'url_video': row[4],
                          'url_tweet': row[5],
+                         'name': politic_name,
+                         'surname': politic_surname,
                          })
+
+    query = f"SELECT id, qty, word FROM find_statistics" \
+            f" WHERE word = '{politic_name.capitalize() + ' '+  politic_surname.capitalize()}' LIMIT 1"
+    cursor.execute(query + ';')
+    result = cursor.fetchone()
+    if result:
+        cursor.execute(
+            f'UPDATE find_statistics SET qty = {result[1] + 1} WHERE id = {result[0]};')
+        connection.commit()
+    else:
+        cursor.execute(
+            f'INSERT INTO find_statistics (qty, word, is_politic_search) '
+            f"VALUES(1, '{politic_name.capitalize() + ' '+  politic_surname.capitalize()}', True);")
+        connection.commit()
+
     cursor.close()
     connection.close()
     response = make_response({'result': response}, 200, HEADERS)
@@ -218,7 +235,7 @@ def get_politic_tweets():
 
 @app.route('/polit', methods=['GET'])
 def get_politicians():
-    """Endpoint returning a list of politicians in database
+    """Endpoint return a list of politicians in database
         ---
         tags:
           - Twitter
@@ -247,10 +264,39 @@ def get_politicians():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
+@app.route('/trends', methods=['GET'])
+def get_trends():
+    """Endpoint return a list of ordered trends (max 50)
+        ---
+        tags:
+          - Twitter
+        responses:
+          200:
+            description: A list of sorted trends by popularity
+          500:
+            description: Error during connection
+        """
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    cursor.execute(f"select word, is_politic_search from find_statistics order by qty DESC LIMIT 50;")
+    result = cursor.fetchall()
+    response = []
+    for row in result:
+        response.append({'phrase': row[0],
+                         'is_politic_search': row[1],
+                         })
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response}, 200, HEADERS)
+    return response
 
 @app.route('/polit_twitter_acc', methods=['GET'])
 def get_politicians_twitter_accounts():
-    """Endpoint returning a list of politiancs Twitter accounts in database
+    """Endpoint return a list of politiancs Twitter accounts in database
         ---
         tags:
           - Twitter
@@ -282,9 +328,83 @@ def get_politicians_twitter_accounts():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
+
+@app.route('/latest', methods=['GET'])
+def get_newest_tweets():
+    """Endpoint return a list of latest tweets (may be limited, max returned tweets 300)
+        ---
+        tags:
+          - Twitter
+        parameters:
+          - name: limit
+            in: query
+            type: integer
+            required: false
+            description: TOP limit of returned tweets
+          - name: offset
+            in: query
+            type: integer
+            required: false
+            description: offset of returned tweets
+
+        responses:
+          200:
+            description: A list of latest tweets max 300
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+
+    limit = request.args.get('limit', False)
+    offset = request.args.get('offset', False)
+
+    try:
+        if limit:
+            limit = int(limit)
+        if offset:
+            offset = int(offset)
+        if not limit or limit > 300:
+            limit = 300
+        if not offset:
+            offset = 0
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname " \
+            f"FROM politicians_tweets " \
+            f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
+            f"left join politicians p on pta.politician = p.id " \
+            f'order by date DESC LIMIT {limit} OFFSET {offset};'
+    cursor.execute(query)
+    result = cursor.fetchall()
+    response = []
+    for row in result:
+        response.append({'message': row[0],
+                         'date': row[1],
+                         'tags': row[2],
+                         'url_photo': row[3],
+                         'url_video': row[4],
+                         'url_tweet': row[5],
+                         'name': row[6],
+                         'surname': row[7],
+                         })
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response}, 200, HEADERS)
+    return response
+
+
 @app.route('/find_tweet', methods=['GET'])
 def find_politic_tweets():
-    """Endpoint returning a list of tweets searched by text
+    """Endpoint return a list of tweets searched by text
         ---
         tags:
           - Twitter
@@ -382,7 +502,7 @@ def find_politic_tweets():
 
     if politic:
         query += f' AND "user" = {int(result[0])}'
-    query += f' ORDER BY date OFFSET {offset} LIMIT {limit}'
+    query += f' ORDER BY date DESC OFFSET {offset} LIMIT {limit}'
     cursor.execute(query + ';')
     result = cursor.fetchall()
     response = []
@@ -398,8 +518,11 @@ def find_politic_tweets():
                          'surname': row[8],
                          })
 
-
-    for word in text.split(' & '):
+    if len(text.split(' & ')) == 1:
+        text = text.split(' & ')
+    else:
+        text = text.split(' & ') + [text.replace(' & ', ' ')]
+    for word in text:
         query = f"SELECT id, qty, word FROM find_statistics WHERE word = '{word.lower()}' LIMIT 1"
         cursor.execute(query + ';')
         result = cursor.fetchone()
@@ -428,4 +551,4 @@ def page_not_found():
 
 
 if __name__ == '__main__':
-    app.get_data(debug=True)  # na prodzie off
+    app.run(debug=True)  # na prodzie off

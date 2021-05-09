@@ -3,12 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b584d08f-0e42-4f9f-b501-eb9f8366318a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/RepresentativeCrawler.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_crawler.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/items.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/items.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/spiders/representative_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/spiders/representative_spider.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representatives.json" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_normalizer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -233,7 +228,7 @@
       <workItem from="1620411070454" duration="10220000" />
       <workItem from="1620465108486" duration="819000" />
       <workItem from="1620467755475" duration="35120000" />
-      <workItem from="1620541326525" duration="19286000" />
+      <workItem from="1620541326525" duration="19595000" />
     </task>
     <servers />
   </component>

@@ -1,7 +1,7 @@
 import LeftBar from "./LeftBar";
 import PageContent from "./PageContent";
 import PoliticianContent from "./PoliticianContent";
-import { Box, Flex, Center, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Center, useColorModeValue } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Main from "./Main";
 

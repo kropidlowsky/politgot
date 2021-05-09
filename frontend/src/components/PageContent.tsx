@@ -32,6 +32,7 @@ function TestmonialCard({
   error,
 }: TestimonialCardProps) {
   const { tweeters } = useParams<{ tweeters: string }>();
+  console.log(tweeters);
   return (
     <Skeleton isLoaded>
       <Flex

@@ -69,7 +69,6 @@ const Politicians = () => {
       maxW="md"
       overflowY="auto"
       overflowX="hidden"
-      position="fixed"
       p="3"
     >
       {data.map((data, index) => (

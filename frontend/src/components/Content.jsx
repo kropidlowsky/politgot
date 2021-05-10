@@ -1,9 +1,10 @@
 import LeftBar from "./LeftBar";
 import PageContent from "./PageContent";
 import PoliticianContent from "./PoliticianContent";
-import { Box, Flex, Center, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Center, useColorModeValue, useBreakpointValue } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Main from "./Main";
+import PoliticianListDrawer from './PoliticianListDrawer'
 
 const routes = [
   { path: "/", exact: true, pageContent: () => <Main /> },
@@ -25,8 +26,10 @@ const Content = (props) => {
 
   return (
     <Flex pt="5" >
-      <Box minW="30vw">
-        <LeftBar />
+      <Box minW={useBreakpointValue({xl: "30vw", xs:"0" })} pt="100">
+        {useBreakpointValue({xl: <LeftBar />, xs:<PoliticianListDrawer /> })}
+        
+        
       </Box>
       {sidebar}
       <Box w="40vw" my="100" pb="10" borderRadius="15" bg={useColorModeValue("blackAlpha.50", "#2D3748")}>

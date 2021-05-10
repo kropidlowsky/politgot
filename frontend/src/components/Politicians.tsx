@@ -65,15 +65,12 @@ const Politicians = () => {
     <Wrap
       bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       borderRadius="15"
-      ml="10"
-      maxH="85vh"
+      maxH="90vh"
       maxW="md"
-      mt="100"
       overflowY="auto"
       overflowX="hidden"
       position="fixed"
-      pl="1rem"
-      py="5"
+      p="3"
     >
       {data.map((data, index) => (
         <PoliticianItem key={index} {...data} />

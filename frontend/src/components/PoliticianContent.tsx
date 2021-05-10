@@ -7,11 +7,12 @@ import {
   useColorModeValue,
   Skeleton,
   Text,
-  Center,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import PoliticianListDrawer from "./PoliticianListDrawer";
 
 interface TestimonialCardProps {
   name: string;
@@ -114,6 +115,11 @@ export default function GridBlurredBackdrop() {
       direction={"column"}
       width={"full"}
     >
+      {useBreakpointValue({
+        xs: <PoliticianListDrawer />,
+        sm: <PoliticianListDrawer />,
+      })}
+
       <Text fontSize="3xl" pt="10">
         {tweeters}
       </Text>
@@ -127,9 +133,7 @@ export default function GridBlurredBackdrop() {
           <TestmonialCard key={index} {...cardInfo} index={index} />
         ))}
       </SimpleGrid>
-      <Box pt="30">
-        <Center>Brak więcej wpisów</Center>
-      </Box>
+      <Box pt="30"></Box>
     </Flex>
   );
 }

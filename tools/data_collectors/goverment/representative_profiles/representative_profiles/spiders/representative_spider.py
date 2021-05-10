@@ -150,23 +150,23 @@ class RepresentativeSpider(scrapy.Spider):
         data['głosowania'] = list()
 
         for row in response.css('tbody tr'):
-            tds = self.__extract_nested_css(row, 'td::text')
+            tds = row.css('td')
             d = dict()
-            for i, td in enumerate(tds):
+            for i, td in enumerate(self.__extract_nested_css(tds, '::text')):
                 if i == 0:
-                    d['Posiedzenie'] = tds[0]
+                    d['Posiedzenie'] = td
                 elif i == 1:
-                    d['Data'] = tds[1]
+                    d['Data'] = td
                 elif i == 2:
-                    d['Ile głosowań'] = tds[2]
+                    d['Ile głosowań'] = td
                 elif i == 3:
-                    d['Ile głosował/a'] = tds[3]
+                    d['Ile głosował/a'] = td
                 elif i == 4:
-                    d['ile opuścił/a'] = tds[4]
+                    d['ile opuścił/a'] = td
                 elif i == 5:
-                    d['udział %'] = tds[5]
+                    d['udział %'] = td
                 else:
-                    d['uspraw'] = tds[6]
+                    d['uspraw'] = td
             d['url'] = self.__extract_css(row, 'td a::attr("href")')
             data['głosowania'].append(d)
 

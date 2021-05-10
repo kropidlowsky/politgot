@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b584d08f-0e42-4f9f-b501-eb9f8366318a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_normalizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_normalizer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/spiders/representative_spider.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/spiders/representative_spider.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -231,6 +232,7 @@
       <workItem from="1620541326525" duration="19595000" />
       <workItem from="1620592613738" duration="1658000" />
       <workItem from="1620647070221" duration="3284000" />
+      <workItem from="1620672715586" duration="5867000" />
     </task>
     <servers />
   </component>

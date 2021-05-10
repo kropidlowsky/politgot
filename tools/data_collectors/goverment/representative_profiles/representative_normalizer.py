@@ -53,16 +53,5 @@ class RepresentativeNormalizer:
 if __name__ == '__main__':
     r = RepresentativeNormalizer()
     d = r.data
-    with open('data.json', 'w') as fp:
+    with open('representative_fix.json', 'w') as fp:
         json.dump(d, fp)
-    # d = {'nazwa': 'Piotr Babinetz', 'url': 'https://www.sejm.gov.pl/Sejm9.nsf/posel.xsp?id=014&type=A',
-    #      'Wybrany dnia:': '13-10-2019', 'Lista:': 'Prawo i Sprawiedliwość', 'Okręg wyborczy:': '22\xa0\xa0Krosno',
-    #      'Liczba głosów:': '13360', 'Ślubowanie:': '12-11-2019',
-    #      'Staż parlamentarny:': 'poseł VI kadencji, poseł VII kadencji, poseł VIII kadencji',
-    #      'Klub/koło:': 'Klub Parlamentarny Prawo i Sprawiedliwość', 'Data i miejsce urodzenia:': '09-09-1969, Krosno',
-    #      'Wykształcenie:': 'wyższe',
-    #      'Ukończona szkoła:': 'Uniwersytet Wrocławski, Wydział Nauk Historycznych i Pedagogicznych, Historia - magister (2007)',
-    #      'Zawód:': 'historyk'}
-    #
-    # di = {"nazwa": "Andrzej Adamczyk", "url": "https://www.sejm.gov.pl/Sejm9.nsf/posel.xsp?id=001&type=A", "Wybrany dnia:": "13-10-2019", "Lista:": "Prawo i Sprawiedliwo\u015b\u0107", "Okr\u0119g wyborczy:": "13\u00a0\u00a0Krak\u00f3w", "Liczba g\u0142os\u00f3w:": "29686", "\u015alubowanie:": "12-11-2019", "Sta\u017c parlamentarny:": "pose\u0142 V kadencji, pose\u0142 VI kadencji, pose\u0142 VII kadencji, pose\u0142 VIII kadencji", "Klub/ko\u0142o:": "Klub Parlamentarny Prawo i Sprawiedliwo\u015b\u0107", "Data i miejsce urodzenia:": "04-01-1959, Krzeszowice", "Wykszta\u0142cenie:": "wy\u017csze", "Uko\u0144czona szko\u0142a:": "Spo\u0142eczna Akademia Nauk w \u0141odzi, Wydzia\u0142 Zarz\u0105dzania, Rachunkowo\u015bc i finanse w zarz\u0105dzaniu - licencjat (2014)", "Zaw\u00f3d:": "parlamentarzysta"}
-    # print(di.get())

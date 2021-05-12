@@ -102,9 +102,6 @@ def requires_auth(f):
 
     return decorated
 
-# @app.route('/tweets', methods=['GET'])
-# @requires_auth
-
 
 # @app.route('/tweets', methods=['GET'])
 # @requires_auth
@@ -175,7 +172,7 @@ def get_politic_tweets():
                    f"FROM politicians "
                    f"LEFT JOIN politicians_twitter_accounts "
                    f"ON politicians_twitter_accounts.politician = politicians.id "
-                   f"WHERE name = '{politic_name}' AND surname = '{politic_surname}';")
+                   f"WHERE name ilike '{politic_name}' AND surname ilike '{politic_surname}';")
     result = cursor.fetchone()
     if not result or not result[0]:
         response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
@@ -197,7 +194,7 @@ def get_politic_tweets():
             response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
             return response
 
-    query += ' ORDER BY date'
+    query += ' ORDER BY date DESC'
     cursor.execute(query + ';')
     result = cursor.fetchall()
     response = []
@@ -232,7 +229,128 @@ def get_politic_tweets():
     return response
 
 
+# @app.route('/parties_tweets', methods=['GET'])
+# @requires_auth
+@app.route('/parties_tweets', methods=['GET'])
+def get_politic_party_tweets():
+    """Endpoint return a list of tweets by given politic name
+        ---
+        tags:
+          - Twitter
+        parameters:
+          - name: politic_party
+            in: query
+            type: string
+            required: true
+            description: Politic party name in format - xxx_yyy_zzz
+          - name: date_to
+            in: query
+            type: string
+            format: date
+            example: 2020-01-01
+            required: false
+            description: Filter tweets to date in format - YYYY-MM-DD
+          - name: date_from
+            in: query
+            type: string
+            format: date
+            example: 2018-01-01
+            required: false
+            description: Filter tweets from date in format - YYYY-MM-DD
 
+
+        responses:
+          200:
+            description: A list of tweets (may be filtered by date)
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
+    politic_party = request.args.get('politic_party', False)
+    date_from = request.args.get('date_from', False)
+    date_to = request.args.get('date_to', False)
+    if not politic_party:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    try:
+        if politic_party:
+            politic_party = politic_party.strip()
+            politic_party = politic_party.replace('"', '').replace("'", '')
+            politic_party = ' '.join(politic_party.split('_')) if len(politic_party.split('_')) > 1 else politic_party
+            politic_party = politic_party.capitalize()
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT political_parties_twitter_accounts.id "
+                   f"FROM political_parties "
+                   f"LEFT JOIN political_parties_twitter_accounts "
+                   f"ON political_parties_twitter_accounts.political_party = political_parties.id "
+                   f"WHERE name ilike  '{politic_party}';")
+    result = cursor.fetchone()
+    if not result or not result[0]:
+        response = make_response({'error': 'No politic party found or no twitter account found'}, 200, HEADERS)
+        return response
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet FROM political_parties_tweets " \
+            f'WHERE "user" = {int(result[0])}'
+    if date_to:
+        try:
+            date_to = datetime.strptime(date_to, '%Y-%m-%d')
+            query += f" AND date <= '{date_to.strftime('%Y-%m-%d')}' "
+        except:
+            response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+            return response
+    if date_from:
+        try:
+            date_from = datetime.strptime(date_from, '%Y-%m-%d')
+            query += f" AND date >= '{date_from.strftime('%Y-%m-%d')}' "
+        except:
+            response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+            return response
+
+    query += ' ORDER BY date DESC'
+    cursor.execute(query + ';')
+    result = cursor.fetchall()
+    response = []
+    for row in result:
+        response.append({'message': row[0],
+                         'date': row[1],
+                         'tags': row[2],
+                         'url_photo': row[3],
+                         'url_video': row[4],
+                         'url_tweet': row[5],
+                         'name': politic_party
+                         })
+
+    query = f"SELECT id, qty, word FROM find_statistics" \
+            f" WHERE word = '{politic_party}' LIMIT 1"
+    cursor.execute(query + ';')
+    result = cursor.fetchone()
+    if result:
+        cursor.execute(
+            f'UPDATE find_statistics SET qty = {result[1] + 1} WHERE id = {result[0]};')
+        connection.commit()
+    else:
+        cursor.execute(
+            f'INSERT INTO find_statistics (qty, word, is_politic_party_search) '
+            f"VALUES(1, '{politic_party}', True);")
+        connection.commit()
+
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response}, 200, HEADERS)
+    return response
+
+
+# @app.route('/polit', methods=['GET'])
+# @requires_auth
 @app.route('/polit', methods=['GET'])
 def get_politicians():
     """Endpoint return a list of politicians in database
@@ -264,6 +382,41 @@ def get_politicians():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
+# @app.route('/parties', methods=['GET'])
+# @requires_auth
+@app.route('/parties', methods=['GET'])
+def get_parties_tweets():
+    """Endpoint return a list of politician parties in database
+        ---
+        tags:
+          - Twitter
+        responses:
+          200:
+            description: A list of politician parties
+          500:
+            description: Error during connection
+        """
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT name, abbr "
+                   f"FROM political_parties ORDER BY name;")
+    result = cursor.fetchall()
+    response = []
+    for row in result:
+        response.append({'name': row[0],
+                         'short_name': row[1],
+                         })
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response}, 200, HEADERS)
+    return response
+
+# @app.route('/trends', methods=['GET'])
+# @requires_auth
 @app.route('/trends', methods=['GET'])
 def get_trends():
     """Endpoint return a list of ordered trends (max 50)
@@ -282,18 +435,21 @@ def get_trends():
         return response
     connection = connection['connection']
     cursor = connection.cursor()
-    cursor.execute(f"select word, is_politic_search from find_statistics order by qty DESC LIMIT 50;")
+    cursor.execute(f"select word, is_politic_search, is_politic_party_search from find_statistics order by qty DESC LIMIT 50;")
     result = cursor.fetchall()
     response = []
     for row in result:
         response.append({'phrase': row[0],
                          'is_politic_search': row[1],
+                         'is_politic_party_search': row[2],
                          })
     cursor.close()
     connection.close()
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
+# @app.route('/polit_twitter_acc', methods=['GET'])
+# @requires_auth
 @app.route('/polit_twitter_acc', methods=['GET'])
 def get_politicians_twitter_accounts():
     """Endpoint return a list of politiancs Twitter accounts in database
@@ -328,7 +484,45 @@ def get_politicians_twitter_accounts():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
+# @app.route('/polit_party_twitter_acc', methods=['GET'])
+# @requires_auth
+@app.route('/parties_twitter_acc', methods=['GET'])
+def get_politicians_party_twitter_accounts():
+    """Endpoint return a list of politician parties Twitter accounts in database
+        ---
+        tags:
+          - Twitter
+        responses:
+          200:
+            description: A list of politicians parties Twitter accounts
+          500:
+            description: Error during connection
+        """
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT username, name "
+                   f"FROM political_parties "
+                   f"LEFT JOIN political_parties_twitter_accounts "
+                   f"ON political_parties_twitter_accounts.political_party = political_parties.id "
+                   f"WHERE username IS NOT NULL;")
+    result = cursor.fetchall()
+    response = []
+    for row in result:
+        response.append({'twitter_name': row[0],
+                         'name': row[1],
+                         })
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response}, 200, HEADERS)
+    return response
 
+
+# @app.route('/latest', methods=['GET'])
+# @requires_auth
 @app.route('/latest', methods=['GET'])
 def get_newest_tweets():
     """Endpoint return a list of latest tweets (may be limited, max returned tweets 300)
@@ -381,8 +575,12 @@ def get_newest_tweets():
     query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname " \
             f"FROM politicians_tweets " \
             f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
-            f"left join politicians p on pta.politician = p.id " \
-            f'order by date DESC LIMIT {limit} OFFSET {offset};'
+            f"left join politicians p on pta.politician = p.id UNION " \
+            f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname " \
+            f"FROM political_parties_tweets as ppt " \
+            f'left join political_parties_twitter_accounts pta on ppt."user" = pta.id ' \
+            f"left join political_parties p on pta.political_party = p.id " \
+            f' order by date DESC LIMIT {limit} OFFSET {offset};'
     cursor.execute(query)
     result = cursor.fetchall()
     response = []
@@ -401,7 +599,8 @@ def get_newest_tweets():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
-
+# @app.route('/find_tweet', methods=['GET'])
+# @requires_auth
 @app.route('/find_tweet', methods=['GET'])
 def find_politic_tweets():
     """Endpoint return a list of tweets searched by text
@@ -418,7 +617,7 @@ def find_politic_tweets():
             in: query
             type: integer
             required: false
-            description: TOP limit of returned tweets
+            description: TOP limit of returned tweets. If politic and politic_party specified return double amount of limit
           - name: offset
             in: query
             type: integer
@@ -429,6 +628,11 @@ def find_politic_tweets():
             type: string
             required: false
             description: Politic name in format - name_surname
+          - name: politic_party
+            in: query
+            type: string
+            required: false
+            description: Politic party name in format - xx_yy_zz
 
 
         responses:
@@ -444,6 +648,7 @@ def find_politic_tweets():
     limit = request.args.get('limit', False)
     offset = request.args.get('offset', False)
     politic = request.args.get('politic', False)
+    politic_party = request.args.get('politic_party', False)
     if not text:
         response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
         return response
@@ -475,6 +680,10 @@ def find_politic_tweets():
                 politic_surname = politic_surname[:index] + '-' + politic_surname[index + 1:].capitalize()
             if not politic_name or not politic_surname:
                 raise
+        if politic_party:
+            politic_party = politic_party.strip()
+            politic_party = politic_party.replace('"', '').replace("'", '')
+            politic_party = tuple(politic_party.split('_')) if len(politic_party.split('_')) > 1 else politic_party
     except:
         response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
         return response
@@ -484,29 +693,62 @@ def find_politic_tweets():
         return response
     connection = connection['connection']
     cursor = connection.cursor()
+    # if politic and politic_party:
+    #     response = make_response({'error': "Can't search on politic and politic party at same time!"}, 200, HEADERS)
+    #     return response
     if politic:
-        cursor.execute(f"SELECT politicians_twitter_accounts.id, name, surname "
+        cursor.execute(f"SELECT politicians_twitter_accounts.id "
                        f"FROM politicians "
                        f"LEFT JOIN politicians_twitter_accounts "
                        f"ON politicians_twitter_accounts.politician = politicians.id "
-                       f"WHERE name = '{politic_name}' AND surname = '{politic_surname}';")
+                       f"WHERE name ilike '{politic_name}' AND surname ilike '{politic_surname}';")
         result = cursor.fetchone()
         if not result or not result[0]:
             response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
             return response
-    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
-            f" polit.name, polit.surname FROM politicians_tweets " \
-            f' LEFT JOIN politicians_twitter_accounts AS polit_acc ON polit_acc.id = politicians_tweets."user" ' \
-            f"LEFT JOIN politicians AS polit ON polit.id = polit_acc.politician " \
-            f"WHERE finder @@ to_tsquery('{text}') "
+    if politic_party:
+        cursor.execute('SELECT political_parties_twitter_accounts.id '
+                       'FROM political_parties '
+                       'LEFT JOIN political_parties_twitter_accounts '
+                       'ON political_parties_twitter_accounts.political_party = political_parties.id '
+                       f"WHERE name ilike '{politic_party}';")
+        sec_result = cursor.fetchone()
+        if not sec_result or not sec_result[0]:
+            response = make_response({'error': 'No politic_party found or no twitter account found'}, 200, HEADERS)
+            return response
+    if (not politic_party and not politic) or (politic and not politic_party) or (politic and politic_party):
+        query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
+                f" polit.name, polit.surname FROM politicians_tweets " \
+                f' LEFT JOIN politicians_twitter_accounts AS polit_acc ON polit_acc.id = politicians_tweets."user" ' \
+                f"LEFT JOIN politicians AS polit ON polit.id = polit_acc.politician " \
+                f"WHERE finder @@ to_tsquery('{text}') "
 
-    if politic:
-        query += f' AND "user" = {int(result[0])}'
-    query += f' ORDER BY date DESC OFFSET {offset} LIMIT {limit}'
-    cursor.execute(query + ';')
-    result = cursor.fetchall()
+        if politic:
+            query += f' AND "user" = {int(result[0])}'
+        query += f' ORDER BY date DESC OFFSET {offset} LIMIT {limit}'
+        cursor.execute(query + ';')
+        result = cursor.fetchall()
+    else:
+        result = []
+
+    if (not politic_party and not politic) or (not politic and politic_party) or (politic and politic_party):
+        query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
+                f" polit.name, NULL as surname " \
+                f" FROM political_parties_tweets " \
+                f' LEFT JOIN political_parties_twitter_accounts AS polit_acc ON polit_acc.id = political_parties_tweets."user" ' \
+                f"LEFT JOIN political_parties AS polit ON polit.id = polit_acc.political_party " \
+                f"WHERE finder @@ to_tsquery('{text}') "
+
+        if politic_party:
+            query += f' AND "user" = {int(sec_result[0])}'
+        query += f' ORDER BY date DESC OFFSET {offset} LIMIT {limit}'
+        cursor.execute(query + ';')
+        sec_result = cursor.fetchall()
+    else:
+        sec_result = []
+
     response = []
-    for row in result:
+    for row in result + sec_result:
         response.append({'message': row[0],
                          'date': row[1],
                          'tags': row[2],

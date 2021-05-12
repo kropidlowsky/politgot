@@ -6,7 +6,6 @@ import psycopg2
 import xlrd
 
 
-
 def fix_message(message, url_tweet):
     if len(message) == 22 and len(url_tweet) == 1 and message[0:13] == 'https://t.co/':
         fixed_url = message + url_tweet
@@ -28,21 +27,21 @@ def get_politicians_from_file():
     :return: dictionary with politicians name: twitter_name
     """
     politicians = {}
-    book = xlrd.open_workbook('politycy.xls')
+    book = xlrd.open_workbook('partie.xls')
     sh = book.sheet_by_index(0)
     for rx in range(sh.nrows):
         if rx == 0:
             continue
-        politicians[sh.cell_value(rx, 0)] = sh.cell_value(rx, 1)
+        politicians[sh.cell_value(rx, 0)] = [sh.cell_value(rx, 1), sh.cell_value(rx, 2)]
     return politicians
 
-def get_politicians_from_db():
+def get_parties_from_db():
     cursor = get_db_connection().cursor()
-    cursor.execute(f"SELECT id, username FROM politicians_twitter_accounts ")
-    politicians =  cursor.fetchall()
+    cursor.execute(f"SELECT id, username FROM political_parties_twitter_accounts ")
+    parties = cursor.fetchall()
     result = {}
-    for polit in politicians:
-        result[polit[1]] = polit[0]
+    for party in parties:
+        result[party[1]] = party[0]
     return result
 
 
@@ -65,55 +64,48 @@ def download_tweets(production):
         if not production:
             resources = get_politicians_from_file()
         else:
-            resources = get_politicians_from_db()
+            resources = get_parties_from_db()
 
-        for name, tweet_polit_name in resources.items():
+        for name, tweet_party_name in resources.items():
+            short_name = tweet_party_name[0] if isinstance(tweet_party_name, list) else ''
+            twitter_name = tweet_party_name[1].strip() if isinstance(tweet_party_name, list) else tweet_party_name
             politic_counter += 1
             print(name, politic_counter)
             if not production:
-                if tweet_polit_name == '-':
+                if tweet_party_name == '-':
                     continue
-                #----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                # Download new politics from file
+                # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                # Download new parties from file
                 # cursor.execute(
-                #     f"SELECT id,name,surname FROM politicians WHERE name='{name.split()[1]}' AND surname ='{name.split()[0]}'")
-                # politic_database_profile = cursor.fetchone()
-                # if not politic_database_profile:
-                #     cursor.execute(f"INSERT INTO politicians (name, surname) VALUES('{name.split()[1]}','{name.split()[0]}');")
+                #     f"SELECT id,name,abbr FROM political_parties WHERE name='{name}'")
+                # party_database_profile = cursor.fetchone()
+                # if not party_database_profile:
+                #     cursor.execute(f"INSERT INTO political_parties (name, abbr) VALUES('{name}','{short_name}');")
                 #     connection.commit()
                 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-                cursor.execute(f"SELECT id, username FROM politicians_twitter_accounts WHERE username='{tweet_polit_name}'")
+                print(twitter_name)
+                cursor.execute(f"SELECT id, username FROM political_parties_twitter_accounts WHERE username='{twitter_name}'")
                 politic_twitter_account = cursor.fetchone()
+                print(politic_twitter_account)
                 if not politic_twitter_account:
-                    cursor.execute(f"SELECT id,name,surname FROM politicians WHERE name='{name.split()[1]}' AND surname ='{name.split()[0]}'")
-                    politic_database_profile = cursor.fetchone()
-                    if not politic_database_profile:
-                        cursor.execute( f"INSERT INTO politicians (name, surname) VALUES('{name.split()[1]}','{name.split()[0]}');")
-                        connection.commit()
-                        cursor.execute(
-                            f"SELECT id,name,surname FROM politicians WHERE name='{name.split()[1]}' AND surname = '{name.split()[0]}'")
-                        politic_database_profile = cursor.fetchone()[0]
-                        cursor.execute(f"INSERT INTO politicians_twitter_accounts (username, politician) VALUES('{tweet_polit_name}','{politic_database_profile}');")
-                        connection.commit()
-                    else:
-                        cursor.execute(
-                            f"INSERT INTO politicians_twitter_accounts (username, politician) VALUES('{tweet_polit_name}','{politic_database_profile[0]}');")
-                        connection.commit()
-                    cursor.execute(f"SELECT id, username FROM politicians_twitter_accounts WHERE username='{tweet_polit_name}'")
+                    cursor.execute(f"SELECT id,name FROM political_parties WHERE name='{name}'")
+                    party_database_profile = cursor.fetchone()
+                    cursor.execute(
+                        f"INSERT INTO political_parties_twitter_accounts (username, political_party) VALUES('{twitter_name}','{party_database_profile[0]}');")
+                    connection.commit()
+                    cursor.execute(f"SELECT id, username FROM political_parties_twitter_accounts WHERE username='{twitter_name}'")
                     politic_twitter_account = cursor.fetchone()
             else:
-                politic_twitter_account = [tweet_polit_name]
-                tweet_polit_name = name
+                politic_twitter_account = [twitter_name]
+                twitter_name = name
 
-
-
-
-            cursor.execute(f'SELECT id, "user" FROM politicians_tweets WHERE "user" = {int(politic_twitter_account[0])}')
+            cursor.execute(
+                f'SELECT id, "user" FROM political_parties_tweets WHERE "user" = {int(politic_twitter_account[0])}')
             politic_tweets = cursor.fetchall()
 
             since_id = 664211632491393024  # id od 10 listopada 2015
             max_id = 1977509021793124359
+
 
             if politic_tweets and not production:
                 max_id = int(politic_tweets[0][0])
@@ -129,11 +121,10 @@ def download_tweets(production):
                 since_id -= 1
 
 
-
             while True:
                 request_counter += 1
                 print('Collecting data...', request_counter)
-                response = oauth.get(f"https://api.twitter.com/1.1/statuses/user_timeline.json?id={tweet_polit_name}&"
+                response = oauth.get(f"https://api.twitter.com/1.1/statuses/user_timeline.json?id={twitter_name}&"
                                      f"tweet_mode=extended&exclude_replies=true&include_rts=false&count=200&max_id={max_id}&since_id={since_id}")
                 if not response.json() or response.status_code != 200:
                     break
@@ -155,6 +146,7 @@ def download_tweets(production):
                         full_text = full_text[:looking_index]
                     else:
                         url_to_tweet = f'https://twitter.com/{tweet["user"]["screen_name"]}/status/{str_id}'
+                    full_text = full_text.replace("'", '')
                     create_date_string = tweet['created_at'].split()
                     to_datetime_string = f'{create_date_string[5]}-{strptime(f"{create_date_string[1]}", "%b").tm_mon}-{create_date_string[2]} {create_date_string[3]}'
                     create_date = datetime.strptime(to_datetime_string, '%Y-%m-%d %H:%M:%S')
@@ -176,22 +168,21 @@ def download_tweets(production):
                     full_text, url_to_tweet = fix_message(full_text, url_to_tweet)
                     try:
                         cursor.execute(
-                            f'INSERT INTO politicians_tweets (id, "user", message, date, url_photo, url_video, url_tweet) '
+                            f'INSERT INTO political_parties_tweets (id, "user", message, date, url_photo, url_video, url_tweet) '
                             f"VALUES('{str_id}',{int(politic_twitter_account[0])},'{full_text}','{create_date}','{photo_url}', '{video_url}', '{url_to_tweet}');")
                         connection.commit()
                     except Exception as err:
                         connection.rollback()
                         try:
-                            full_text = full_text.replace("'", '')
                             cursor.execute(
-                                f'''INSERT INTO politicians_tweets (id, "user", message, date, url_photo, url_video, url_tweet)
-    VALUES('{str_id}',{int(politic_twitter_account[0])},'{full_text}','{create_date}','{photo_url}', '{video_url}', '{url_to_tweet}');''')
+                                f'''INSERT INTO political_parties_tweets (id, "user", message, date, url_photo, url_video, url_tweet)
+                        VALUES('{str_id}',{int(politic_twitter_account[0])},"{full_text}","{create_date}",'{photo_url}', '{video_url}', '{url_to_tweet}');''')
                             connection.commit()
 
                         except Exception as errr:
                             connection.rollback()
                             print(errr)
-                        error_list.append((tweet['id'], tweet_polit_name, err))
+                        error_list.append((tweet['id'], twitter_name, err))
                         continue
 
 
@@ -199,7 +190,7 @@ def download_tweets(production):
         print("Error while connecting to PostgreSQL", error)
     finally:
         if (connection):
-            cursor.execute("update politicians_tweets set finder = to_tsvector(message);")
+            cursor.execute("update political_parties_tweets set finder = to_tsvector(message);")
             connection.commit()
             cursor.close()
             connection.close()
@@ -208,4 +199,6 @@ def download_tweets(production):
                 print('Błąd dla: ', error)
 
 
-download_tweets(production=False)
+
+download_tweets(production=True)
+

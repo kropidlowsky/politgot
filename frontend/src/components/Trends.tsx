@@ -20,7 +20,7 @@ const Trend = ({ is_politic_search, phrase, index }: ITrends) => {
       <Link
         fontSize={30 - (index % 10)}
         fontWeight={index % 3 ? "400" : "200"}
-        href={"/politicians/s=" + phrase}
+        href={"/politicians/tweety/s=" + phrase}
         _hover={{ color: "red.500" }}
       >
         {phrase}

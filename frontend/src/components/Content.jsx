@@ -16,17 +16,21 @@ import Trends from "./Trends";
 import Copyright from "./Copyright";
 
 const routes = [
-  { path: "/", exact: true, pageContent: () => <Main /> },
+  { path: "/", exact: true, pageContent: () => <Main source="latest" /> },
   {
     path: "/politicians/tweety/s=:search",
     exact: true,
-    pageContent: () => <PageContent />,
+    pageContent: () => <Main source="search" />,
   },
-  { path: "/politicians", exact: true, pageContent: () => <Main /> },
   {
-    path: "/politicians/p/:tweeters",
+    path: "/politicians",
     exact: true,
-    pageContent: () => <PoliticianContent />,
+    pageContent: () => <Main source="latest" />,
+  },
+  {
+    path: "/politicians/:tweeters",
+    exact: true,
+    pageContent: () => <Main source="politic" />,
   },
 ];
 

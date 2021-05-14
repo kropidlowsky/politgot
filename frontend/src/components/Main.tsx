@@ -64,7 +64,7 @@ function TestmonialCard({
             {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
-            {name + "" + surname}
+            {name + " " + surname}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
               - {date}
@@ -126,6 +126,10 @@ const Main = (props: Props) => {
       direction={"column"}
       width={"full"}
     >
+      {useBreakpointValue({
+        xs: <PoliticianListDrawer />,
+        sm: <PoliticianListDrawer />,
+      })}
       <SimpleGrid
         columns={{ base: 1, xl: 1 }}
         spacing={"20"}

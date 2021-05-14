@@ -6,10 +6,13 @@ import {
   SimpleGrid,
   useColorModeValue,
   Skeleton,
+  Text,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import PoliticianListDrawer from "./PoliticianListDrawer";
 
 interface TestimonialCardProps {
   name: string;
@@ -43,7 +46,7 @@ function TestmonialCard({
         p={10}
         justifyContent={"space-between"}
         position={"relative"}
-        bg={useColorModeValue("white", "#3F444E")}
+        bg={useColorModeValue("white", "blackAlpha.200")}
         _after={{
           message: '""',
           position: "absolute",
@@ -108,14 +111,21 @@ export default function GridBlurredBackdrop() {
   return (
     <Flex
       textAlign={"center"}
-      pt={10}
       justifyContent={"center"}
       direction={"column"}
       width={"full"}
     >
+      {useBreakpointValue({
+        xs: <PoliticianListDrawer />,
+        sm: <PoliticianListDrawer />,
+      })}
+
+      <Text fontSize="3xl" pt="10">
+        {tweeters}
+      </Text>
       <SimpleGrid
         columns={{ base: 1, xl: 1 }}
-        spacing={"20"}
+        spacing={"10"}
         mt={16}
         mx={"auto"}
       >
@@ -123,7 +133,7 @@ export default function GridBlurredBackdrop() {
           <TestmonialCard key={index} {...cardInfo} index={index} />
         ))}
       </SimpleGrid>
-      <Box></Box>
+      <Box pt="30"></Box>
     </Flex>
   );
 }

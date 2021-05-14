@@ -1,4 +1,4 @@
-import { Center, Flex, Link, Text, Wrap, Container } from "@chakra-ui/layout";
+import { Link, Text, Wrap } from "@chakra-ui/layout";
 import { useColorModeValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -20,7 +20,7 @@ interface ResData {
 const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
   return (
     <Link
-      bg={useColorModeValue("white", "#3F444E")}
+      bg={useColorModeValue("white", "blackAlpha.200")}
       w="95%"
       p="2"
       borderRadius="10"
@@ -63,14 +63,13 @@ const Politicians = () => {
 
   return (
     <Wrap
-      maxH="85vh"
+      bg={useColorModeValue("blackAlpha.50", "#2D3748")}
+      borderRadius="15"
+      maxH="90vh"
       maxW="md"
-      mt="100"
       overflowY="auto"
       overflowX="hidden"
-      position="fixed"
-      pl="3rem"
-      py="5"
+      p="3"
     >
       {data.map((data, index) => (
         <PoliticianItem key={index} {...data} />

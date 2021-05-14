@@ -25,6 +25,7 @@ import {
 import ThemeButton from "./ThemeButton";
 
 import SearchBar from "./SearchBar";
+import PoliticianListDrawer from "./PoliticianListDrawer";
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
@@ -62,13 +63,15 @@ export default function WithSubnavigation() {
 
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
           <Center>
-            <Text
+            <Link
+              href="/"
               textAlign={useBreakpointValue({ base: "center", md: "left" })}
               fontFamily={"Gugi"}
               fontSize={"4xl"}
+              _hover={{ color: "red.500" }}
             >
               PolitGot
-            </Text>
+            </Link>
           </Center>
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <DesktopNav />
@@ -82,7 +85,7 @@ export default function WithSubnavigation() {
           spacing={6}
         >
           <ThemeButton />
-          <SearchBar />
+          {useBreakpointValue({ xl: <SearchBar /> })}
         </Stack>
       </Flex>
 
@@ -180,6 +183,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 const MobileNav = () => {
   return (
     <Stack p={4} display={{ md: "none" }}>
+      <SearchBar />
       {NAV_ITEMS.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}

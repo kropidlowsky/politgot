@@ -1,18 +1,28 @@
 import LeftBar from "./LeftBar";
 import PageContent from "./PageContent";
 import PoliticianContent from "./PoliticianContent";
-import { Box, Flex, Center, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Center,
+  useColorModeValue,
+  useBreakpointValue,
+  Spacer,
+} from "@chakra-ui/react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import Main from "./Main";
+import PoliticianListDrawer from "./PoliticianListDrawer";
+import Trends from "./Trends";
+import Copyright from "./Copyright";
 
 const routes = [
-  { path: "/", exact: true, pageContent: () => <h1>Main</h1> },
-  { path: "/politicians", exact: true, pageContent: () => <h1>Main</h1> },
-
+  { path: "/", exact: true, pageContent: () => <Main /> },
   {
     path: "/politicians/tweety/s=:search",
     exact: true,
     pageContent: () => <PageContent />,
   },
+  { path: "/politicians", exact: true, pageContent: () => <Main /> },
   {
     path: "/politicians/p/:tweeters",
     exact: true,
@@ -25,11 +35,23 @@ const Content = (props) => {
 
   return (
     <Flex pt="5">
-      <Box minW="30vw">
-        <LeftBar />
+      <Box
+        minW={useBreakpointValue({ xl: "27vw", xs: "0" })}
+        pt="100"
+        ml="15"
+        position="fixed"
+      >
+        {useBreakpointValue({ xl: <LeftBar />, xs: <PoliticianListDrawer /> })}
       </Box>
+      <Spacer />
       {sidebar}
-      <Box w="60vw">
+      <Box
+        w="43vw"
+        my="100"
+        pb="10"
+        borderRadius="15"
+        bg={useColorModeValue("blackAlpha.50", "#2D3748")}
+      >
         {/* <PageContent /> */}
         <Router>
           {routes.map((route, index) => (
@@ -42,8 +64,21 @@ const Content = (props) => {
           ))}
         </Router>
       </Box>
-
-      <Center w="20vw"></Center>
+      <Spacer />
+      <Box
+        maxH="90vh"
+        mt="100"
+        w="20vw"
+        ml="10"
+        borderRadius="15"
+        p="8"
+        right="20"
+        bg={useColorModeValue("blackAlpha.50", "#2D3748")}
+        position="fixed"
+      >
+        <Trends />
+        <Copyright />
+      </Box>
     </Flex>
   );
 };

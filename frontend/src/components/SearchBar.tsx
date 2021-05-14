@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { FormLabel, HStack, IconButton, Input } from "@chakra-ui/react";
+import {
+  FormLabel,
+  HStack,
+  IconButton,
+  Input,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import { SearchIcon } from "@chakra-ui/icons";
 
@@ -18,8 +24,8 @@ const SearchBar = () => {
       <HStack>
         <Input
           type="text"
-          minW="10vw"
-          maxW="10vw"
+          w={useBreakpointValue({ xl: "10vw", xs: "90%" })}
+          id="header-search"
           placeholder="Szukaj"
           onChange={(e) => setLink(e.target.value)}
         />

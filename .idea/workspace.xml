@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b584d08f-0e42-4f9f-b501-eb9f8366318a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_data_inserter.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_data_inserter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_normalizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_normalizer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/databse/politgot_db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/tools/databse/politgot_db.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +42,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_data_inserter.py" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
@@ -52,7 +53,7 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.representative_data_inserter">
-    <configuration name="representative_crawler (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="representative_crawler (1)" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="politgot" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -132,7 +133,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_data_inserter.py" />
-      <option name="PARAMETERS" value="-f representative_fix.json" />
+      <option name="PARAMETERS" value="-f representative.json" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -217,7 +218,6 @@
       <list>
         <item itemvalue="Python.representative_normalizer" />
         <item itemvalue="Python.tweets_controller" />
-        <item itemvalue="Python.representative_crawler (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -267,7 +267,8 @@
       <workItem from="1620839385607" duration="11057000" />
       <workItem from="1620920989106" duration="3171000" />
       <workItem from="1620939387053" duration="3471000" />
-      <workItem from="1621003553115" duration="17626000" />
+      <workItem from="1621003553115" duration="17702000" />
+      <workItem from="1621101621940" duration="8498000" />
     </task>
     <servers />
   </component>
@@ -288,7 +289,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/politgot$json_reader.coverage" NAME="json_reader Coverage Results" MODIFIED="1616534965842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
-    <SUITE FILE_PATH="coverage/politgot$representative_data_inserter.coverage" NAME="representative_data_inserter Coverage Results" MODIFIED="1621018205000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
+    <SUITE FILE_PATH="coverage/politgot$representative_data_inserter.coverage" NAME="representative_data_inserter Coverage Results" MODIFIED="1621115139457" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
     <SUITE FILE_PATH="coverage/politgot$representative_crawler__1_.coverage" NAME="representative_crawler (1) Coverage Results" MODIFIED="1619977782042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
     <SUITE FILE_PATH="coverage/politgot$test__1_.coverage" NAME="test (1) Coverage Results" MODIFIED="1618044353808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
     <SUITE FILE_PATH="coverage/politgot$representative_spider.coverage" NAME="representative_spider Coverage Results" MODIFIED="1618046434661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/spiders" />

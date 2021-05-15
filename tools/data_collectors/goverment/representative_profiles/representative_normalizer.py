@@ -44,7 +44,7 @@ class RepresentativeNormalizer:
         """
         if representative.get('zdjęcie'):
             try:
-                representative['zdjęcie'] = base64.b64encode(requests.get(representative['zdjęcie']).content)
+                representative['zdjęcie'] = base64.b64encode(requests.get(representative['zdjęcie']).content).decode()
             except Exception as e:
                 print(f"Cannot open {representative.get('zdjęcie')}.\n{e}")
 

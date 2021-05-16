@@ -48,13 +48,16 @@ class RepresentativeNormalizer:
             except Exception as e:
                 print(f"Cannot open {representative.get('zdjęcie')}.\n{e}")
 
+    def normalize_date(self, raw_date, date_format='%d-%m-%Y'):
+        return datetime.strptime(raw_date, date_format)
+
     def normalize_elect_date(self, representative: dict):
         if representative.get('Wybrany dnia'):
             representative['Płeć'] = 'męska'
-            representative['Dzień wybrania'] = representative.pop('Wybrany dnia')
+            representative['Dzień wybrania'] = self.normalize_date(representative.pop('Wybrany dnia'))
         elif representative.get('Wybrana dnia'):
             representative['Płeć'] = 'żeńska'
-            representative['Dzień wybrania'] = representative.pop('Wybrana dnia')
+            representative['Dzień wybrania'] = self.normalize_date(representative.pop('Wybrana dnia'))
 
     def normalize_period(self, representative: dict):
         """
@@ -77,10 +80,11 @@ class RepresentativeNormalizer:
             for speech in representative.get("Wypowiedzi"):
                 speech['tekst'] = "/n".join(re.sub(r'\(.*\)', '', text) for text in speech['tekst'] if re.sub(
                     r'\(.*\)', '', text))
+                speech['tekst'].replace("\n\n", "\n").strip()
 
 
 if __name__ == '__main__':
     r = RepresentativeNormalizer()
     r.get_data_from_file('representative.json')
     r.normalize()
-    print(r.data[0]['zdjęcie'])
+    print(r.data[2].get('Wypowiedzi'))

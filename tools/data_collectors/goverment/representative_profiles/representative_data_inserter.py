@@ -29,11 +29,12 @@ def get_db_connection():
 
 
 def menage_data(data: list):
-    genders = read_genders()
-    db_politicians = read_politicians()
+    genders: dict = read_genders()
+    ids: list = []
+    db_politicians = read_politicians(ids)
 
     for datum in data:
-        insert_politician(datum, genders, db_politicians)
+        insert_politician(datum, genders, db_politicians, ids)
 
 
 def read_genders():
@@ -53,12 +54,13 @@ def read_genders():
         return result
 
 
-def read_politicians():
+def read_politicians(ids: list):
     result = []
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
-        cursor.execute(f"SELECT id, name, surname, profession, picture, education, birth_place, votes, birth_date, gender FROM politicians")
+        cursor.execute(
+            f"SELECT id, name, surname, profession, picture, education, birth_place, votes, birth_date, gender FROM politicians")
         politicians = cursor.fetchall()
         for politician in politicians:
             result.append({
@@ -73,6 +75,7 @@ def read_politicians():
                 'birth_date': politician[8],
                 'gender': politician[9]
             })
+            ids.append(politician[0])
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:
@@ -81,13 +84,11 @@ def read_politicians():
         return result
 
 
-def insert_politician(politician: dict, genders: dict, db_politicians):
+def insert_politician(politician: dict, genders: dict, db_politicians, ids: list):
     name = politician.get('Imię')
     surname = politician.get('Nazwisko')
     picture = politician.get('zdjęcie')
     dob = politician.get('Data urodzenia')
-    if dob:
-        dob = datetime.datetime.strptime(dob, '%d-%m-%Y')
     pob = politician.get('Miejsce urodzenia')
     gender = politician.get('Płeć')
     profession = politician.get('Zawód')
@@ -98,77 +99,77 @@ def insert_politician(politician: dict, genders: dict, db_politicians):
         connection = get_db_connection()
         cursor = connection.cursor()
         for db_politician in db_politicians:
-            print(db_politician['name'] == name and db_politician['surname'] == surname)
             if db_politician['name'] == name and db_politician['surname'] == surname:
-                print(name, surname)
                 exists = True
-        #         if not db_politician['profession']:
-        #             try:
-        #                 cursor.execute(f"UPDATE politicians SET profession = 'profession' WHERE id = {db_politician['id']}")
-        #             except (Exception, Error) as error:
-        #                 print("Error while updating picture", error)
-        #                 connection.rollback()
-        #             connection.commit()
-        #         if not db_politician['picture']:
-        #             try:
-        #                 cursor.execute(f"UPDATE politicians SET picture = decode('{picture}', 'base64') WHERE id = {db_politician['id']}")
-        #             except (Exception, Error) as error:
-        #                 print("Error while updating picture", error)
-        #                 connection.rollback()
-        #             connection.commit()
-        #         if not db_politician['education']:
-        #             try:
-        #                 cursor.execute(f"UPDATE politicians SET education = '{edu}' WHERE id = {db_politician['id']}")
-        #             except (Exception, Error) as error:
-        #                 print("Error while updating education", error)
-        #                 connection.rollback()
-        #             connection.commit()
-        #         if not db_politician['birth_place']:
-        #             try:
-        #                 cursor.execute(f"UPDATE politicians SET birth_place = '{pob}' WHERE id = {db_politician['id']}")
-        #             except (Exception, Error) as error:
-        #                 print("Error while updating birth_place", error)
-        #                 connection.rollback()
-        #             connection.commit()
-        #         if not db_politician['votes']:
-        #             try:
-        #                 cursor.execute(f"UPDATE politicians SET votes = '{votes}' WHERE id = {db_politician['id']}")
-        #             except (Exception, Error) as error:
-        #                 print("Error while updating votes", error)
-        #                 connection.rollback()
-        #             connection.commit()
-        #         if not db_politician['birth_date']:
-        #             try:
-        #                 cursor.execute(f"UPDATE politicians SET birth_date = '{dob}' WHERE id = {db_politician['id']}")
-        #             except (Exception, Error) as error:
-        #                 print("Error while updating votes", error)
-        #                 connection.rollback()
-        #             connection.commit()
-        #         if not db_politician['gender']:
-        #             g = genders[gender]
-        #             try:
-        #                 cursor.execute(f"UPDATE politicians SET gender = '{g}' WHERE id = {db_politician['id']}")
-        #             except (Exception, Error) as error:
-        #                 print("Error while updating votes", error)
-        #                 connection.rollback()
-        #             connection.commit()
+                if db_politician['profession'] != profession:
+                    try:
+                        cursor.execute(
+                            f"UPDATE politicians SET profession = '{profession}' WHERE id = {db_politician['id']}")
+                    except (Exception, Error) as error:
+                        print("Error while updating picture", error)
+                        connection.rollback()
+                    connection.commit()
+                if not db_politician['picture']:
+                    try:
+                        cursor.execute(
+                            f"UPDATE politicians SET picture = decode('{picture}', 'base64') WHERE id = {db_politician['id']}")
+                    except (Exception, Error) as error:
+                        print("Error while updating picture", error)
+                        connection.rollback()
+                    connection.commit()
+                if db_politician['education'] != edu:
+                    try:
+                        cursor.execute(f"UPDATE politicians SET education = '{edu}' WHERE id = {db_politician['id']}")
+                    except (Exception, Error) as error:
+                        print("Error while updating education", error)
+                        connection.rollback()
+                    connection.commit()
+                if db_politician['birth_place'] != pob:
+                    try:
+                        cursor.execute(f"UPDATE politicians SET birth_place = '{pob}' WHERE id = {db_politician['id']}")
+                    except (Exception, Error) as error:
+                        print("Error while updating birth_place", error)
+                        connection.rollback()
+                    connection.commit()
+                if db_politician['votes'] != votes:
+                    try:
+                        cursor.execute(f"UPDATE politicians SET votes = '{votes}' WHERE id = {db_politician['id']}")
+                    except (Exception, Error) as error:
+                        print("Error while updating votes", error)
+                        connection.rollback()
+                    connection.commit()
+                if db_politician['birth_date'] != dob:
+                    try:
+                        cursor.execute(f"UPDATE politicians SET birth_date = '{dob}' WHERE id = {db_politician['id']}")
+                    except (Exception, Error) as error:
+                        print("Error while updating votes", error)
+                        connection.rollback()
+                    connection.commit()
+                if db_politician['gender']:
+                    g = genders[gender]
+                    try:
+                        cursor.execute(f"UPDATE politicians SET gender = '{g}' WHERE id = {db_politician['id']}")
+                    except (Exception, Error) as error:
+                        print("Error while updating votes", error)
+                        connection.rollback()
+                    connection.commit()
+            if exists:
+                break
         if not exists:
             print('it doesnt exist')
-            #
-            # g = genders[gender]
-            # try:
-            #     print(f"INSERT INTO politicians"
-            #                    f"(name, surname, profession, picture, education, birth_place, votes, birth_date, gender) VALUES"
-            #                    f"('{name}', '{surname}', '{profession}', decode('{picture.decode()}', 'base64'),"
-            #                    f"'{edu}', '{pob}', '{votes}', '{dob}', '{g}')")
-                # cursor.execute(f"INSERT INTO politicians"
-                #                f"(name, surname, profession, picture, education, birth_place, votes, birth_date, gender) VALUES"
-                #                f"('{name}', '{surname}', '{profession}', decode('{picture.decode()}', 'base64'),"
-                #                f"'{edu}', '{pob}', '{votes}', '{dob}', '{g}')")
-            # except (Exception, Error) as error:
-            #     print("Error while updating votes", error)
-            #     connection.rollback()
-            # connection.commit()
+            g = genders[gender]
+            try:
+                cursor.execute(f"INSERT INTO politicians"
+                               f"(name, surname, profession, picture, education, birth_place, votes, birth_date, gender) VALUES"
+                               f"('{name}', '{surname}', '{profession}', decode('{picture.decode()}', 'base64'),"
+                               f"'{edu}', '{pob}', '{votes}', '{dob}', '{g}')")
+            except (Exception, Error) as error:
+                print("Error while inserting a politician", error)
+                connection.rollback()
+            connection.commit()
+            cursor.execute(f"SELECT id FROM politicians WHERE name = '{name} and surname = '{surname}' "
+                           f"and birth_date = '{dob}'")
+            ids.append(cursor.fetchone()[0])
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:
@@ -176,9 +177,51 @@ def insert_politician(politician: dict, genders: dict, db_politicians):
         connection.close()
 
 
+def read_poll_topics():
+    topics = []
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT * FROM poll_topics")
+        for poll_topic in cursor.fetchall():
+            topics.append({
+                'id': poll_topic[0],
+                'title': poll_topic[1],
+                'date': poll_topic[2]
+            })
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        cursor.close()
+        connection.close()
+        return topics
+
+
+def read_polls():
+    polls = []
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT * FROM polls")
+        for poll_topic in cursor.fetchall():
+            polls.append({
+                'id': poll_topic[0],
+                'parliament_poll': poll_topic[1],
+                'politician': poll_topic[2],
+                'vote': poll_topic[3],
+                'time': poll_topic[4]
+            })
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        cursor.close()
+        connection.close()
+        return polls
+
+
+def menage_speeches():
+    pass
+
+
 data = read_data()
 menage_data(data)
-# imie = 'Wojtek'
-# n = {}
-# a = n.get('as')
-# print(f"{imie or 'sex'} {a or 'aaa'}")

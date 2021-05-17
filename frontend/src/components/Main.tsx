@@ -18,7 +18,7 @@ interface TestimonialCardProps {
   surname: string;
   role: string;
   message: string;
-  avatar: string;
+  profile_image: string;
   index: number;
   date: Date;
   error: string;
@@ -29,7 +29,7 @@ function TestmonialCard({
   surname,
   role,
   message,
-  avatar,
+  profile_image,
   date,
   error,
 }: TestimonialCardProps) {
@@ -63,24 +63,21 @@ function TestmonialCard({
             {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
-<<<<<<< Updated upstream
-            {name + " x  x x x" + surname}
-=======
-            {name + " x x x " + surname}
->>>>>>> Stashed changes
+            {name + "  " + surname}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
               - {date}
             </chakra.span>
           </chakra.p>
         </Flex>
-        <Avatar
-          src={avatar}
+        {/* <Avatar
+          src={profile_image}
           height={"80px"}
           width={"80px"}
           alignSelf={"center"}
           m={{ base: "0 0 35px 0", md: "0 0 0 50px" }}
-        />
+        /> */}
+        <img src={"data:image/png;base64, " + profile_image} />
       </Flex>
     </Skeleton>
   );

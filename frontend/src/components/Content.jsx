@@ -11,6 +11,7 @@ import Main from "./Main";
 import PoliticianListDrawer from "./PoliticianListDrawer";
 import Trends from "./Trends";
 import Copyright from "./Copyright";
+import PartiesList from "./PartiesList";
 
 const routes = [
   { path: "/", exact: true, pageContent: () => <Main source="latest" /> },
@@ -53,7 +54,7 @@ const Content = (props) => {
         borderRadius="15"
         bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       >
-        {/* <PageContent /> */}
+        <PartiesList></PartiesList>
         <Router>
           {routes.map((route, index) => (
             <Route

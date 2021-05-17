@@ -1,9 +1,8 @@
-import datetime
-
 from representative_normalizer import RepresentativeNormalizer
 import sys
 from psycopg2 import Error
 import psycopg2
+from datetime import datetime
 
 
 def read_data():
@@ -19,6 +18,10 @@ def read_data():
     return normalizer.data
 
 
+def parse_date(raw_date, date_format='%d-%m-%Y'):
+    return datetime.strptime(raw_date, date_format)
+
+
 def get_db_connection():
     connection = psycopg2.connect(user="mcpixzcwkhrrio",
                                   password="9141440570eff0a8d538498b8a95a407ad364d9297712891184913c19192ee26",
@@ -30,11 +33,12 @@ def get_db_connection():
 
 def menage_data(data: list):
     genders: dict = read_genders()
-    ids: list = []
-    db_politicians = read_politicians(ids)
+    db_politicians = read_politicians()
 
     for datum in data:
-        insert_politician(datum, genders, db_politicians, ids)
+        insert_politician(datum, genders, db_politicians)
+        db_polls = read_polls()
+        insert_polls(datum)
 
 
 def read_genders():
@@ -54,13 +58,14 @@ def read_genders():
         return result
 
 
-def read_politicians(ids: list):
+def read_politicians():
     result = []
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute(
-            f"SELECT id, name, surname, profession, picture, education, birth_place, votes, birth_date, gender FROM politicians")
+            f"SELECT id, name, surname, profession, picture, education, birth_place, votes, birth_date, gender "
+            f"FROM politicians")
         politicians = cursor.fetchall()
         for politician in politicians:
             result.append({
@@ -75,7 +80,6 @@ def read_politicians(ids: list):
                 'birth_date': politician[8],
                 'gender': politician[9]
             })
-            ids.append(politician[0])
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:
@@ -84,7 +88,7 @@ def read_politicians(ids: list):
         return result
 
 
-def insert_politician(politician: dict, genders: dict, db_politicians, ids: list):
+def insert_politician(politician: dict, genders: dict, db_politicians):
     name = politician.get('Imię')
     surname = politician.get('Nazwisko')
     picture = politician.get('zdjęcie')
@@ -112,7 +116,8 @@ def insert_politician(politician: dict, genders: dict, db_politicians, ids: list
                 if not db_politician['picture']:
                     try:
                         cursor.execute(
-                            f"UPDATE politicians SET picture = decode('{picture}', 'base64') WHERE id = {db_politician['id']}")
+                            f"UPDATE politicians SET picture = decode('{picture}', 'base64') "
+                            f"WHERE id = {db_politician['id']}")
                     except (Exception, Error) as error:
                         print("Error while updating picture", error)
                         connection.rollback()
@@ -138,9 +143,10 @@ def insert_politician(politician: dict, genders: dict, db_politicians, ids: list
                         print("Error while updating votes", error)
                         connection.rollback()
                     connection.commit()
-                if db_politician['birth_date'] != dob:
+                if db_politician['birth_date']:
                     try:
-                        cursor.execute(f"UPDATE politicians SET birth_date = '{dob}' WHERE id = {db_politician['id']}")
+                        cursor.execute(
+                            f"UPDATE politicians SET birth_date = '{parse_date(dob)}' WHERE id = {db_politician['id']}")
                     except (Exception, Error) as error:
                         print("Error while updating votes", error)
                         connection.rollback()
@@ -153,6 +159,7 @@ def insert_politician(politician: dict, genders: dict, db_politicians, ids: list
                         print("Error while updating votes", error)
                         connection.rollback()
                     connection.commit()
+                politician['id'] = db_politician['id']
             if exists:
                 break
         if not exists:
@@ -162,14 +169,13 @@ def insert_politician(politician: dict, genders: dict, db_politicians, ids: list
                 cursor.execute(f"INSERT INTO politicians"
                                f"(name, surname, profession, picture, education, birth_place, votes, birth_date, gender) VALUES"
                                f"('{name}', '{surname}', '{profession}', decode('{picture.decode()}', 'base64'),"
-                               f"'{edu}', '{pob}', '{votes}', '{dob}', '{g}')")
+                               f"'{edu}', '{pob}', '{votes}', '{parse_date(dob)}', '{g}')"
+                               f"RETURNING id")
+                politician['id'] = cursor.fetchone()[0]
             except (Exception, Error) as error:
                 print("Error while inserting a politician", error)
                 connection.rollback()
             connection.commit()
-            cursor.execute(f"SELECT id FROM politicians WHERE name = '{name} and surname = '{surname}' "
-                           f"and birth_date = '{dob}'")
-            ids.append(cursor.fetchone()[0])
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:
@@ -187,10 +193,9 @@ def read_poll_topics():
             topics.append({
                 'id': poll_topic[0],
                 'title': poll_topic[1],
-                'date': poll_topic[2]
             })
     except (Exception, Error) as error:
-        print("Error while connecting to PostgreSQL", error)
+        print("Error while reading poll topics", error)
     finally:
         cursor.close()
         connection.close()
@@ -206,17 +211,84 @@ def read_polls():
         for poll_topic in cursor.fetchall():
             polls.append({
                 'id': poll_topic[0],
-                'parliament_poll': poll_topic[1],
+                'poll_topic': poll_topic[1],
                 'politician': poll_topic[2],
                 'vote': poll_topic[3],
-                'time': poll_topic[4]
+                'time': poll_topic[4],
+                'date': poll_topic[5]
             })
     except (Exception, Error) as error:
-        print("Error while connecting to PostgreSQL", error)
+        print("Error while reading polls", error)
     finally:
         cursor.close()
         connection.close()
         return polls
+
+
+def insert_polls(politician: dict):
+    politician_id = politician.get('id')
+    for poll in politician.get('głosowania'):
+        db_topics = read_poll_topics()
+        db_polls = read_polls()
+        insert_poll(poll, db_topics, db_polls, politician_id)
+
+
+def insert_poll(poll: dict, db_topics: list, db_polls: list, politician_id):
+    date = poll.get('Data')
+    votes = poll.get('głosy')
+    for vote in votes:
+        hour = vote.get('Godzina')
+        source = vote.get('Wynik')
+        topic = vote.get('Temat')
+        topic_existence = False
+
+        for db_topic in db_topics:
+            if db_topic.get('title') == topic:
+                topic_id = db_topic.get('id')
+                topic_existence = True
+                break
+        try:
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            if not topic_existence:
+                try:
+                    cursor.execute(f"INSERT INTO poll_topics"
+                                   f"(title) VALUES"
+                                   f"('{topic}')"
+                                   f"RETURNING id")
+                    topic_id = cursor.fetchone()[0]
+                except (Exception, Error) as error:
+                    print("Error while inserting poll topics", error)
+                    connection.rollback()
+                connection.commit()
+
+            # poll_existence = False
+            # for db_poll in db_polls:
+            #     if (topic == db_poll.get('poll_topic') and date == db_poll.get('date') and
+            #             politician_id == db_poll.get('politician') and source == db_poll.get('vote')):
+            #         poll_existence = True
+            #         break
+            # if not poll_existence:
+            #     try:
+            #         connection = get_db_connection()
+            #         cursor = connection.cursor()
+            #         cursor.execute(f"INSERT INTO polls"
+            #                        f"(parliament_topic, politician, vote, time, date) VALUES"
+            #                        f"('{topic_id}', '{politician_id}', '{source}', '{hour}','{parse_date(date)}')"
+            #                        f"RETURNING id")
+            #         poll_id = cursor.fetchone()[0]
+            #         print(poll_id)
+            #     except (Exception, Error) as error:
+            #         print("Error while inserting poll topics", error)
+            #     finally:
+            #         cursor.close()
+            #         connection.close()
+        except (Exception, Error) as error:
+            print("Error while connecting to PostgreSQL", error)
+        finally:
+            cursor.close()
+            connection.close()
+
 
 
 def menage_speeches():

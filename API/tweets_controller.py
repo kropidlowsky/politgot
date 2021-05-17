@@ -1,3 +1,4 @@
+import base64
 from functools import wraps
 from flask import Flask, jsonify, request, make_response
 from psycopg2 import Error
@@ -103,6 +104,128 @@ def requires_auth(f):
     return decorated
 
 
+# @app.route('/main_politic_info', methods=['GET'])
+# @requires_auth
+@app.route('/main_politic_info', methods=['GET'])
+def get_politic_main_informations():
+    """Endpoint return a main information about politic
+        ---
+        tags:
+          - Twitter
+        parameters:
+          - name: politic
+            in: query
+            type: string
+            required: true
+            description: Politic name in format - name_surname
+
+
+        responses:
+          200:
+            description: A list of tweets (may be filtered by date)
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
+    politic = request.args.get('politic', False)
+    if not politic:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    try:
+        politic = politic.strip()
+        politic = politic.replace('"', '').replace("'", '')
+        politic_name, politic_surname = politic.split('_')
+        politic_name = politic_name.capitalize()
+        politic_surname = politic_surname.capitalize()
+        if '-' in politic_surname:
+            index = politic_surname.index('-')
+            politic_surname = politic_surname[:index] + '-' + politic_surname[index + 1:].capitalize()
+        if not politic_name or not politic_surname:
+            raise
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT politicians_twitter_accounts.id, name, surname "
+                   f"FROM politicians "
+                   f"LEFT JOIN politicians_twitter_accounts "
+                   f"ON politicians_twitter_accounts.politician = politicians.id "
+                   f"WHERE name ilike '{politic_name}' AND surname ilike '{politic_surname}';")
+    result = cursor.fetchone()
+    if not result or not result[0]:
+        response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
+        return response
+
+
+
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet" \
+            f" FROM politicians_tweets " \
+            f'WHERE "user" = {int(result[0])} ORDER BY date DESC LIMIT 50'
+    cursor.execute(query + ';')
+    result = cursor.fetchall()
+    tweets = []
+    for row in result:
+        tweets.append({'message': row[0],
+                         'date': row[1],
+                         'tags': row[2],
+                         'url_photo': row[3],
+                         'url_video': row[4],
+                         'url_tweet': row[5],
+                         'name': politic_name,
+                         'surname': politic_surname,
+                         })
+
+    query = f"""
+        select profession, picture, education, birth_date, votes, birth_place, g.name, pw.summary
+        FROM politicians
+        LEFT JOIN politicians_wiki pw on politicians.id = pw.politician
+        LEFT JOIN gender g on politicians.gender = g.id
+        WHERE politicians.name ilike '{politic_name}' AND surname ilike '{politic_surname}';
+    """
+    cursor.execute(query + ';')
+    result = cursor.fetchone()
+
+    response = {
+        'tweets': tweets,
+        'name': politic_name,
+        'surname': politic_surname,
+        'profession': result[0],
+        'profile_image': base64.b64encode(result[1].tobytes()).decode() if result[1] else result[1],
+        'birth_date': result[2],
+        'education': result[3],
+        'votes': result[4],
+        'birth_place': result[5],
+        'gender': result[6],
+        'wiki_summary': result[7],
+    }
+
+    query = f"SELECT id, qty, word FROM find_statistics" \
+            f" WHERE word = '{politic_name.capitalize() + ' ' + politic_surname.capitalize()}' LIMIT 1"
+    cursor.execute(query + ';')
+    result = cursor.fetchone()
+
+    if result:
+        cursor.execute(
+            f'UPDATE find_statistics SET qty = {result[1] + 1} WHERE id = {result[0]};')
+        connection.commit()
+    else:
+        cursor.execute(
+            f'INSERT INTO find_statistics (qty, word, is_politic_search) '
+            f"VALUES(1, '{politic_name.capitalize() + ' ' + politic_surname.capitalize()}', True);")
+        connection.commit()
+
+    cursor.close()
+    connection.close()
+    response = make_response(response, 200, HEADERS)
+    return response
+
 # @app.route('/tweets', methods=['GET'])
 # @requires_auth
 @app.route('/tweets', methods=['GET'])
@@ -177,7 +300,10 @@ def get_politic_tweets():
     if not result or not result[0]:
         response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
         return response
-    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet FROM politicians_tweets " \
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit.picture" \
+            f" FROM politicians_tweets" \
+            f' LEFT JOIN politicians_twitter_accounts AS twitt_acc ON twitt_acc.id = politicians_tweets."user"' \
+            f' LEFT JOIN politicians AS polit ON polit.id = twitt_acc.politician ' \
             f'WHERE "user" = {int(result[0])}'
     if date_to:
         try:
@@ -207,6 +333,7 @@ def get_politic_tweets():
                          'url_tweet': row[5],
                          'name': politic_name,
                          'surname': politic_surname,
+                         'profile_image': base64.b64encode(row[6].tobytes()).decode() if row[6] else row[6]
                          })
 
     query = f"SELECT id, qty, word FROM find_statistics" \
@@ -233,7 +360,7 @@ def get_politic_tweets():
 # @requires_auth
 @app.route('/parties_tweets', methods=['GET'])
 def get_politic_party_tweets():
-    """Endpoint return a list of tweets by given politic name
+    """Endpoint return a list of tweets by given politic party name
         ---
         tags:
           - Twitter
@@ -346,6 +473,113 @@ def get_politic_party_tweets():
     cursor.close()
     connection.close()
     response = make_response({'result': response}, 200, HEADERS)
+    return response
+
+
+# @app.route('/party_main_info', methods=['GET'])
+# @requires_auth
+@app.route('/party_main_info', methods=['GET'])
+def get_politic_party_party_tweets():
+    """Endpoint return a main information about politic party
+        ---
+        tags:
+          - Twitter
+        parameters:
+          - name: politic_party
+            in: query
+            type: string
+            required: true
+            description: Politic party name in format - xxx_yyy_zzz
+
+
+        responses:
+          200:
+            description: A list of tweets (may be filtered by date)
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
+    politic_party = request.args.get('politic_party', False)
+    if not politic_party:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    try:
+        if politic_party:
+            politic_party = politic_party.strip()
+            politic_party = politic_party.replace('"', '').replace("'", '')
+            politic_party = ' '.join(politic_party.split('_')) if len(politic_party.split('_')) > 1 else politic_party
+            politic_party = politic_party.capitalize()
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT political_parties_twitter_accounts.id "
+                   f"FROM political_parties "
+                   f"LEFT JOIN political_parties_twitter_accounts "
+                   f"ON political_parties_twitter_accounts.political_party = political_parties.id "
+                   f"WHERE name ilike  '{politic_party}';")
+    result = cursor.fetchone()
+    if not result or not result[0]:
+        response = make_response({'error': 'No politic party found or no twitter account found'}, 200, HEADERS)
+        return response
+
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet FROM political_parties_tweets " \
+            f'WHERE "user" = {int(result[0])} ORDER BY date DESC LIMIT 50'
+
+    cursor.execute(query + ';')
+    result = cursor.fetchall()
+    tweets = []
+    for row in result:
+        tweets.append({'message': row[0],
+                         'date': row[1],
+                         'tags': row[2],
+                         'url_photo': row[3],
+                         'url_video': row[4],
+                         'url_tweet': row[5],
+                         'name': politic_party
+                         })
+
+    query = f"""
+        select abbr, ppw.summary
+        from political_parties
+        LEFT JOIN political_parties_wiki ppw on political_parties.id = ppw.political_party
+        WHERE name ilike '{politic_party}';
+            """
+
+    cursor.execute(query + ';')
+    result = cursor.fetchone()
+
+    response = {
+        'tweets': tweets,
+        'name': politic_party,
+        'wiki_summary': result[1],
+        'short_name': result[0]
+    }
+
+    query = f"SELECT id, qty, word FROM find_statistics" \
+            f" WHERE word = '{politic_party}' LIMIT 1"
+    cursor.execute(query + ';')
+    result = cursor.fetchone()
+    if result:
+        cursor.execute(
+            f'UPDATE find_statistics SET qty = {result[1] + 1} WHERE id = {result[0]};')
+        connection.commit()
+    else:
+        cursor.execute(
+            f'INSERT INTO find_statistics (qty, word, is_politic_party_search) '
+            f"VALUES(1, '{politic_party}', True);")
+        connection.commit()
+
+    cursor.close()
+    connection.close()
+    response = make_response(response, 200, HEADERS)
     return response
 
 
@@ -572,11 +806,11 @@ def get_newest_tweets():
         response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
         return response
 
-    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname " \
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname, p.picture " \
             f"FROM politicians_tweets " \
             f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
             f"left join politicians p on pta.politician = p.id UNION " \
-            f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname " \
+            f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname, NULL AS picture " \
             f"FROM political_parties_tweets as ppt " \
             f'left join political_parties_twitter_accounts pta on ppt."user" = pta.id ' \
             f"left join political_parties p on pta.political_party = p.id " \
@@ -593,6 +827,7 @@ def get_newest_tweets():
                          'url_tweet': row[5],
                          'name': row[6],
                          'surname': row[7],
+                         'profile_image': base64.b64encode(row[8].tobytes()).decode() if row[8] else row[8],
                          })
     cursor.close()
     connection.close()
@@ -718,7 +953,7 @@ def find_politic_tweets():
             return response
     if (not politic_party and not politic) or (politic and not politic_party) or (politic and politic_party):
         query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
-                f" polit.name, polit.surname FROM politicians_tweets " \
+                f" polit.name, polit.surname, polit.picture FROM politicians_tweets " \
                 f' LEFT JOIN politicians_twitter_accounts AS polit_acc ON polit_acc.id = politicians_tweets."user" ' \
                 f"LEFT JOIN politicians AS polit ON polit.id = polit_acc.politician " \
                 f"WHERE finder @@ to_tsquery('{text}') "
@@ -733,7 +968,7 @@ def find_politic_tweets():
 
     if (not politic_party and not politic) or (not politic and politic_party) or (politic and politic_party):
         query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
-                f" polit.name, NULL as surname " \
+                f" polit.name, NULL as surname, NULL as picture " \
                 f" FROM political_parties_tweets " \
                 f' LEFT JOIN political_parties_twitter_accounts AS polit_acc ON polit_acc.id = political_parties_tweets."user" ' \
                 f"LEFT JOIN political_parties AS polit ON polit.id = polit_acc.political_party " \
@@ -758,6 +993,7 @@ def find_politic_tweets():
                          'twitter_username': row[6],
                          'name': row[7],
                          'surname': row[8],
+                         'profile_image': base64.b64encode(row[9].tobytes()).decode() if row[9] else row[9],
                          })
 
     if len(text.split(' & ')) == 1:
@@ -790,7 +1026,5 @@ def page_not_found():
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
 
-
-
 if __name__ == '__main__':
-    app.run(debug=True)  # na prodzie off
+    app.run(debug=False)  # na prodzie off

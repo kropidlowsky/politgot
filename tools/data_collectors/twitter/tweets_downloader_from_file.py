@@ -208,4 +208,4 @@ def download_tweets(production):
                 print('Błąd dla: ', error)
 
 
-download_tweets(production=False)
+download_tweets(production=True)

@@ -1,7 +1,7 @@
 import { Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, ListItem, Text, Wrap } from "@chakra-ui/layout";
+import { Wrap } from "@chakra-ui/layout";
 import {} from "react-router-dom";
 
 interface ITrends {
@@ -20,7 +20,7 @@ const Trend = ({ is_politic_search, phrase, index }: ITrends) => {
       <Link
         fontSize={30 - (index % 10)}
         fontWeight={index % 3 ? "400" : "200"}
-        href={"/politicians/s=" + phrase}
+        href={"/politicians/tweety/s=" + phrase}
         _hover={{ color: "red.500" }}
       >
         {phrase}

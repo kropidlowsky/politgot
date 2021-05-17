@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  FormLabel,
   HStack,
   IconButton,
   Input,
@@ -15,25 +14,24 @@ const SearchBar = () => {
   const history = useHistory();
 
   const redirect = () => {
-    history.push("/politicians/s=" + link);
+    history.push("/politicians/tweety/s=" + link + "?");
+    history.go(0);
   };
 
   return (
     <form onSubmit={redirect}>
       <HStack>
-        <FormLabel htmlFor="header-search" placeholder="Szukaj" />
         <Input
           type="text"
           w={useBreakpointValue({ xl: "10vw", xs: "90%" })}
           id="header-search"
           placeholder="Szukaj"
-          name="s"
           onChange={(e) => setLink(e.target.value)}
         />
         <IconButton
-          onClick={redirect}
           aria-label="Search database"
           icon={<SearchIcon />}
+          onClick={redirect}
         />
       </HStack>
     </form>

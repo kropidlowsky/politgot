@@ -25,8 +25,6 @@ import {
 import ThemeButton from "./ThemeButton";
 
 import SearchBar from "./SearchBar";
-import PoliticianListDrawer from "./PoliticianListDrawer";
-
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
 

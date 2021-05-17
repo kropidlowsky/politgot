@@ -92,7 +92,6 @@ export default function GridBlurredBackdrop() {
   const [data, setData] = useState<TestimonialCardProps[]>([]);
 
   useEffect(() => {
-    console.log(search);
     axios
       .get<ResData>(
         "https://politgot-umk.herokuapp.com/find_tweet?text=" + search

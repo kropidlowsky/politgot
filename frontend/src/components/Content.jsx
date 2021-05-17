@@ -30,6 +30,11 @@ const routes = [
     exact: true,
     pageContent: () => <Main source="politic" />,
   },
+  {
+    path: "/parties",
+    exact: true,
+    pageContent: () => <Main source="latest" />,
+  },
 ];
 
 const Content = (props) => {
@@ -54,7 +59,6 @@ const Content = (props) => {
         borderRadius="15"
         bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       >
-        <PartiesList></PartiesList>
         <Router>
           {routes.map((route, index) => (
             <Route

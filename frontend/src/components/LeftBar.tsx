@@ -1,4 +1,5 @@
 import Politicians from "./Politicians";
+import PartiesList from "./PartiesList";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -10,6 +11,11 @@ const routes = [
     sidebar: () => <Politicians />,
   },
   { path: "/politicians", sidebar: () => <Politicians /> },
+  {
+    path: "/parties",
+    exact: true,
+    sidebar: () => <PartiesList />,
+  },
 ];
 
 const LeftBar = () => {

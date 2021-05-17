@@ -1,10 +1,7 @@
 import LeftBar from "./LeftBar";
-import PageContent from "./PageContent";
-import PoliticianContent from "./PoliticianContent";
 import {
   Box,
   Flex,
-  Center,
   useColorModeValue,
   useBreakpointValue,
   Spacer,

@@ -1,7 +1,7 @@
 import { Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, ListItem, Text, Wrap } from "@chakra-ui/layout";
+import { Wrap } from "@chakra-ui/layout";
 import {} from "react-router-dom";
 
 interface ITrends {

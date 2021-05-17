@@ -6,7 +6,6 @@ import {
   SimpleGrid,
   useColorModeValue,
   Skeleton,
-  Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -94,18 +93,15 @@ const Main = (props: Props) => {
   const [data, setData] = useState<TestimonialCardProps[]>([]);
   const { search } = useParams<{ search: string }>();
   const { tweeters } = useParams<{ tweeters: string }>();
-  let link = "";
 
   useEffect(() => {
-    if (props.source === "latest") {
+    let link = "";
+    if (props.source === "latest")
       link = "https://politgot-umk.herokuapp.com/latest";
-    } else if (props.source === "search") {
+    if (props.source === "search")
       link = "https://politgot-umk.herokuapp.com/find_tweet?text=" + search;
-      console.log(link);
-    } else if (props.source === "politic") {
+    if (props.source === "politic")
       link = "https://politgot-umk.herokuapp.com/tweets?politic=" + tweeters;
-      console.log(link);
-    }
     axios
       .get<ResData>(link)
       .then(function (response) {
@@ -113,10 +109,10 @@ const Main = (props: Props) => {
         console.log(response.data.result[0].error);
         setData(response.data.result);
       })
-      .catch(function (error: any) {
+      .catch(function (error: unknown) {
         console.log(error);
       });
-  }, []);
+  }, [props, search, tweeters]);
 
   return (
     <Flex

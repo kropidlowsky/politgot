@@ -35,6 +35,11 @@ const routes = [
     exact: true,
     pageContent: () => <Main source="latest" />,
   },
+  {
+    path: "/parties/:tweeters",
+    exact: true,
+    pageContent: () => <Main source="party" />,
+  },
 ];
 
 const Content = (props) => {

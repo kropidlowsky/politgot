@@ -13,7 +13,6 @@ const routes = [
   { path: "/politicians", sidebar: () => <Politicians /> },
   {
     path: "/parties",
-    exact: true,
     sidebar: () => <PartiesList />,
   },
 ];

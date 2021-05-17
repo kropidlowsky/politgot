@@ -63,7 +63,7 @@ function TestmonialCard({
             {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
-            {name + " " + surname}
+            {name + " x " + surname}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
               - {date}

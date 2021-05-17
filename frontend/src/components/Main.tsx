@@ -63,7 +63,11 @@ function TestmonialCard({
             {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
-            {name + " " + surname}
+<<<<<<< Updated upstream
+            {name + " x  x x x" + surname}
+=======
+            {name + " x x x " + surname}
+>>>>>>> Stashed changes
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
               - {date}

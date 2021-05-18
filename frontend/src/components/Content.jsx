@@ -11,6 +11,7 @@ import Main from "./Main";
 import PoliticianListDrawer from "./PoliticianListDrawer";
 import Trends from "./Trends";
 import Copyright from "./Copyright";
+import PartiesList from "./PartiesList";
 
 const routes = [
   { path: "/", exact: true, pageContent: () => <Main source="latest" /> },
@@ -28,6 +29,16 @@ const routes = [
     path: "/politicians/:tweeters",
     exact: true,
     pageContent: () => <Main source="politic" />,
+  },
+  {
+    path: "/parties",
+    exact: true,
+    pageContent: () => <Main source="latest" />,
+  },
+  {
+    path: "/parties/:tweeters",
+    exact: true,
+    pageContent: () => <Main source="party" />,
   },
 ];
 
@@ -55,7 +66,6 @@ const Content = (props) => {
         borderRadius="15"
         bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       >
-        {/* <PageContent /> */}
         <Router>
           {routes.map((route, index) => (
             <Route

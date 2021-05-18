@@ -63,7 +63,8 @@ function TestmonialCard({
             {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
-            {name + " " + surname}
+            {name + "  "}
+            {surname && " "}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
               - {date}
@@ -92,7 +93,7 @@ interface Props {
 const Main = (props: Props) => {
   const [data, setData] = useState<TestimonialCardProps[]>([]);
   const { search } = useParams<{ search: string }>();
-  const { tweeters } = useParams<{ tweeters: string }>();
+  let { tweeters } = useParams<{ tweeters: string }>();
 
   useEffect(() => {
     let link = "";
@@ -102,6 +103,13 @@ const Main = (props: Props) => {
       link = "https://politgot-umk.herokuapp.com/find_tweet?text=" + search;
     if (props.source === "politic")
       link = "https://politgot-umk.herokuapp.com/tweets?politic=" + tweeters;
+    if (props.source === "party") {
+      link =
+        "https://politgot-umk.herokuapp.com/parties_tweets?politic_party=" +
+        tweeters;
+      link = link.replace(/\s+/g, "_");
+      console.log(link);
+    }
     axios
       .get<ResData>(link)
       .then(function (response) {

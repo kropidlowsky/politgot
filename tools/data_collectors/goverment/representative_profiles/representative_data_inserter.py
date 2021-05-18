@@ -35,10 +35,12 @@ def menage_data(data: list):
     genders: dict = read_genders()
     db_politicians = read_politicians()
 
+    db_topics = read_poll_topics()
+    db_polls = read_polls()
+
     for datum in data:
         insert_politician(datum, genders, db_politicians)
-        db_polls = read_polls()
-        insert_polls(datum)
+        insert_polls(datum, db_polls, db_topics)
 
 
 def read_genders():
@@ -225,7 +227,7 @@ def read_polls():
         return polls
 
 
-def insert_polls(politician: dict):
+def insert_polls(politician: dict, db_polls: list, db_topics: list):
     politician_id = politician.get('id')
     for poll in politician.get('głosowania'):
         db_topics = read_poll_topics()
@@ -257,32 +259,41 @@ def insert_poll(poll: dict, db_topics: list, db_polls: list, politician_id):
                                    f"('{topic}')"
                                    f"RETURNING id")
                     topic_id = cursor.fetchone()[0]
+                    db_topics.append({
+                        'id': topic_id,
+                        'title': topic
+                    })
                 except (Exception, Error) as error:
                     print("Error while inserting poll topics", error)
                     connection.rollback()
                 connection.commit()
 
-            # poll_existence = False
-            # for db_poll in db_polls:
-            #     if (topic == db_poll.get('poll_topic') and date == db_poll.get('date') and
-            #             politician_id == db_poll.get('politician') and source == db_poll.get('vote')):
-            #         poll_existence = True
-            #         break
-            # if not poll_existence:
-            #     try:
-            #         connection = get_db_connection()
-            #         cursor = connection.cursor()
-            #         cursor.execute(f"INSERT INTO polls"
-            #                        f"(parliament_topic, politician, vote, time, date) VALUES"
-            #                        f"('{topic_id}', '{politician_id}', '{source}', '{hour}','{parse_date(date)}')"
-            #                        f"RETURNING id")
-            #         poll_id = cursor.fetchone()[0]
-            #         print(poll_id)
-            #     except (Exception, Error) as error:
-            #         print("Error while inserting poll topics", error)
-            #     finally:
-            #         cursor.close()
-            #         connection.close()
+            poll_existence = False
+            for db_poll in db_polls:
+                if (topic == db_poll.get('poll_topic') and date == db_poll.get('date') and
+                        politician_id == db_poll.get('politician') and source == db_poll.get('vote')):
+                    poll_existence = True
+                    break
+            if not poll_existence:
+                try:
+                    connection = get_db_connection()
+                    cursor = connection.cursor()
+                    cursor.execute(f"INSERT INTO polls"
+                                   f"(parliament_topic, politician, vote, time, date) VALUES"
+                                   f"('{topic_id}', '{politician_id}', '{source}', '{hour}','{parse_date(date)}')"
+                                   f"RETURNING id")
+                    poll_id = cursor.fetchone()[0]
+                    db_polls.append({
+                        'id': poll_id,
+                        'poll_topic': topic_id,
+                        'politician': politician_id,
+                        'time': hour,
+                        'date': parse_date(date)
+                    })
+                except (Exception, Error) as error:
+                    print("Error while inserting polls", error)
+                    connection.rollback()
+                connection.commit()
         except (Exception, Error) as error:
             print("Error while connecting to PostgreSQL", error)
         finally:
@@ -290,9 +301,8 @@ def insert_poll(poll: dict, db_topics: list, db_polls: list, politician_id):
             connection.close()
 
 
-
-def menage_speeches():
-    pass
+# def menage_speeches():
+#     pass
 
 
 data = read_data()

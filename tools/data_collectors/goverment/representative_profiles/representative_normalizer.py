@@ -26,6 +26,7 @@ class RepresentativeNormalizer:
             self.normalize_period(datum)
             self.normalize_yob_pob(datum)
             self.normalize_speeches(datum)
+            self.normalize_polls(datum)
 
     def normalize_name(self, representative: dict):
         """
@@ -76,6 +77,14 @@ class RepresentativeNormalizer:
                 speech['tekst'] = "/n".join(re.sub(r'\(.*\)', '', text) for text in speech['tekst'] if re.sub(
                     r'\(.*\)', '', text))
                 speech['tekst'].replace("\n\n", "\n").strip()
+
+    def normalize_polls(self, representative: dict):
+        root_polls = representative.get('głosowania')
+        for root_poll in root_polls:
+            polls = root_poll.get('głosy')
+            for poll in polls:
+                if poll.get('Temat'):
+                    poll['Temat'].replace("'", '"')
 
 
 if __name__ == '__main__':

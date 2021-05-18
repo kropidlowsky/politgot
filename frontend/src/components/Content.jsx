@@ -11,7 +11,6 @@ import Main from "./Main";
 import PoliticianListDrawer from "./PoliticianListDrawer";
 import Trends from "./Trends";
 import Copyright from "./Copyright";
-import PartiesList from "./PartiesList";
 
 const routes = [
   { path: "/", exact: true, pageContent: () => <Main source="latest" /> },

@@ -122,7 +122,7 @@ def get_politic_main_informations():
 
         responses:
           200:
-            description: A list of tweets (may be filtered by date)
+            description: Main information about Politic
           400:
             description: Bad parameter
           500:
@@ -198,8 +198,8 @@ def get_politic_main_informations():
         'surname': politic_surname,
         'profession': result[0],
         'profile_image': base64.b64encode(result[1].tobytes()).decode() if result[1] else result[1],
-        'birth_date': result[2],
-        'education': result[3],
+        'birth_date': result[3],
+        'education': result[2],
         'votes': result[4],
         'birth_place': result[5],
         'gender': result[6],
@@ -388,7 +388,7 @@ def get_politic_party_tweets():
 
         responses:
           200:
-            description: A list of tweets (may be filtered by date)
+            description: A list of political parties tweets (may be filtered by date)
           400:
             description: Bad parameter
           500:
@@ -494,7 +494,7 @@ def get_politic_party_party_tweets():
 
         responses:
           200:
-            description: A list of tweets (may be filtered by date)
+            description: Main information about political party
           400:
             description: Bad parameter
           500:

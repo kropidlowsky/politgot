@@ -18,6 +18,8 @@
     "add": "^2.0.6",
     "antd": "^4.14.1",
     "axios": "^0.21.1",
+    "chakra-ui-autocomplete": "^1.3.0",
+    "chakra-ui-simple-autocomplete": "^0.7.0",
     "custom-scrollbars": "^0.0.4",
     "expo-status-bar": "^1.0.4",
     "framer-motion": "^4",

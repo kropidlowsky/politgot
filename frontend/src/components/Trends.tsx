@@ -36,7 +36,6 @@ const Trends = () => {
     axios
       .get<IResult>("https://politgot-umk.herokuapp.com/trends")
       .then(function (response) {
-        console.log(response.data);
         setData(response.data.result);
       })
       .catch(function (error: any) {
@@ -45,7 +44,6 @@ const Trends = () => {
   }, []);
   return (
     <Wrap overflow="none">
-      {console.log(data)}
       {data.map((trends, index) => {
         return <Trend key={index} {...trends} index={index} />;
       })}

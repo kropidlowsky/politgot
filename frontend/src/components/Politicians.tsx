@@ -39,11 +39,6 @@ const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
   );
 };
 
-// const username = "admin";
-// const password = "secret";
-// const token = `${username}:${password}`;
-// const encodedToken = Buffer.from(token).toString("base64");
-
 const Politicians = () => {
   const [data, setData] = useState<Politician[]>([]);
 

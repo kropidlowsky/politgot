@@ -18,7 +18,7 @@ interface TestimonialCardProps {
   surname: string;
   role: string;
   message: string;
-  avatar: string;
+  profile_image: string;
   index: number;
   date: Date;
   error: string;
@@ -29,7 +29,7 @@ function TestmonialCard({
   surname,
   role,
   message,
-  avatar,
+  profile_image,
   date,
   error,
 }: TestimonialCardProps) {
@@ -71,7 +71,7 @@ function TestmonialCard({
           </chakra.p>
         </Flex>
         <Avatar
-          src={avatar}
+          src={"data:image/png;base64, " + profile_image}
           height={"80px"}
           width={"80px"}
           alignSelf={"center"}

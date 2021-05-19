@@ -115,7 +115,7 @@ def get_politic_main_informations():
             in: query
             type: string
             required: true
-            description: Politic name in format - name_surname
+            description: Politic name in format -  name_surname
 
 
         responses:

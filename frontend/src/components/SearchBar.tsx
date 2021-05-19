@@ -49,19 +49,17 @@ const SearchBar = () => {
 
   useEffect(() => {
     setFiltered(
-      names.filter((name) =>
-      {
+      names.filter((name) => {
         let query = link;
-        query = query.toLowerCase;
-      
+        query = query.toLowerCase();
+
         return (
           name.name.toLowerCase().indexOf(query) >= 0 ||
-          name.surname.toLowerCase().indexOf(query) >= 0 || 
-        )
-        .includes(link.toUpperCase)
-      )
+          name.surname.toLowerCase().indexOf(query) >= 0
+        );
+      })
     );
-    
+
     console.log(link);
   }, [link]);
 

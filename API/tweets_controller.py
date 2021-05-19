@@ -8,7 +8,6 @@ from flasgger import Swagger
 import hashlib
 import psycopg2
 
-
 HEADERS = {'Access-Control-Allow-Origin': '*',
            'Access-Control-Allow-Credentials': True,
            'Access-Control-Allow-Method': 'GET',
@@ -122,7 +121,7 @@ def get_politic_main_informations():
 
         responses:
           200:
-            description: Main information about Politic
+            description: Main information about Politic, last votes and tweets
           400:
             description: Bad parameter
           500:
@@ -153,34 +152,60 @@ def get_politic_main_informations():
         return response
     connection = connection['connection']
     cursor = connection.cursor()
-    cursor.execute(f"SELECT politicians_twitter_accounts.id, name, surname "
+    cursor.execute(f"SELECT politicians_twitter_accounts.id, name, surname, politicians.id "
                    f"FROM politicians "
                    f"LEFT JOIN politicians_twitter_accounts "
                    f"ON politicians_twitter_accounts.politician = politicians.id "
                    f"WHERE name ilike '{politic_name}' AND surname ilike '{politic_surname}';")
     result = cursor.fetchone()
-    if not result or not result[0]:
+    tweets = []
+    if not result:
         response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
         return response
+    if result[0]:
+        politic_id = result[3]
+        query = f"SELECT message, date, tags, url_photo, url_video, url_tweet" \
+                f" FROM politicians_tweets " \
+                f'WHERE "user" = {int(result[0])} ORDER BY date DESC LIMIT 50'
+        cursor.execute(query + ';')
+        result = cursor.fetchall()
 
-
-
-    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet" \
-            f" FROM politicians_tweets " \
-            f'WHERE "user" = {int(result[0])} ORDER BY date DESC LIMIT 50'
+        for row in result:
+            tweets.append({'message': row[0],
+                           'date': row[1],
+                           'tags': row[2],
+                           'url_photo': row[3],
+                           'url_video': row[4],
+                           'url_tweet': row[5],
+                           'name': politic_name,
+                           'surname': politic_surname,
+                           })
+    polls = []
+    query = f"""
+        select title, polls.date,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id) AS glosowalo,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id AND polls.vote = 'Za') AS za,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id AND polls.vote = 'Przeciw') AS przeciw,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id AND polls.vote = 'Nie głosował') AS wstrzymal,
+        polls.vote
+        from poll_topics
+        LEFT JOIN polls ON polls.parliament_topic = poll_topics.id
+        WHERE politician = {politic_id}
+        GROUP BY title, polls.date, poll_topics.id, polls.vote
+        ORDER BY polls.date DESC LIMIT 50;
+        """
     cursor.execute(query + ';')
     result = cursor.fetchall()
-    tweets = []
     for row in result:
-        tweets.append({'message': row[0],
-                         'date': row[1],
-                         'tags': row[2],
-                         'url_photo': row[3],
-                         'url_video': row[4],
-                         'url_tweet': row[5],
-                         'name': politic_name,
-                         'surname': politic_surname,
-                         })
+        polls.append({
+            'title': row[0],
+            'date': row[1],
+            'all_votes': row[2],
+            'for_vote': row[3],
+            'against_vote': row[4],
+            'abstained_vote': row[5],
+            'politic_vote': row[6]
+        })
 
     query = f"""
         select profession, picture, education, birth_date, votes, birth_place, g.name, pw.summary
@@ -194,6 +219,7 @@ def get_politic_main_informations():
 
     response = {
         'tweets': tweets,
+        'polls': polls,
         'name': politic_name,
         'surname': politic_surname,
         'profession': result[0],
@@ -225,6 +251,7 @@ def get_politic_main_informations():
     connection.close()
     response = make_response(response, 200, HEADERS)
     return response
+
 
 # @app.route('/tweets', methods=['GET'])
 # @requires_auth
@@ -337,7 +364,7 @@ def get_politic_tweets():
                          })
 
     query = f"SELECT id, qty, word FROM find_statistics" \
-            f" WHERE word = '{politic_name.capitalize() + ' '+  politic_surname.capitalize()}' LIMIT 1"
+            f" WHERE word = '{politic_name.capitalize() + ' ' + politic_surname.capitalize()}' LIMIT 1"
     cursor.execute(query + ';')
     result = cursor.fetchone()
     if result:
@@ -347,7 +374,7 @@ def get_politic_tweets():
     else:
         cursor.execute(
             f'INSERT INTO find_statistics (qty, word, is_politic_search) '
-            f"VALUES(1, '{politic_name.capitalize() + ' '+  politic_surname.capitalize()}', True);")
+            f"VALUES(1, '{politic_name.capitalize() + ' ' + politic_surname.capitalize()}', True);")
         connection.commit()
 
     cursor.close()
@@ -538,13 +565,13 @@ def get_politic_party_party_tweets():
     tweets = []
     for row in result:
         tweets.append({'message': row[0],
-                         'date': row[1],
-                         'tags': row[2],
-                         'url_photo': row[3],
-                         'url_video': row[4],
-                         'url_tweet': row[5],
-                         'name': politic_party
-                         })
+                       'date': row[1],
+                       'tags': row[2],
+                       'url_photo': row[3],
+                       'url_video': row[4],
+                       'url_tweet': row[5],
+                       'name': politic_party
+                       })
 
     query = f"""
         select abbr, ppw.summary
@@ -616,6 +643,7 @@ def get_politicians():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
+
 # @app.route('/parties', methods=['GET'])
 # @requires_auth
 @app.route('/parties', methods=['GET'])
@@ -649,6 +677,7 @@ def get_parties_tweets():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
+
 # @app.route('/trends', methods=['GET'])
 # @requires_auth
 @app.route('/trends', methods=['GET'])
@@ -669,7 +698,8 @@ def get_trends():
         return response
     connection = connection['connection']
     cursor = connection.cursor()
-    cursor.execute(f"select word, is_politic_search, is_politic_party_search from find_statistics order by qty DESC LIMIT 50;")
+    cursor.execute(
+        f"select word, is_politic_search, is_politic_party_search from find_statistics order by qty DESC LIMIT 50;")
     result = cursor.fetchall()
     response = []
     for row in result:
@@ -681,6 +711,7 @@ def get_trends():
     connection.close()
     response = make_response({'result': response}, 200, HEADERS)
     return response
+
 
 # @app.route('/polit_twitter_acc', methods=['GET'])
 # @requires_auth
@@ -717,6 +748,7 @@ def get_politicians_twitter_accounts():
     connection.close()
     response = make_response({'result': response}, 200, HEADERS)
     return response
+
 
 # @app.route('/polit_party_twitter_acc', methods=['GET'])
 # @requires_auth
@@ -774,6 +806,11 @@ def get_newest_tweets():
             type: integer
             required: false
             description: offset of returned tweets
+          - name: specify
+            in: query
+            type: string
+            required: false
+            description: specify only politic tweets or only politic_party. ENUM ['politic', 'politic_party']
 
         responses:
           200:
@@ -792,6 +829,7 @@ def get_newest_tweets():
 
     limit = request.args.get('limit', False)
     offset = request.args.get('offset', False)
+    specify = request.args.get('specify', False)
 
     try:
         if limit:
@@ -802,37 +840,151 @@ def get_newest_tweets():
             limit = 300
         if not offset:
             offset = 0
+        if specify and specify not in ('politic', 'politic_party'):
+            raise
     except:
         response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
         return response
+    if not specify:
+        query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname, p.picture " \
+                f"FROM politicians_tweets " \
+                f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
+                f"left join politicians p on pta.politician = p.id UNION " \
+                f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname, NULL AS picture " \
+                f"FROM political_parties_tweets as ppt " \
+                f'left join political_parties_twitter_accounts pta on ppt."user" = pta.id ' \
+                f"left join political_parties p on pta.political_party = p.id " \
+                f' order by date DESC LIMIT {limit} OFFSET {offset};'
+        cursor.execute(query)
+        result = cursor.fetchall()
+        response = []
+        for row in result:
+            response.append({'message': row[0],
+                             'date': row[1],
+                             'tags': row[2],
+                             'url_photo': row[3],
+                             'url_video': row[4],
+                             'url_tweet': row[5],
+                             'name': row[6],
+                             'surname': row[7],
+                             'profile_image': base64.b64encode(row[8].tobytes()).decode() if row[8] else row[8],
+                             })
+    else:
+        if specify == 'politic':
+            query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname, p.picture " \
+                    f"FROM politicians_tweets " \
+                    f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
+                    f"left join politicians p on pta.politician = p.id order by date DESC LIMIT {limit} OFFSET {offset}; "
+        else:
+            query = f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname, NULL AS picture " \
+                    f"FROM political_parties_tweets as ppt " \
+                    f'left join political_parties_twitter_accounts pta on ppt."user" = pta.id ' \
+                    f"left join political_parties p on pta.political_party = p.id " \
+                    f' order by date DESC LIMIT {limit} OFFSET {offset};'
 
-    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname, p.picture " \
-            f"FROM politicians_tweets " \
-            f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
-            f"left join politicians p on pta.politician = p.id UNION " \
-            f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname, NULL AS picture " \
-            f"FROM political_parties_tweets as ppt " \
-            f'left join political_parties_twitter_accounts pta on ppt."user" = pta.id ' \
-            f"left join political_parties p on pta.political_party = p.id " \
-            f' order by date DESC LIMIT {limit} OFFSET {offset};'
-    cursor.execute(query)
-    result = cursor.fetchall()
-    response = []
-    for row in result:
-        response.append({'message': row[0],
-                         'date': row[1],
-                         'tags': row[2],
-                         'url_photo': row[3],
-                         'url_video': row[4],
-                         'url_tweet': row[5],
-                         'name': row[6],
-                         'surname': row[7],
-                         'profile_image': base64.b64encode(row[8].tobytes()).decode() if row[8] else row[8],
-                         })
+        cursor.execute(query)
+        result = cursor.fetchall()
+        response = []
+        for row in result:
+            response.append({'message': row[0],
+                             'date': row[1],
+                             'tags': row[2],
+                             'url_photo': row[3],
+                             'url_video': row[4],
+                             'url_tweet': row[5],
+                             'name': row[6],
+                             'surname': row[7],
+                             'profile_image': base64.b64encode(row[8].tobytes()).decode() if row[8] else row[8],
+                             })
     cursor.close()
     connection.close()
     response = make_response({'result': response}, 200, HEADERS)
     return response
+
+
+# @app.route('/latest_pools', methods=['GET'])
+# @requires_auth
+@app.route('/latest_pools', methods=['GET'])
+def find_latest_polls():
+    """Endpoint return a list of latest pools in Goverment
+        ---
+        tags:
+          - Twitter
+        parameters:
+          - name: limit
+            in: query
+            type: integer
+            required: false
+            description: TOP limit of returned pools. MAX 300
+          - name: offset
+            in: query
+            type: integer
+            required: false
+            description: offset of returned tweets
+
+
+        responses:
+          200:
+            description: A list of pools (may be filtered by politic and may be limited) MAX 300
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
+
+    limit = request.args.get('limit', False)
+    offset = request.args.get('offset', False)
+
+    try:
+        if limit:
+            limit = int(limit)
+        if offset:
+            offset = int(offset)
+        if not limit or limit > 300:
+            limit = 300
+        if not offset:
+            offset = 0
+
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+
+    query = f"""
+        select title, polls.date,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id) AS glosowalo,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id AND polls.vote = 'Za') AS za,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id AND polls.vote = 'Przeciw') AS przeciw,
+        (SELECT count(*) FROM polls AS pol WHERE pol.parliament_topic = poll_topics.id AND polls.vote = 'Nie głosował') AS wstrzymal
+        from poll_topics
+        LEFT JOIN polls ON polls.parliament_topic = poll_topics.id
+        GROUP BY title, polls.date, poll_topics.id, polls.vote
+        ORDER BY polls.date DESC LIMIT {limit} OFFSET {offset};
+        """
+
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    response = []
+    for row in result:
+        response.append({'title': row[0],
+                         'date': row[1],
+                         'all_votes': row[2],
+                         'for_vote': row[3],
+                         'against_vote': row[4],
+                         'abstained_vote': row[5],
+                         })
+
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response, 'limit': limit, 'offset': offset}, 200, HEADERS)
+    return response
+
 
 # @app.route('/find_tweet', methods=['GET'])
 # @requires_auth
@@ -928,9 +1080,6 @@ def find_politic_tweets():
         return response
     connection = connection['connection']
     cursor = connection.cursor()
-    # if politic and politic_party:
-    #     response = make_response({'error': "Can't search on politic and politic party at same time!"}, 200, HEADERS)
-    #     return response
     if politic:
         cursor.execute(f"SELECT politicians_twitter_accounts.id "
                        f"FROM politicians "
@@ -1018,7 +1167,6 @@ def find_politic_tweets():
     connection.close()
     response = make_response({'result': response, 'limit': limit, 'offset': offset}, 200, HEADERS)
     return response
-
 
 
 @app.errorhandler(404)

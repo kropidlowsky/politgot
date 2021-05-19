@@ -38,9 +38,13 @@ def menage_data(data: list):
     db_topics = read_poll_topics()
     db_polls = read_polls()
 
+    db_points = read_speech_points()
+    db_speeches = read_speeches()
+
     for datum in data:
         insert_politician(datum, genders, db_politicians)
         insert_polls(datum, db_polls, db_topics)
+        insert_speeches(datum, db_points, db_speeches)
 
 
 def read_genders():
@@ -229,10 +233,11 @@ def read_polls():
 
 def insert_polls(politician: dict, db_polls: list, db_topics: list):
     politician_id = politician.get('id')
-    for poll in politician.get('głosowania'):
-        db_topics = read_poll_topics()
-        db_polls = read_polls()
-        insert_poll(poll, db_topics, db_polls, politician_id)
+    polls = politician.get('głosowania')
+
+    if polls:
+        for poll in polls:
+            insert_poll(poll, db_topics, db_polls, politician_id)
 
 
 def insert_poll(poll: dict, db_topics: list, db_polls: list, politician_id):
@@ -301,8 +306,118 @@ def insert_poll(poll: dict, db_topics: list, db_polls: list, politician_id):
             connection.close()
 
 
-# def menage_speeches():
-#     pass
+def read_speech_points():
+    points = []
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT * FROM speech_points")
+        for poll_topic in cursor.fetchall():
+            points.append({
+                'id': poll_topic[0],
+                'name': poll_topic[1],
+            })
+    except (Exception, Error) as error:
+        print("Error while reading speech points", error)
+    finally:
+        cursor.close()
+        connection.close()
+        return points
+
+
+def read_speeches():
+    speeches = []
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT * FROM parliament_speeches")
+        for poll_topic in cursor.fetchall():
+            speeches.append({
+                'id': poll_topic[0],
+                'politician': poll_topic[1],
+                'speech': poll_topic[2],
+                'points': poll_topic[3],
+                'date': poll_topic[4]
+            })
+    except (Exception, Error) as error:
+        print("Error while reading parliament speeches", error)
+    finally:
+        cursor.close()
+        connection.close()
+        return speeches
+
+
+def insert_speeches(politician: dict, db_points: list, db_speeches: list):
+    politician_id = politician.get('id')
+    speeches = politician.get('Wypowiedzi')
+
+    if speeches:
+        for speech in speeches:
+            insert_speech(speech, db_points, db_speeches, politician_id)
+
+
+def insert_speech(speech: dict, db_points: list, db_speeches: list, politician_id):
+    date = speech.get('Data')
+    point = "/n".join(speech.get('Punkty'))
+    speech = speech.get('tekst')
+    point_existence = False
+
+    if db_points:
+        for db_point in db_points:
+            if point == db_point.get('name'):
+                point_id = db_point.get('id')
+                point_existence = True
+                break
+
+        try:
+            connection = get_db_connection()
+            cursor = connection.cursor()
+            if not point_existence:
+                try:
+                    cursor.execute(f"INSERT INTO speech_points"
+                                   f"(name) VALUES"
+                                   f"('{point}')"
+                                   f"RETURNING id")
+                    point_id = cursor.fetchone()[0]
+                    db_points.append({
+                        'id': point_id,
+                        'title': point
+                    })
+                except (Exception, Error) as error:
+                    print("Error while inserting speech points", error)
+                    connection.rollback()
+                connection.commit()
+
+            speech_existence = False
+            for db_speech in db_speeches:
+                if (date == db_speech.get('date') and point_id == db_speech.get('points')
+                        and speech == db_speech.get('speech') and politician_id == db_speech.get('politician')):
+                    speech_existence = True
+                    break
+
+            if not speech_existence:
+                try:
+                    cursor.execute(f"INSERT INTO parliament_speeches"
+                                   f"(politician, speech, points, date) VALUES"
+                                   f"('{politician_id}', '{speech}', '{point_id}', '{parse_date(date)}')"
+                                   f"RETURNING id")
+                    point_id = cursor.fetchone()[0]
+                    db_points.append({
+                        'id': point_id,
+                        'speech': speech,
+                        'points': point_id,
+                        'date': parse_date(date)
+                    })
+                except (Exception, Error) as error:
+                    print("Error while inserting speech", error)
+                    connection.rollback()
+                connection.commit()
+
+        except (Exception, Error) as error:
+            print("Error while connecting to PostgreSQL", error)
+        finally:
+            cursor.close()
+            connection.close()
 
 
 data = read_data()

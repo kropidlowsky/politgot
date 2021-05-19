@@ -38,7 +38,6 @@ DEFAULT_CONFIG = {
 }
 template = {
     "swagger": "2.0",
-    # 'tags': [{'name': 'tweets', 'description': ''}],
     "info": {
         "description": "Team project of Nicolaus Copernicus University students",
         "version": "0.0.1"
@@ -110,7 +109,7 @@ def get_politic_main_informations():
     """Endpoint return a main information about politic
         ---
         tags:
-          - Twitter
+          - PolitGot
         parameters:
           - name: politic
             in: query
@@ -162,8 +161,8 @@ def get_politic_main_informations():
     if not result:
         response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
         return response
+    politic_id = result[3]
     if result[0]:
-        politic_id = result[3]
         query = f"SELECT message, date, tags, url_photo, url_video, url_tweet" \
                 f" FROM politicians_tweets " \
                 f'WHERE "user" = {int(result[0])} ORDER BY date DESC LIMIT 50'
@@ -260,7 +259,7 @@ def get_politic_tweets():
     """Endpoint return a list of tweets by given politic name
         ---
         tags:
-          - Twitter
+          - PolitGot
         parameters:
           - name: politic
             in: query
@@ -390,7 +389,7 @@ def get_politic_party_tweets():
     """Endpoint return a list of tweets by given politic party name
         ---
         tags:
-          - Twitter
+          - PolitGot
         parameters:
           - name: politic_party
             in: query
@@ -510,7 +509,7 @@ def get_politic_party_party_tweets():
     """Endpoint return a main information about politic party
         ---
         tags:
-          - Twitter
+          - PolitGot
         parameters:
           - name: politic_party
             in: query
@@ -617,7 +616,7 @@ def get_politicians():
     """Endpoint return a list of politicians in database
         ---
         tags:
-          - Twitter
+          - PolitGot
         responses:
           200:
             description: A list of politicians
@@ -651,7 +650,7 @@ def get_parties_tweets():
     """Endpoint return a list of politician parties in database
         ---
         tags:
-          - Twitter
+          - PolitGot
         responses:
           200:
             description: A list of politician parties
@@ -685,7 +684,7 @@ def get_trends():
     """Endpoint return a list of ordered trends (max 50)
         ---
         tags:
-          - Twitter
+          - PolitGot
         responses:
           200:
             description: A list of sorted trends by popularity
@@ -720,7 +719,7 @@ def get_politicians_twitter_accounts():
     """Endpoint return a list of politiancs Twitter accounts in database
         ---
         tags:
-          - Twitter
+          - PolitGot
         responses:
           200:
             description: A list of politicians Twitter accounts
@@ -757,7 +756,7 @@ def get_politicians_party_twitter_accounts():
     """Endpoint return a list of politician parties Twitter accounts in database
         ---
         tags:
-          - Twitter
+          - PolitGot
         responses:
           200:
             description: A list of politicians parties Twitter accounts
@@ -794,7 +793,7 @@ def get_newest_tweets():
     """Endpoint return a list of latest tweets (may be limited, max returned tweets 300)
         ---
         tags:
-          - Twitter
+          - PolitGot
         parameters:
           - name: limit
             in: query
@@ -909,7 +908,7 @@ def find_latest_polls():
     """Endpoint return a list of latest pools in Goverment
         ---
         tags:
-          - Twitter
+          - PolitGot
         parameters:
           - name: limit
             in: query
@@ -993,7 +992,7 @@ def find_politic_tweets():
     """Endpoint return a list of tweets searched by text
         ---
         tags:
-          - Twitter
+          - PolitGot
         parameters:
           - name: text
             in: query

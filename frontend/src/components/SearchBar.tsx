@@ -2,11 +2,8 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
   PopoverArrow,
-  PopoverCloseButton,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -18,6 +15,43 @@ import {
 import { useHistory } from "react-router-dom";
 import { SearchIcon } from "@chakra-ui/icons";
 import axios from "axios";
+import { Link, Text } from "@chakra-ui/layout";
+import { useColorModeValue } from "@chakra-ui/react";
+
+interface PoliticiansConfig {
+  name?: string;
+  surname?: string;
+}
+
+const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
+  return (
+    <Link
+      bg={useColorModeValue("white", "blackAlpha.200")}
+      p="1 0 0 0"
+      align="center"
+      _hover={{
+        bg: useColorModeValue("red.500", "red.500"),
+        color: useColorModeValue("white", "white"),
+      }}
+      href={"/politicians/" + name + "_" + surname}
+    >
+      <Text
+        bg={useColorModeValue("white", "blackAlpha.200")}
+        w="95%"
+        p="2"
+        borderRadius="10"
+        boxShadow="md"
+        align="center"
+        _hover={{
+          bg: useColorModeValue("red.500", "red.500"),
+          color: useColorModeValue("white", "white"),
+        }}
+      >
+        {name} {surname}
+      </Text>
+    </Link>
+  );
+};
 
 interface Politician {
   name: string;
@@ -46,23 +80,22 @@ const SearchBar = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  useEffect(() => {
+  const filter = () => {
     setFiltered(
-      names.filter((name) =>
-      {
+      names.filter((name) => {
         let query = link;
-        query = query.toLowerCase;
-      
+        query = query.toLowerCase();
+
         return (
           name.name.toLowerCase().indexOf(query) >= 0 ||
-          name.surname.toLowerCase().indexOf(query) >= 0 || 
-        )
-        .includes(link.toUpperCase)
-      )
+          name.surname.toLowerCase().indexOf(query) >= 0
+        );
+      })
     );
-    
-    console.log(link);
+  };
+  useEffect(() => {
+    filter();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [link]);
 
   const history = useHistory();
@@ -94,15 +127,38 @@ const SearchBar = () => {
               autoComplete="off"
             />
           </PopoverTrigger>
-          <PopoverContent color="white" bg="blue.800" borderColor="blue.800">
+          <PopoverContent color="black">
             <PopoverArrow />
             <PopoverBody>
               <div>
-                <li>{"Wyszukaj frazę: '" + link + "'"}</li>
+                <Link
+                  bg={useColorModeValue("white", "blackAlpha.200")}
+                  p="1 0 0 0"
+                  align="center"
+                  _hover={{
+                    bg: useColorModeValue("red.500", "red.500"),
+                    color: useColorModeValue("white", "white"),
+                  }}
+                  href={"/politicians/tweety/s=" + link}
+                >
+                  <Text
+                    bg={useColorModeValue("white", "blackAlpha.200")}
+                    w="95%"
+                    p="2"
+                    borderRadius="10"
+                    boxShadow="md"
+                    align="center"
+                    _hover={{
+                      bg: useColorModeValue("red.500", "red.500"),
+                      color: useColorModeValue("white", "white"),
+                    }}
+                  >
+                    {"Wyszukaj frazę: '" + link + "'"}
+                  </Text>
+                </Link>
+
                 {filtered.map((filteredName, index) => (
-                  <li key={index}>
-                    {filteredName.name + filteredName.surname}
-                  </li>
+                  <PoliticianItem key={index} {...filteredName} />
                 ))}
               </div>
             </PopoverBody>

@@ -7,6 +7,7 @@ import {
   useColorModeValue,
   Skeleton,
   useBreakpointValue,
+  Text,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -18,7 +19,7 @@ interface TestimonialCardProps {
   surname: string;
   role: string;
   message: string;
-  avatar: string;
+  profile_image: string;
   index: number;
   date: Date;
   error: string;
@@ -29,7 +30,7 @@ function TestmonialCard({
   surname,
   role,
   message,
-  avatar,
+  profile_image,
   date,
   error,
 }: TestimonialCardProps) {
@@ -63,7 +64,8 @@ function TestmonialCard({
             {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
-            {name + " " + surname}
+            {name + "  "}
+            {surname || " "}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
               - {date}
@@ -71,7 +73,7 @@ function TestmonialCard({
           </chakra.p>
         </Flex>
         <Avatar
-          src={avatar}
+          src={"data:image/png;base64, " + profile_image}
           height={"80px"}
           width={"80px"}
           alignSelf={"center"}
@@ -92,7 +94,7 @@ interface Props {
 const Main = (props: Props) => {
   const [data, setData] = useState<TestimonialCardProps[]>([]);
   const { search } = useParams<{ search: string }>();
-  const { tweeters } = useParams<{ tweeters: string }>();
+  let { tweeters } = useParams<{ tweeters: string }>();
 
   useEffect(() => {
     let link = "";
@@ -102,6 +104,12 @@ const Main = (props: Props) => {
       link = "https://politgot-umk.herokuapp.com/find_tweet?text=" + search;
     if (props.source === "politic")
       link = "https://politgot-umk.herokuapp.com/tweets?politic=" + tweeters;
+    if (props.source === "party") {
+      link =
+        "https://politgot-umk.herokuapp.com/parties_tweets?politic_party=" +
+        tweeters;
+      link = link.replace(/\s+/g, "_");
+    }
     axios
       .get<ResData>(link)
       .then(function (response) {
@@ -117,7 +125,6 @@ const Main = (props: Props) => {
   return (
     <Flex
       textAlign={"center"}
-      pt={10}
       justifyContent={"center"}
       direction={"column"}
       width={"full"}
@@ -126,12 +133,14 @@ const Main = (props: Props) => {
         xs: <PoliticianListDrawer />,
         sm: <PoliticianListDrawer />,
       })}
-      <SimpleGrid
-        columns={{ base: 1, xl: 1 }}
-        spacing={"20"}
-        mt={16}
-        mx={"auto"}
-      >
+      <SimpleGrid columns={{ base: 1, xl: 1 }} spacing={"6"} mx={"auto"}>
+        <Text fontSize="4xl" fontWeight="bold">
+          {props.source === "search"
+            ? "Szukaj: " + search
+            : props.source === "politic"
+            ? "Wpisy " + tweeters.replace("_", " ")
+            : props.source === "latest" && "Najnowsze wpisy"}
+        </Text>
         {data.map((cardInfo, index) => (
           <TestmonialCard key={index} {...cardInfo} index={index} />
         ))}

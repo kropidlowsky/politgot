@@ -29,6 +29,16 @@ const routes = [
     exact: true,
     pageContent: () => <Main source="politic" />,
   },
+  {
+    path: "/parties",
+    exact: true,
+    pageContent: () => <Main source="latest" />,
+  },
+  {
+    path: "/parties/:tweeters",
+    exact: true,
+    pageContent: () => <Main source="party" />,
+  },
 ];
 
 const Content = (props) => {
@@ -42,18 +52,19 @@ const Content = (props) => {
         ml="15"
         position="fixed"
       >
-        {useBreakpointValue({ xl: <LeftBar />, xs: <PoliticianListDrawer /> })}
+        {useBreakpointValue({ xl: <LeftBar />, sm: <PoliticianListDrawer />})}
       </Box>
-      <Spacer />
+      {useBreakpointValue({ xl: <Spacer />})}
+      
       {sidebar}
       <Box
-        w="43vw"
+        wminW={useBreakpointValue({ xl: "43vw", xs: "80vw" })}
+        p="8"
         my="100"
         pb="10"
         borderRadius="15"
         bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       >
-        {/* <PageContent /> */}
         <Router>
           {routes.map((route, index) => (
             <Route
@@ -65,8 +76,8 @@ const Content = (props) => {
           ))}
         </Router>
       </Box>
-      <Spacer />
-      <Box
+      {useBreakpointValue({ xl: <Spacer />})}
+      {useBreakpointValue({ xl: <Box
         maxH="90vh"
         mt="100"
         w="20vw"
@@ -79,7 +90,7 @@ const Content = (props) => {
       >
         <Trends />
         <Copyright />
-      </Box>
+      </Box>})}
     </Flex>
   );
 };

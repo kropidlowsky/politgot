@@ -114,6 +114,7 @@ const Main = (props: Props) => {
       .get<ResData>(link)
       .then(function (response) {
         //temporary fix for errors
+        console.log(response.data.result[0].error);
         setData(response.data.result);
       })
       .catch(function (error: unknown) {

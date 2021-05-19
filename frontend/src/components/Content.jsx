@@ -52,12 +52,14 @@ const Content = (props) => {
         ml="15"
         position="fixed"
       >
-        {useBreakpointValue({ xl: <LeftBar />, xs: <PoliticianListDrawer /> })}
+        {useBreakpointValue({ xl: <LeftBar />, sm: <PoliticianListDrawer />})}
       </Box>
-      <Spacer />
+      {useBreakpointValue({ xl: <Spacer />})}
+      
       {sidebar}
       <Box
-        w="43vw"
+        wminW={useBreakpointValue({ xl: "43vw", xs: "80vw" })}
+        p="8"
         my="100"
         pb="10"
         borderRadius="15"
@@ -74,7 +76,7 @@ const Content = (props) => {
           ))}
         </Router>
       </Box>
-      <Spacer />
+      {useBreakpointValue({ xl: <Spacer />})}
       <Box
         maxH="90vh"
         mt="100"

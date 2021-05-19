@@ -64,21 +64,20 @@ function TestmonialCard({
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
             {name + "  "}
-            {surname && " "}
+            {surname || " "}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
               - {date}
             </chakra.span>
           </chakra.p>
         </Flex>
-        {/* <Avatar
-          src={profile_image}
+        <Avatar
+          src={"data:image/png;base64, " + profile_image}
           height={"80px"}
           width={"80px"}
           alignSelf={"center"}
           m={{ base: "0 0 35px 0", md: "0 0 0 50px" }}
-        /> */}
-        <img src={"data:image/png;base64, " + profile_image} />
+        />
       </Flex>
     </Skeleton>
   );

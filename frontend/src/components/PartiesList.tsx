@@ -5,19 +5,19 @@ import axios from "axios";
 
 interface PoliticiansConfig {
   name?: string;
-  surname?: string;
+  twitter_name?: string;
 }
 
 interface Politician {
   name: string;
-  surname: string;
+  twitter_name: string;
 }
 
 interface ResData {
   result: Politician[];
 }
 
-const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
+const PoliticianItem = ({ name, twitter_name }: PoliticiansConfig) => {
   return (
     <Link
       bg={useColorModeValue("white", "blackAlpha.200")}
@@ -30,21 +30,26 @@ const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
         bg: useColorModeValue("red.500", "red.500"),
         color: useColorModeValue("white", "white"),
       }}
-      href={"/politicians/" + name + "_" + surname}
+      href={"/parties/" + name}
     >
       <Text fontWeight="400" fontSize="lg">
-        {name} {surname}
+        {name}
       </Text>
     </Link>
   );
 };
 
-const Politicians = () => {
+// const username = "admin";
+// const password = "secret";
+// const token = `${username}:${password}`;
+// const encodedToken = Buffer.from(token).toString("base64");
+
+const PartiesList = () => {
   const [data, setData] = useState<Politician[]>([]);
 
   const fetchData = () => {
     axios
-      .get<ResData>("https://politgot-umk.herokuapp.com/polit")
+      .get<ResData>("https://politgot-umk.herokuapp.com/parties_twitter_acc")
       .then(function (response) {
         setData(response.data.result);
       })
@@ -72,4 +77,4 @@ const Politicians = () => {
     </Wrap>
   );
 };
-export default Politicians;
+export default PartiesList;

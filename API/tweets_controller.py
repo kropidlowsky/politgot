@@ -11,7 +11,7 @@ import psycopg2
 HEADERS = {'Access-Control-Allow-Origin': '*',
            'Access-Control-Allow-Credentials': True,
            'Access-Control-Allow-Method': 'GET',
-           'Access-Control-Allow-Headers': 'Content-Type, Accept'
+           'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept'
            }
 
 app = Flask(__name__)
@@ -102,10 +102,11 @@ def requires_auth(f):
 
     return decorated
 
+
 #@app.route('/main_politic_info', methods=['GET'])
+#@requires_auth
 
 @app.route('/main_politic_info', methods=['GET'])
-@requires_auth
 def get_politic_main_informations():
     """Endpoint return a main information about politic
         ---

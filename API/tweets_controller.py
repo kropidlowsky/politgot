@@ -79,11 +79,12 @@ def check_auth(username, password):
     cursor = connection.cursor()
     username = hashlib.md5(username.encode()).hexdigest()
     password = hashlib.md5(password.encode()).hexdigest()
-    cursor.execute(f"SELECT COUNT(*) "
-                   f"FROM api_user "
-                   f"WHERE username_mdhex = '{username}' AND password_mdhex = '{password}';")
+    query = f"""
+     SELECT EXISTS (SELECT FROM api_user WHERE username_mdhex = '{username}' AND password_mdhex = '{password}');
+    """
+    cursor.execute(query)
     result = cursor.fetchone()
-    if result:
+    if result[0]:
         return True
     return False
 
@@ -101,10 +102,10 @@ def requires_auth(f):
 
     return decorated
 
+#@app.route('/main_politic_info', methods=['GET'])
 
-# @app.route('/main_politic_info', methods=['GET'])
-# @requires_auth
 @app.route('/main_politic_info', methods=['GET'])
+@requires_auth
 def get_politic_main_informations():
     """Endpoint return a main information about politic
         ---

@@ -11,7 +11,7 @@ import psycopg2
 HEADERS = {'Access-Control-Allow-Origin': '*',
            'Access-Control-Allow-Credentials': True,
            'Access-Control-Allow-Method': 'GET',
-           'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept'
+           'Access-Control-Allow-Headers': 'Content-Type, Accept'
            }
 
 app = Flask(__name__)

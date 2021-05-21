@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request, make_response
 from psycopg2 import Error
 from datetime import datetime
 from flasgger import Swagger
+from flask_cors import CORS
 
 import hashlib
 import psycopg2
@@ -20,6 +21,7 @@ app.config['SWAGGER'] = {
     'uiversion': 2,
     'info': 'API',
 }
+CORS(app)
 DEFAULT_CONFIG = {
     "headers": [
     ],

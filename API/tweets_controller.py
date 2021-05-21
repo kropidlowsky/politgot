@@ -8,7 +8,7 @@ from flasgger import Swagger
 import hashlib
 import psycopg2
 
-HEADERS = {'Access-Control-Allow-Origin': '*',
+HEADERS = {'Access-Control-Allow-Origin': 'https://politgot-testy.vercel.app',
            'Access-Control-Allow-Credentials': True,
            'Access-Control-Allow-Method': 'GET, OPTIONS',
            'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization'

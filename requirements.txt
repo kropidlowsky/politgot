@@ -3,5 +3,6 @@ scrapy-splash
 scrapy-fake-useragent
 gunicorn
 flask
+flask_cors
 psycopg2
 flasgger

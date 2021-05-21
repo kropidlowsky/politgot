@@ -4,14 +4,15 @@ from flask import Flask, jsonify, request, make_response
 from psycopg2 import Error
 from datetime import datetime
 from flasgger import Swagger
+from flask_cors import CORS
 
 import hashlib
 import psycopg2
 
 HEADERS = {'Access-Control-Allow-Origin': '*',
            'Access-Control-Allow-Credentials': True,
-           'Access-Control-Allow-Method': 'GET',
-           'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept'
+           'Access-Control-Allow-Methods': 'HEAD, GET, OPTIONS',
+           'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin, Origin, access-control-allow-origin'
            }
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ app.config['SWAGGER'] = {
     'uiversion': 2,
     'info': 'API',
 }
+CORS(app)
 DEFAULT_CONFIG = {
     "headers": [
     ],
@@ -102,7 +104,6 @@ def requires_auth(f):
 
     return decorated
 
-#@app.route('/main_politic_info', methods=['GET'])
 
 @app.route('/main_politic_info', methods=['GET'])
 @requires_auth
@@ -117,8 +118,6 @@ def get_politic_main_informations():
             type: string
             required: true
             description: Politic name in format -  name_surname
-
-
         responses:
           200:
             description: Main information about Politic, last votes and tweets
@@ -253,9 +252,8 @@ def get_politic_main_informations():
     return response
 
 
-# @app.route('/tweets', methods=['GET'])
-# @requires_auth
 @app.route('/tweets', methods=['GET'])
+@requires_auth
 def get_politic_tweets():
     """Endpoint return a list of tweets by given politic name
         ---
@@ -281,8 +279,6 @@ def get_politic_tweets():
             example: 2018-01-01
             required: false
             description: Filter tweets from date in format - YYYY-MM-DD
-
-
         responses:
           200:
             description: A list of tweets (may be filtered by date)
@@ -382,10 +378,8 @@ def get_politic_tweets():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
-
-# @app.route('/parties_tweets', methods=['GET'])
-# @requires_auth
 @app.route('/parties_tweets', methods=['GET'])
+@requires_auth
 def get_politic_party_tweets():
     """Endpoint return a list of tweets by given politic party name
         ---
@@ -411,8 +405,6 @@ def get_politic_party_tweets():
             example: 2018-01-01
             required: false
             description: Filter tweets from date in format - YYYY-MM-DD
-
-
         responses:
           200:
             description: A list of political parties tweets (may be filtered by date)
@@ -502,10 +494,8 @@ def get_politic_party_tweets():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
-
-# @app.route('/party_main_info', methods=['GET'])
-# @requires_auth
 @app.route('/party_main_info', methods=['GET'])
+@requires_auth
 def get_politic_party_party_tweets():
     """Endpoint return a main information about politic party
         ---
@@ -517,8 +507,6 @@ def get_politic_party_party_tweets():
             type: string
             required: true
             description: Politic party name in format - xxx_yyy_zzz
-
-
         responses:
           200:
             description: Main information about political party
@@ -609,10 +597,8 @@ def get_politic_party_party_tweets():
     response = make_response(response, 200, HEADERS)
     return response
 
-
-# @app.route('/polit', methods=['GET'])
-# @requires_auth
 @app.route('/polit', methods=['GET'])
+@requires_auth
 def get_politicians():
     """Endpoint return a list of politicians in database
         ---
@@ -644,9 +630,8 @@ def get_politicians():
     return response
 
 
-# @app.route('/parties', methods=['GET'])
-# @requires_auth
 @app.route('/parties', methods=['GET'])
+@requires_auth
 def get_parties_tweets():
     """Endpoint return a list of politician parties in database
         ---
@@ -678,9 +663,8 @@ def get_parties_tweets():
     return response
 
 
-# @app.route('/trends', methods=['GET'])
-# @requires_auth
 @app.route('/trends', methods=['GET'])
+@requires_auth
 def get_trends():
     """Endpoint return a list of ordered trends (max 50)
         ---
@@ -713,9 +697,8 @@ def get_trends():
     return response
 
 
-# @app.route('/polit_twitter_acc', methods=['GET'])
-# @requires_auth
 @app.route('/polit_twitter_acc', methods=['GET'])
+@requires_auth
 def get_politicians_twitter_accounts():
     """Endpoint return a list of politiancs Twitter accounts in database
         ---
@@ -750,9 +733,8 @@ def get_politicians_twitter_accounts():
     return response
 
 
-# @app.route('/polit_party_twitter_acc', methods=['GET'])
-# @requires_auth
-@app.route('/parties_twitter_acc', methods=['GET'])
+@app.route('/polit_party_twitter_acc', methods=['GET'])
+@requires_auth
 def get_politicians_party_twitter_accounts():
     """Endpoint return a list of politician parties Twitter accounts in database
         ---
@@ -787,9 +769,8 @@ def get_politicians_party_twitter_accounts():
     return response
 
 
-# @app.route('/latest', methods=['GET'])
-# @requires_auth
 @app.route('/latest', methods=['GET'])
+@requires_auth
 def get_newest_tweets():
     """Endpoint return a list of latest tweets (may be limited, max returned tweets 300)
         ---
@@ -811,7 +792,6 @@ def get_newest_tweets():
             type: string
             required: false
             description: specify only politic tweets or only politic_party. ENUM ['politic', 'politic_party']
-
         responses:
           200:
             description: A list of latest tweets max 300
@@ -902,9 +882,8 @@ def get_newest_tweets():
     return response
 
 
-# @app.route('/latest_pools', methods=['GET'])
-# @requires_auth
 @app.route('/latest_pools', methods=['GET'])
+@requires_auth
 def find_latest_polls():
     """Endpoint return a list of latest pools in Goverment
         ---
@@ -921,8 +900,6 @@ def find_latest_polls():
             type: integer
             required: false
             description: offset of returned tweets
-
-
         responses:
           200:
             description: A list of pools (may be filtered by politic and may be limited) MAX 300
@@ -986,9 +963,8 @@ def find_latest_polls():
     return response
 
 
-# @app.route('/find_tweet', methods=['GET'])
-# @requires_auth
 @app.route('/find_tweet', methods=['GET'])
+@requires_auth
 def find_politic_tweets():
     """Endpoint return a list of tweets searched by text
         ---
@@ -1020,8 +996,6 @@ def find_politic_tweets():
             type: string
             required: false
             description: Politic party name in format - xx_yy_zz
-
-
         responses:
           200:
             description: A list of tweets (may be filtered by politic and may be limited) max 300
@@ -1175,4 +1149,4 @@ def page_not_found():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)  # na prodzie off
+    app.run(debug=False)

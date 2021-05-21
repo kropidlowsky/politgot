@@ -50,14 +50,14 @@ export default function MainPoliticInfo() {
           // mode: "no-cors",
           headers: {
             // "Access-Control-Allow-Credentials": true,
-            "Access-Control-Allow-Origin": "*",
+            // "Access-Control-Allow-Origin": "*",
             // "Access-Control-Allow-Methods": "GET",
             // "Access-Control-Allow-Headers": "Content-Type,Accept",
             // Accept: "application/json",
             // "Content-Type": "application/json",
             // Authorization: `Basic ${token}`,
 
-            Origin: "http://localhost:3000",
+            Origin: "https://politgot-testy.vercel.app",
           },
           auth: {
             username: "admin",

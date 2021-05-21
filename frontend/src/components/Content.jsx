@@ -11,7 +11,7 @@ import Main from "./Main";
 import PoliticianListDrawer from "./PoliticianListDrawer";
 import Trends from "./Trends";
 import Copyright from "./Copyright";
-
+import MainPoliticInfo from "./MainPoliticInfo";
 const routes = [
   { path: "/", exact: true, pageContent: () => <Main source="latest" /> },
   {
@@ -52,10 +52,10 @@ const Content = (props) => {
         ml="15"
         position="fixed"
       >
-        {useBreakpointValue({ xl: <LeftBar />, sm: <PoliticianListDrawer />})}
+        {useBreakpointValue({ xl: <LeftBar />, sm: <PoliticianListDrawer /> })}
       </Box>
-      {useBreakpointValue({ xl: <Spacer />})}
-      
+      {useBreakpointValue({ xl: <Spacer /> })}
+
       {sidebar}
       <Box
         wminW={useBreakpointValue({ xl: "43vw", xs: "80vw" })}
@@ -65,6 +65,8 @@ const Content = (props) => {
         borderRadius="15"
         bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       >
+        <MainPoliticInfo />
+
         <Router>
           {routes.map((route, index) => (
             <Route
@@ -76,7 +78,7 @@ const Content = (props) => {
           ))}
         </Router>
       </Box>
-      {useBreakpointValue({ xl: <Spacer />})}
+      {useBreakpointValue({ xl: <Spacer /> })}
       <Box
         maxH="90vh"
         mt="100"

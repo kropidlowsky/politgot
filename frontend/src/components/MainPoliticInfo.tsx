@@ -74,23 +74,7 @@ export default function MainPoliticInfo() {
       .catch(function (error: any) {
         console.log(error);
       });
-
-    axios
-      .get("https://httpbin.org/basic-auth/foo/bar", {
-        // Axios looks for the `auth` option, and, if it is set, formats a
-        // basic auth header for you automatically.
-        auth: {
-          username: "foo",
-          password: "bar",
-        },
-      })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  }, [token]);
 
   return <h1>siema{console.log(data)}</h1>;
 }

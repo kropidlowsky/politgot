@@ -3,30 +3,56 @@ from scrapy_splash import SplashRequest
 
 
 class RepresentativeSpider(scrapy.Spider):
+    """
+    A class used to scrap Polish parliament's website to collect data about representatives.
+
+    How to run it?
+        1)  RepresentativeCrawler
+            politgot\tools\data_collectors\goverment\representative_profiles\representative_crawler.py
+        2)  scrapy crawl <name> -O <file_name>.<format | .json>
+            scrapy representative crawl -O representative.json
+            -O corresponds to overwrite and -o to append
+
+
+    !!!WARNING!!!
+    Unfortunately it was needed to use Polish naming in keys, because of not having always classes/ids/etc in HTML.
+    """
     name: str = "representative"
-    base = 'https://www.sejm.gov.pl/sejm9.nsf/'
-    start_urls = [
+    base: str = 'https://www.sejm.gov.pl/sejm9.nsf/'
+    start_urls: list = [
         'https://www.sejm.gov.pl/Sejm9.nsf/poslowie.xsp',
         'https://www.sejm.gov.pl/Sejm9.nsf/poslowie.xsp?type=B'
     ]
 
     def __extract_css(self, response, query):
+        """
+        CLass to extract one element from response matching to the CSS query.
+        """
         output = response.css(query).get()
         if output:
             output = output.strip()
         return output
 
     def __extract_nested_css(self, response, query):
+        """
+        CLass to extract list of elements from response matching to the CSS query.
+        """
         output = response.css(query).getall()
         if output:
             output = list(map(str.strip, output))
         return output
 
     def parse(self, response, **kwargs):
+        """
+        Getting links of representatives to loop throw.
+        """
         representatives = self.__extract_nested_css(response, 'ul[class*="deputies"] li div a ::attr(href)')
         yield from response.follow_all(representatives, self.click_links_in_profile)
 
     def click_links_in_profile(self, response):
+        """
+        It returns response with extra data loaded from JS functions.
+        """
         script = """
         function main(splash)
             assert(splash:go(splash.args.url))
@@ -43,11 +69,17 @@ class RepresentativeSpider(scrapy.Spider):
         end
         """
 
+        # Run lua script to run JS functions to load more data on the website
         yield SplashRequest(response.request.url, callback=self.parse_profile, endpoint='execute', args={
             'lua_source': script
         })
 
     def parse_profile(self, response):
+        """
+        Scrap basic data about a representative.
+        """
+
+        # Getting the easiest information to collect.
         data: dict = {
             'nazwa': self.__extract_css(response, 'h1::text'),
             'zdjęcie': self.__extract_css(response, 'div[class*="partia"] img::attr(src)'),
@@ -59,6 +91,8 @@ class RepresentativeSpider(scrapy.Spider):
                                                   'a::attr("href")')
         }
 
+        # It was required to match p[class*="left] to the key and the right one to the value.
+        # This strategy was chosen, because the website has random order of values.
         for i, response2 in enumerate(response.css('ul[class*="data"]')):
             if i > 1:
                 break
@@ -70,18 +104,21 @@ class RepresentativeSpider(scrapy.Spider):
                     data[self.__extract_css(row, 'p[class*="left"]::text').strip(':')] = \
                         self.__extract_css(row, 'p[class*="right"] a::text')
 
+        # go to parse_speeches if the link exists
         if data['wystąpienia']:
             yield scrapy.Request(
                 self.base + data['wystąpienia'],
                 callback=self.parse_speeches,
                 meta={'data': data}
             )
+        # go to parse_polls if the link exists and the one for speeches does not exist
         elif data['głosowania_link']:
             yield scrapy.Request(
                 self.base + data['głosowania_link'],
                 callback=self.parse_polls,
                 meta={'data': data}
             )
+        # if both link do not exist, then return the dict
         else:
             yield data
 

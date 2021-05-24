@@ -6,10 +6,6 @@ create table political_parties
     name varchar(30) not null,
     abbr varchar(8)
 );
-
-alter table political_parties
-    owner to pz2020nsi1;
-
 create unique index political_party_id_uindex
     on political_parties (id);
 
@@ -25,10 +21,6 @@ create table politicians
     surname    varchar(40) not null,
     birth_date date
 );
-
-alter table politicians
-    owner to pz2020nsi1;
-
 create unique index politician_id_uindex
     on politicians (id);
 
@@ -47,9 +39,6 @@ create table political_party_affiliations
     end_date        date
 );
 
-alter table political_party_affiliations
-    owner to pz2020nsi1;
-
 create unique index political_party_affiliation_id_uindex
     on political_party_affiliations (id);
 
@@ -63,9 +52,6 @@ create table politicians_twitter_accounts
         constraint twitter_accounts_politicians_id_fk
             references politicians
 );
-
-alter table politicians_twitter_accounts
-    owner to pz2020nsi1;
 
 create unique index twitter_accounts_id_uindex
     on politicians_twitter_accounts (id);
@@ -86,9 +72,6 @@ create table politicians_tweets
     tags    varchar(20)[]
 );
 
-alter table politicians_tweets
-    owner to pz2020nsi1;
-
 create unique index tweets_id_uindex
     on politicians_tweets (id);
 
@@ -102,9 +85,6 @@ create table political_parties_twitter_accounts
         constraint political_parties_accounts_political_parties_id_fk
             references political_parties
 );
-
-alter table political_parties_twitter_accounts
-    owner to pz2020nsi1;
 
 create unique index political_parties_accounts_id_uindex
     on political_parties_twitter_accounts (id);
@@ -125,9 +105,6 @@ create table political_parties_tweets
     tags    varchar(20)[]
 );
 
-alter table political_parties_tweets
-    owner to pz2020nsi1;
-
 create unique index political_parties_tweets_id_uindex
     on political_parties_tweets (id);
 
@@ -139,9 +116,6 @@ create table terms_of_office
     start_year integer not null,
     end_year   integer
 );
-
-alter table terms_of_office
-    owner to pz2020nsi1;
 
 create unique index terms_of_office_id_uindex
     on terms_of_office (id);
@@ -160,9 +134,6 @@ create table parliament_speeches
     speech         text    not null
 );
 
-alter table parliament_speeches
-    owner to pz2020nsi1;
-
 create unique index parliament_speeches_id_uindex
     on parliament_speeches (id);
 
@@ -178,9 +149,6 @@ create table parliament_polls
         constraint parliament_polls_terms_of_office_id_fk
             references terms_of_office
 );
-
-alter table parliament_polls
-    owner to pz2020nsi1;
 
 create unique index parliament_polls_id_uindex
     on parliament_polls (id);
@@ -199,9 +167,6 @@ create table votes
     vote            integer
 );
 
-alter table votes
-    owner to pz2020nsi1;
-
 create unique index votes_id_uindex
     on votes (id);
 
@@ -215,9 +180,6 @@ create table politicians_wiki
         constraint politicians_wiki_politicians_id_fk
             references politicians
 );
-
-alter table politicians_wiki
-    owner to pz2020nsi1;
 
 create unique index politicians_wiki_id_uindex
     on politicians_wiki (id);
@@ -239,9 +201,6 @@ create table political_parties_wiki
             references political_parties
 );
 
-alter table political_parties_wiki
-    owner to pz2020nsi1;
-
 create unique index political_partis_wiki_id_uindex
     on political_parties_wiki (id);
 
@@ -250,5 +209,3 @@ create unique index political_partis_wiki_political_party_uindex
 
 create unique index political_partis_wiki_url_uindex
     on political_parties_wiki (url);
-
-

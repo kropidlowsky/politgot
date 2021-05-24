@@ -18,7 +18,7 @@ interface TestimonialCardProps {
   surname: string;
   role: string;
   message: string;
-  profile_image: string;
+  // profile_image: string;
   index: number;
   date: Date;
   error: string;
@@ -29,7 +29,7 @@ function TestmonialCard({
   surname,
   role,
   message,
-  profile_image,
+  // profile_image,
   date,
   error,
 }: TestimonialCardProps) {
@@ -71,13 +71,13 @@ function TestmonialCard({
             </chakra.span>
           </chakra.p>
         </Flex>
-        <Avatar
+        {/* <Avatar
           src={"data:image/png;base64, " + profile_image}
           height={"80px"}
           width={"80px"}
           alignSelf={"center"}
           m={{ base: "0 0 35px 0", md: "0 0 0 50px" }}
-        />
+        /> */}
       </Flex>
     </Skeleton>
   );
@@ -110,7 +110,12 @@ const Main = (props: Props) => {
       link = link.replace(/\s+/g, "_");
     }
     axios
-      .get<ResData>(link)
+      .get<ResData>(link, {
+        auth: {
+          username: "admin",
+          password: "secret",
+        },
+      })
       .then(function (response) {
         //temporary fix for errors
         console.log(response.data.result[0].error);
@@ -119,7 +124,8 @@ const Main = (props: Props) => {
       .catch(function (error: unknown) {
         console.log(error);
       });
-  }, [props, search, tweeters]);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Flex

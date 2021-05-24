@@ -69,7 +69,12 @@ const SearchBar = () => {
 
   const fetchData = () => {
     axios
-      .get<ResData>("https://politgot-umk.herokuapp.com/polit")
+      .get<ResData>("https://politgot-umk.herokuapp.com/polit", {
+        auth: {
+          username: "admin",
+          password: "secret",
+        },
+      })
       .then(function (response) {
         setNames(response.data.result);
       })

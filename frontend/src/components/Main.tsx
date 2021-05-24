@@ -110,7 +110,12 @@ const Main = (props: Props) => {
       link = link.replace(/\s+/g, "_");
     }
     axios
-      .get<ResData>(link)
+      .get<ResData>(link, {
+        auth: {
+          username: "admin",
+          password: "secret",
+        },
+      })
       .then(function (response) {
         //temporary fix for errors
         console.log(response.data.result[0].error);

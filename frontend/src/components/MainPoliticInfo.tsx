@@ -44,25 +44,10 @@ export default function MainPoliticInfo() {
       .get<ResData>(
         "https://politgot-umk.herokuapp.com/main_politic_info?politic=Dominik_Tarczy%C5%84ski",
         {
-          //   method: "GET",
-          //   withCredentials: true,
-          method: "GET",
-          // mode: "no-cors",
-
-          headers: {
-            "Access-Control-Allow-Credentials": true,
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET",
-            "Access-Control-Allow-Headers": "Content-Type,Accept",
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Basic ${token}`,
-            // Origin: "https://politgot-testy.vercel.app",
+          auth: {
+            username: "admin",
+            password: "secret",
           },
-          // auth: {
-          //   username: "admin",
-          //   password: "secret",
-          // },
         }
       )
       .then(function (response) {
@@ -70,6 +55,7 @@ export default function MainPoliticInfo() {
         console.log(response.headers);
         console.log(response.data.result[0].error);
         setData(response.data.result);
+        console.log(data);
       })
       .catch(function (error: any) {
         console.log(error);

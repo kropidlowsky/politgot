@@ -33,7 +33,7 @@ class RepresentativeNormalizer:
         Normalize day of birth and place of birth based on a string with sum of them.
         """
         name = representative.pop('nazwa').split()
-        representative['Imię'] = " ".join(name[0:-1])
+        representative['Imię'] = name[0]
         representative['Nazwisko'] = name[-1]
 
     def normalize_pic(self, representative: dict):
@@ -76,15 +76,17 @@ class RepresentativeNormalizer:
             for speech in speeches:
                 speech['tekst'] = "/n".join(re.sub(r'\(.*\)', '', text) for text in speech['tekst'] if re.sub(
                     r'\(.*\)', '', text))
-                speech['tekst'].replace("\n\n", "\n").strip()
+                speech['tekst'] = speech['tekst'].replace("\n\n", "\n").replace("'", '"').strip()
+                speech['Punkty'] = '/n'.join(speech['Punkty'])
 
     def normalize_polls(self, representative: dict):
         root_polls = representative.get('głosowania')
-        for root_poll in root_polls:
-            polls = root_poll.get('głosy')
-            for poll in polls:
-                if poll.get('Temat'):
-                    poll['Temat'].replace("'", '"')
+        if root_polls:
+            for root_poll in root_polls:
+                polls = root_poll.get('głosy')
+                for poll in polls:
+                    if poll.get('Temat'):
+                        poll['Temat'] = poll.get('Temat').replace("'", '')
 
 
 if __name__ == '__main__':

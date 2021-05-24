@@ -27,7 +27,7 @@ const routes = [
   {
     path: "/politicians/:tweeters",
     exact: true,
-    pageContent: () => <Main source="politic" />,
+    pageContent: () => <MainPoliticInfo />,
   },
   {
     path: "/parties",
@@ -65,8 +65,6 @@ const Content = (props) => {
         borderRadius="15"
         bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       >
-        <MainPoliticInfo />
-
         <Router>
           {routes.map((route, index) => (
             <Route

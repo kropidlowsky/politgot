@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 
 import {
   Avatar,
-  Box,
+  // Box,
   chakra,
   Flex,
-  SimpleGrid,
+  // SimpleGrid,
   useColorModeValue,
   Skeleton,
-  useBreakpointValue,
+  // useBreakpointValue,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 
@@ -122,10 +122,6 @@ interface PoliticInfo {
   index: number;
 }
 
-interface ResData {
-  result: PoliticInfo[];
-}
-
 export default function MainPoliticInfo() {
   const [data, setData] = useState<PoliticInfo>();
   let { tweeters } = useParams<{ tweeters: string }>();
@@ -149,6 +145,7 @@ export default function MainPoliticInfo() {
       .catch(function (error: any) {
         console.log(error);
       });
+    // eslint-disable-next-line
   }, []);
 
   return (

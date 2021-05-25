@@ -9,6 +9,8 @@ import {
   // SimpleGrid,
   useColorModeValue,
   Skeleton,
+  Center,
+  Box,
   // useBreakpointValue,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
@@ -30,11 +32,12 @@ function Tweets({ name, surname, message, date, index }: PoliticTweet) {
     <Skeleton isLoaded>
       <Flex
         boxShadow={"md"}
-        maxW={"640px"}
+        maxW={"30vw"}
         direction={{ base: "column-reverse", md: "row" }}
         width={"full"}
         rounded={"3xl"}
         p={10}
+        m="5"
         justifyContent={"space-between"}
         position={"relative"}
         bg={useColorModeValue("white", "blackAlpha.200")}
@@ -151,25 +154,47 @@ export default function MainPoliticInfo() {
   return (
     <div>
       <Skeleton isLoaded>
-        <Avatar
-          size="2xl"
-          src={"data:image/png;base64, " + data?.profile_image}
-        />
-        <chakra.p fontWeight={"bold"} fontSize={14}>
-          {data?.name + "  "}
-          {data?.surname || " "}
-        </chakra.p>
-        <chakra.p fontWeight={"bold"} fontSize={14}>
-          {" Urodzony: " + data?.birth_place}
-          {data?.birth_date}
-        </chakra.p>
-        <chakra.p>{"Wykształcenie: " + data?.education}</chakra.p>
+        <Box bg={"blackAlpha.50"} p="10" borderRadius="15">
+          <Center>
+            <Avatar
+              size="2xl"
+              src={"data:image/png;base64, " + data?.profile_image}
+            />
+          </Center>
+          <Center>
+            <chakra.p fontWeight={"bold"} fontSize={"4xl"} my="5">
+              {data?.name + "  "}
+              {data?.surname || " "}
+            </chakra.p>
+          </Center>
+          <Center>
+            <chakra.p fontWeight={"bold"} fontSize={"lg"}>
+              {"Data urodzenia: " +
+                data?.birth_date.replace("00:00:00 GMT", "")}
+            </chakra.p>
+          </Center>
+          <Center>
+            <chakra.p fontWeight={"500"} fontSize={"lg"}>
+              {" Miejsce urodzenia: " + data?.birth_place + " "}
+            </chakra.p>
+          </Center>
+          <Center>
+            <chakra.p fontSize="lg" fontWeight="500">
+              {" "}
+              {"Wykształcenie: " + data?.education}
+            </chakra.p>
+          </Center>
+        </Box>
         <table>
           <tr>
             <td>
-              {"Tweety:"}
+              <Center>
+                <chakra.p fontSize="3xl" fontWeight="800" pt="10">
+                  {"Tweety:"}
+                </chakra.p>
+              </Center>
               <br></br>
-              {data?.tweets.map((tweetData, index) => (
+              {data?.tweets.slice(0, 5).map((tweetData, index) => (
                 <Tweets key={index} {...tweetData} index={index} />
               ))}
             </td>

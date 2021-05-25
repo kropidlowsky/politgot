@@ -152,7 +152,6 @@ const SearchBar = () => {
                     fontWeight={"bold"}
                     w="95%"
                     p="2"
-                    borderRadius="3"
                     align="center"
                     _hover={{
                       bg: useColorModeValue("red.500", "red.500"),
@@ -174,14 +173,14 @@ const SearchBar = () => {
                   href={"/politicians/speaches/s=" + link}
                 >
                   <Text
-                    bg={useColorModeValue("white", "blackAlpha.200")}
+                    bg={useColorModeValue("blackAlpha.300", "blackAlpha.700")}
+                    color={useColorModeValue("blackAlpha.800", "white")}
+                    fontWeight={"bold"}
                     w="95%"
                     p="2"
-                    borderRadius="10"
-                    boxShadow="md"
                     align="center"
                     _hover={{
-                      bg: useColorModeValue("red.500", "red.500"),
+                      bg: useColorModeValue("blackAlpha.700", "red.500"),
                       color: useColorModeValue("white", "white"),
                     }}
                   >

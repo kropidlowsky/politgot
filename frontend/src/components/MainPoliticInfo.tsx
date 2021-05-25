@@ -170,18 +170,18 @@ export default function MainPoliticInfo() {
           <Center>
             <chakra.p fontWeight={"bold"} fontSize={"lg"}>
               {"Data urodzenia: " +
-                data?.birth_date.replace("00:00:00 GMT", "")}
+                (data?.birth_date || " ").replace("00:00:00 GMT", "")}
             </chakra.p>
           </Center>
           <Center>
             <chakra.p fontWeight={"500"} fontSize={"lg"}>
-              {" Miejsce urodzenia: " + data?.birth_place + " "}
+              {" Miejsce urodzenia: " + (data?.birth_place || " ") + " "}
             </chakra.p>
           </Center>
           <Center>
             <chakra.p fontSize="lg" fontWeight="500">
               {" "}
-              {"Wykształcenie: " + data?.education}
+              {"Wykształcenie: " + (data?.education || " ")}
             </chakra.p>
           </Center>
         </Box>

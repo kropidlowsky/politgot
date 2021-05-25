@@ -162,6 +162,32 @@ const SearchBar = () => {
                   </Text>
                 </Link>
 
+                <Link
+                  bg={useColorModeValue("white", "blackAlpha.200")}
+                  p="1 0 0 0"
+                  align="center"
+                  _hover={{
+                    bg: useColorModeValue("red.500", "red.500"),
+                    color: useColorModeValue("white", "white"),
+                  }}
+                  href={"/politicians/speaches/s=" + link}
+                >
+                  <Text
+                    bg={useColorModeValue("white", "blackAlpha.200")}
+                    w="95%"
+                    p="2"
+                    borderRadius="10"
+                    boxShadow="md"
+                    align="center"
+                    _hover={{
+                      bg: useColorModeValue("red.500", "red.500"),
+                      color: useColorModeValue("white", "white"),
+                    }}
+                  >
+                    {"Wyszukaj w wypowiedziach: '" + link + "'"}
+                  </Text>
+                </Link>
+
                 {filtered.map((filteredName, index) => (
                   <PoliticianItem key={index} {...filteredName} />
                 ))}

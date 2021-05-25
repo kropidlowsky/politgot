@@ -20,6 +20,11 @@ const routes = [
     pageContent: () => <Main source="search" />,
   },
   {
+    path: "/politicians/speaches/s=:search",
+    exact: true,
+    pageContent: () => <Main source="speach" />,
+  },
+  {
     path: "/politicians",
     exact: true,
     pageContent: () => <Main source="latest" />,

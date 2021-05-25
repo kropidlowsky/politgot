@@ -18,6 +18,7 @@ interface TestimonialCardProps {
   surname: string;
   role: string;
   message: string;
+  speech: string;
   profile_image: string;
   index: number;
   date: Date;
@@ -29,6 +30,7 @@ function TestmonialCard({
   surname,
   role,
   message,
+  speech,
   profile_image,
   date,
   error,
@@ -60,7 +62,7 @@ function TestmonialCard({
           justifyContent={"space-between"}
         >
           <chakra.p fontWeight={"medium"} fontSize={"15px"} pb={4}>
-            {message}
+            {message || speech}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
             {name + "  "}
@@ -101,6 +103,8 @@ const Main = (props: Props) => {
       link = "https://politgot-umk.herokuapp.com/latest";
     if (props.source === "search")
       link = "https://politgot-umk.herokuapp.com/find_tweet?text=" + search;
+    if (props.source === "speach")
+      link = "https://politgot-umk.herokuapp.com/find_speech?text=" + search;
     if (props.source === "politic")
       link = "https://politgot-umk.herokuapp.com/tweets?politic=" + tweeters;
     if (props.source === "party") {

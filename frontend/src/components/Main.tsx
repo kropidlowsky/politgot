@@ -7,6 +7,7 @@ import {
   useColorModeValue,
   Skeleton,
   useBreakpointValue,
+  Text,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -134,7 +135,6 @@ const Main = (props: Props) => {
   return (
     <Flex
       textAlign={"center"}
-      pt={10}
       justifyContent={"center"}
       direction={"column"}
       width={"full"}
@@ -143,12 +143,14 @@ const Main = (props: Props) => {
         xs: <PoliticianListDrawer />,
         sm: <PoliticianListDrawer />,
       })}
-      <SimpleGrid
-        columns={{ base: 1, xl: 1 }}
-        spacing={"20"}
-        mt={16}
-        mx={"auto"}
-      >
+      <SimpleGrid columns={{ base: 1, xl: 1 }} spacing={"6"} mx={"auto"}>
+        <Text fontSize="4xl" fontWeight="bold">
+          {props.source === "search"
+            ? "Szukaj: " + search
+            : props.source === "politic"
+            ? "Wpisy " + tweeters.replace("_", " ")
+            : props.source === "latest" && "Najnowsze wpisy"}
+        </Text>
         {data.map((cardInfo, index) => (
           <TestmonialCard key={index} {...cardInfo} index={index} />
         ))}

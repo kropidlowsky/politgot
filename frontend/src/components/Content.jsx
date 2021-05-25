@@ -83,6 +83,7 @@ const Content = (props) => {
       </Box>
       {useBreakpointValue({ xl: <Spacer /> })}
       <Box
+
         maxH="90vh"
         mt="100"
         w="20vw"
@@ -95,7 +96,7 @@ const Content = (props) => {
       >
         <Trends />
         <Copyright />
-      </Box>
+      </Box>})}
     </Flex>
   );
 };

@@ -6,3 +6,4 @@ flask
 flask_cors
 psycopg2
 flasgger
+requests

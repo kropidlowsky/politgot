@@ -1,0 +1,7 @@
+scrapy
+scrapy-splash
+scrapy-fake-useragent
+gunicorn
+flask
+psycopg2
+flasgger

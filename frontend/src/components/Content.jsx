@@ -11,13 +11,18 @@ import Main from "./Main";
 import PoliticianListDrawer from "./PoliticianListDrawer";
 import Trends from "./Trends";
 import Copyright from "./Copyright";
-
+import MainPoliticInfo from "./MainPoliticInfo";
 const routes = [
   { path: "/", exact: true, pageContent: () => <Main source="latest" /> },
   {
     path: "/politicians/tweety/s=:search",
     exact: true,
     pageContent: () => <Main source="search" />,
+  },
+  {
+    path: "/politicians/speaches/s=:search",
+    exact: true,
+    pageContent: () => <Main source="speach" />,
   },
   {
     path: "/politicians",
@@ -27,7 +32,7 @@ const routes = [
   {
     path: "/politicians/:tweeters",
     exact: true,
-    pageContent: () => <Main source="politic" />,
+    pageContent: () => <MainPoliticInfo />,
   },
   {
     path: "/parties",
@@ -52,10 +57,10 @@ const Content = (props) => {
         ml="15"
         position="fixed"
       >
-        {useBreakpointValue({ xl: <LeftBar />, sm: <PoliticianListDrawer />})}
+        {useBreakpointValue({ xl: <LeftBar />, sm: <PoliticianListDrawer /> })}
       </Box>
-      {useBreakpointValue({ xl: <Spacer />})}
-      
+      {useBreakpointValue({ xl: <Spacer /> })}
+
       {sidebar}
       <Box
         wminW={useBreakpointValue({ xl: "43vw", xs: "80vw" })}
@@ -76,8 +81,9 @@ const Content = (props) => {
           ))}
         </Router>
       </Box>
-      {useBreakpointValue({ xl: <Spacer />})}
-      {useBreakpointValue({ xl: <Box
+      {useBreakpointValue({ xl: <Spacer /> })}
+      <Box
+
         maxH="90vh"
         mt="100"
         w="20vw"

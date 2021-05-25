@@ -4,14 +4,15 @@ from flask import Flask, jsonify, request, make_response
 from psycopg2 import Error
 from datetime import datetime
 from flasgger import Swagger
+from flask_cors import CORS
 
 import hashlib
 import psycopg2
 
 HEADERS = {'Access-Control-Allow-Origin': '*',
            'Access-Control-Allow-Credentials': True,
-           'Access-Control-Allow-Method': 'GET',
-           'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept'
+           'Access-Control-Allow-Methods': 'HEAD, GET, OPTIONS',
+           'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin, Origin, access-control-allow-origin'
            }
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ app.config['SWAGGER'] = {
     'uiversion': 2,
     'info': 'API',
 }
+CORS(app)
 DEFAULT_CONFIG = {
     "headers": [
     ],
@@ -79,11 +81,12 @@ def check_auth(username, password):
     cursor = connection.cursor()
     username = hashlib.md5(username.encode()).hexdigest()
     password = hashlib.md5(password.encode()).hexdigest()
-    cursor.execute(f"SELECT COUNT(*) "
-                   f"FROM api_user "
-                   f"WHERE username_mdhex = '{username}' AND password_mdhex = '{password}';")
+    query = f"""
+     SELECT EXISTS (SELECT FROM api_user WHERE username_mdhex = '{username}' AND password_mdhex = '{password}');
+    """
+    cursor.execute(query)
     result = cursor.fetchone()
-    if result:
+    if result[0]:
         return True
     return False
 
@@ -102,9 +105,8 @@ def requires_auth(f):
     return decorated
 
 
-# @app.route('/main_politic_info', methods=['GET'])
-# @requires_auth
 @app.route('/main_politic_info', methods=['GET'])
+@requires_auth
 def get_politic_main_informations():
     """Endpoint return a main information about politic
         ---
@@ -116,8 +118,6 @@ def get_politic_main_informations():
             type: string
             required: true
             description: Politic name in format -  name_surname
-
-
         responses:
           200:
             description: Main information about Politic, last votes and tweets
@@ -179,6 +179,21 @@ def get_politic_main_informations():
                            'name': politic_name,
                            'surname': politic_surname,
                            })
+    speeches = []
+    query = f"""
+        select speeches.speech, points.name, date
+        from parliament_speeches as speeches
+        LEFT JOIN speech_points as points on points.id = speeches.points
+        WHERE politician = {politic_id}
+        ORDER BY date DESC LIMIT 5;
+        """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    for row in result:
+        speeches.append({'speech': row[0],
+                         'speech_point': row[1],
+                         'date': row[2],
+                         })
     polls = []
     query = f"""
         select title, polls.date,
@@ -191,7 +206,7 @@ def get_politic_main_informations():
         LEFT JOIN polls ON polls.parliament_topic = poll_topics.id
         WHERE politician = {politic_id}
         GROUP BY title, polls.date, poll_topics.id, polls.vote
-        ORDER BY polls.date DESC LIMIT 50;
+        ORDER BY polls.date DESC LIMIT 3;
         """
     cursor.execute(query + ';')
     result = cursor.fetchall()
@@ -203,11 +218,11 @@ def get_politic_main_informations():
             'for_vote': row[3],
             'against_vote': row[4],
             'abstained_vote': row[5],
-            'politic_vote': row[6]
+            'politic_vote': row[6],
         })
 
     query = f"""
-        select profession, picture, education, birth_date, votes, birth_place, g.name, pw.summary
+        select profession, education, birth_date, votes, birth_place, g.name, pw.summary
         FROM politicians
         LEFT JOIN politicians_wiki pw on politicians.id = pw.politician
         LEFT JOIN gender g on politicians.gender = g.id
@@ -219,16 +234,16 @@ def get_politic_main_informations():
     response = {
         'tweets': tweets,
         'polls': polls,
+        'speeches': speeches,
         'name': politic_name,
         'surname': politic_surname,
         'profession': result[0],
-        'profile_image': base64.b64encode(result[1].tobytes()).decode() if result[1] else result[1],
-        'birth_date': result[3],
-        'education': result[2],
-        'votes': result[4],
-        'birth_place': result[5],
-        'gender': result[6],
-        'wiki_summary': result[7],
+        'birth_date': result[2],
+        'education': result[1],
+        'votes': result[3],
+        'birth_place': result[4],
+        'gender': result[5],
+        'wiki_summary': result[6],
     }
 
     query = f"SELECT id, qty, word FROM find_statistics" \
@@ -252,9 +267,8 @@ def get_politic_main_informations():
     return response
 
 
-# @app.route('/tweets', methods=['GET'])
-# @requires_auth
 @app.route('/tweets', methods=['GET'])
+@requires_auth
 def get_politic_tweets():
     """Endpoint return a list of tweets by given politic name
         ---
@@ -280,8 +294,6 @@ def get_politic_tweets():
             example: 2018-01-01
             required: false
             description: Filter tweets from date in format - YYYY-MM-DD
-
-
         responses:
           200:
             description: A list of tweets (may be filtered by date)
@@ -326,7 +338,7 @@ def get_politic_tweets():
     if not result or not result[0]:
         response = make_response({'error': 'No politic found or no twitter account found'}, 200, HEADERS)
         return response
-    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit.picture" \
+    query = f"SELECT message, date, tags, url_photo, url_video, url_tweet " \
             f" FROM politicians_tweets" \
             f' LEFT JOIN politicians_twitter_accounts AS twitt_acc ON twitt_acc.id = politicians_tweets."user"' \
             f' LEFT JOIN politicians AS polit ON polit.id = twitt_acc.politician ' \
@@ -359,7 +371,6 @@ def get_politic_tweets():
                          'url_tweet': row[5],
                          'name': politic_name,
                          'surname': politic_surname,
-                         'profile_image': base64.b64encode(row[6].tobytes()).decode() if row[6] else row[6]
                          })
 
     query = f"SELECT id, qty, word FROM find_statistics" \
@@ -381,10 +392,8 @@ def get_politic_tweets():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
-
-# @app.route('/parties_tweets', methods=['GET'])
-# @requires_auth
 @app.route('/parties_tweets', methods=['GET'])
+@requires_auth
 def get_politic_party_tweets():
     """Endpoint return a list of tweets by given politic party name
         ---
@@ -410,8 +419,6 @@ def get_politic_party_tweets():
             example: 2018-01-01
             required: false
             description: Filter tweets from date in format - YYYY-MM-DD
-
-
         responses:
           200:
             description: A list of political parties tweets (may be filtered by date)
@@ -501,10 +508,8 @@ def get_politic_party_tweets():
     response = make_response({'result': response}, 200, HEADERS)
     return response
 
-
-# @app.route('/party_main_info', methods=['GET'])
-# @requires_auth
 @app.route('/party_main_info', methods=['GET'])
+@requires_auth
 def get_politic_party_party_tweets():
     """Endpoint return a main information about politic party
         ---
@@ -516,8 +521,6 @@ def get_politic_party_party_tweets():
             type: string
             required: true
             description: Politic party name in format - xxx_yyy_zzz
-
-
         responses:
           200:
             description: Main information about political party
@@ -608,10 +611,8 @@ def get_politic_party_party_tweets():
     response = make_response(response, 200, HEADERS)
     return response
 
-
-# @app.route('/polit', methods=['GET'])
-# @requires_auth
 @app.route('/polit', methods=['GET'])
+@requires_auth
 def get_politicians():
     """Endpoint return a list of politicians in database
         ---
@@ -643,9 +644,8 @@ def get_politicians():
     return response
 
 
-# @app.route('/parties', methods=['GET'])
-# @requires_auth
 @app.route('/parties', methods=['GET'])
+@requires_auth
 def get_parties_tweets():
     """Endpoint return a list of politician parties in database
         ---
@@ -677,9 +677,8 @@ def get_parties_tweets():
     return response
 
 
-# @app.route('/trends', methods=['GET'])
-# @requires_auth
 @app.route('/trends', methods=['GET'])
+@requires_auth
 def get_trends():
     """Endpoint return a list of ordered trends (max 50)
         ---
@@ -712,9 +711,8 @@ def get_trends():
     return response
 
 
-# @app.route('/polit_twitter_acc', methods=['GET'])
-# @requires_auth
 @app.route('/polit_twitter_acc', methods=['GET'])
+@requires_auth
 def get_politicians_twitter_accounts():
     """Endpoint return a list of politiancs Twitter accounts in database
         ---
@@ -749,9 +747,8 @@ def get_politicians_twitter_accounts():
     return response
 
 
-# @app.route('/polit_party_twitter_acc', methods=['GET'])
-# @requires_auth
-@app.route('/parties_twitter_acc', methods=['GET'])
+@app.route('/polit_party_twitter_acc', methods=['GET'])
+@requires_auth
 def get_politicians_party_twitter_accounts():
     """Endpoint return a list of politician parties Twitter accounts in database
         ---
@@ -786,9 +783,8 @@ def get_politicians_party_twitter_accounts():
     return response
 
 
-# @app.route('/latest', methods=['GET'])
-# @requires_auth
 @app.route('/latest', methods=['GET'])
+@requires_auth
 def get_newest_tweets():
     """Endpoint return a list of latest tweets (may be limited, max returned tweets 300)
         ---
@@ -810,7 +806,6 @@ def get_newest_tweets():
             type: string
             required: false
             description: specify only politic tweets or only politic_party. ENUM ['politic', 'politic_party']
-
         responses:
           200:
             description: A list of latest tweets max 300
@@ -845,11 +840,11 @@ def get_newest_tweets():
         response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
         return response
     if not specify:
-        query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname, p.picture " \
+        query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname " \
                 f"FROM politicians_tweets " \
                 f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
                 f"left join politicians p on pta.politician = p.id UNION " \
-                f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname, NULL AS picture " \
+                f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname " \
                 f"FROM political_parties_tweets as ppt " \
                 f'left join political_parties_twitter_accounts pta on ppt."user" = pta.id ' \
                 f"left join political_parties p on pta.political_party = p.id " \
@@ -866,16 +861,15 @@ def get_newest_tweets():
                              'url_tweet': row[5],
                              'name': row[6],
                              'surname': row[7],
-                             'profile_image': base64.b64encode(row[8].tobytes()).decode() if row[8] else row[8],
                              })
     else:
         if specify == 'politic':
-            query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname, p.picture " \
+            query = f"SELECT message, date, tags, url_photo, url_video, url_tweet,p.name, p.surname " \
                     f"FROM politicians_tweets " \
                     f'left join politicians_twitter_accounts pta on politicians_tweets."user" = pta.id ' \
                     f"left join politicians p on pta.politician = p.id order by date DESC LIMIT {limit} OFFSET {offset}; "
         else:
-            query = f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname, NULL AS picture " \
+            query = f"SELECT ppt.message, ppt.date, ppt.tags, ppt.url_photo, ppt.url_video, ppt.url_tweet,p.name, NULL as surname " \
                     f"FROM political_parties_tweets as ppt " \
                     f'left join political_parties_twitter_accounts pta on ppt."user" = pta.id ' \
                     f"left join political_parties p on pta.political_party = p.id " \
@@ -892,8 +886,7 @@ def get_newest_tweets():
                              'url_video': row[4],
                              'url_tweet': row[5],
                              'name': row[6],
-                             'surname': row[7],
-                             'profile_image': base64.b64encode(row[8].tobytes()).decode() if row[8] else row[8],
+                             'surname': row[7]
                              })
     cursor.close()
     connection.close()
@@ -901,9 +894,8 @@ def get_newest_tweets():
     return response
 
 
-# @app.route('/latest_pools', methods=['GET'])
-# @requires_auth
 @app.route('/latest_pools', methods=['GET'])
+@requires_auth
 def find_latest_polls():
     """Endpoint return a list of latest pools in Goverment
         ---
@@ -914,17 +906,15 @@ def find_latest_polls():
             in: query
             type: integer
             required: false
-            description: TOP limit of returned pools. MAX 300
+            description: TOP limit of returned pools. MAX 10
           - name: offset
             in: query
             type: integer
             required: false
             description: offset of returned tweets
-
-
         responses:
           200:
-            description: A list of pools (may be filtered by politic and may be limited) MAX 300
+            description: A list of pools (may be filtered by politic and may be limited) MAX 10
           400:
             description: Bad parameter
           500:
@@ -939,8 +929,8 @@ def find_latest_polls():
             limit = int(limit)
         if offset:
             offset = int(offset)
-        if not limit or limit > 300:
-            limit = 300
+        if not limit or limit > 10:
+            limit = 10
         if not offset:
             offset = 0
 
@@ -984,10 +974,83 @@ def find_latest_polls():
     response = make_response({'result': response, 'limit': limit, 'offset': offset}, 200, HEADERS)
     return response
 
+@app.route('/latest_speeches', methods=['GET'])
+@requires_auth
+def find_latest_speeches():
+    """Endpoint return a list of latest speeches in Goverment
+        ---
+        tags:
+          - PolitGot
+        parameters:
+          - name: limit
+            in: query
+            type: integer
+            required: false
+            description: TOP limit of returned speeches. MAX 50
+          - name: offset
+            in: query
+            type: integer
+            required: false
+            description: offset of returned tweets
+        responses:
+          200:
+            description: A list of pools (may be filtered by politic and may be limited) MAX 50
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
 
-# @app.route('/find_tweet', methods=['GET'])
-# @requires_auth
+    limit = request.args.get('limit', False)
+    offset = request.args.get('offset', False)
+
+    try:
+        if limit:
+            limit = int(limit)
+        if offset:
+            offset = int(offset)
+        if not limit or limit > 50:
+            limit = 50
+        if not offset:
+            offset = 0
+
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+
+    query = f"""
+        select p.name, p.surname, speeches.speech, points.name, date
+        from parliament_speeches as speeches
+        LEFT JOIN speech_points as points on points.id = speeches.points
+        LEFT JOIN politicians p on speeches.politician = p.id
+        ORDER BY date DESC LIMIT {limit} OFFSET {offset};
+        """
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    response = []
+    for row in result:
+        response.append({'name': row[0],
+                         'surname': row[1],
+                         'speech': row[2],
+                         'speech_point': row[3],
+                         'date': row[4],
+                         })
+
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response, 'limit': limit, 'offset': offset}, 200, HEADERS)
+    return response
+
+
 @app.route('/find_tweet', methods=['GET'])
+@requires_auth
 def find_politic_tweets():
     """Endpoint return a list of tweets searched by text
         ---
@@ -1019,8 +1082,6 @@ def find_politic_tweets():
             type: string
             required: false
             description: Politic party name in format - xx_yy_zz
-
-
         responses:
           200:
             description: A list of tweets (may be filtered by politic and may be limited) max 300
@@ -1101,7 +1162,7 @@ def find_politic_tweets():
             return response
     if (not politic_party and not politic) or (politic and not politic_party) or (politic and politic_party):
         query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
-                f" polit.name, polit.surname, polit.picture FROM politicians_tweets " \
+                f" polit.name, polit.surname FROM politicians_tweets " \
                 f' LEFT JOIN politicians_twitter_accounts AS polit_acc ON polit_acc.id = politicians_tweets."user" ' \
                 f"LEFT JOIN politicians AS polit ON polit.id = polit_acc.politician " \
                 f"WHERE finder @@ to_tsquery('{text}') "
@@ -1116,7 +1177,7 @@ def find_politic_tweets():
 
     if (not politic_party and not politic) or (not politic and politic_party) or (politic and politic_party):
         query = f"SELECT message, date, tags, url_photo, url_video, url_tweet, polit_acc.username," \
-                f" polit.name, NULL as surname, NULL as picture " \
+                f" polit.name, NULL as surname " \
                 f" FROM political_parties_tweets " \
                 f' LEFT JOIN political_parties_twitter_accounts AS polit_acc ON polit_acc.id = political_parties_tweets."user" ' \
                 f"LEFT JOIN political_parties AS polit ON polit.id = polit_acc.political_party " \
@@ -1140,8 +1201,143 @@ def find_politic_tweets():
                          'url_tweet': row[5],
                          'twitter_username': row[6],
                          'name': row[7],
-                         'surname': row[8],
-                         'profile_image': base64.b64encode(row[9].tobytes()).decode() if row[9] else row[9],
+                         'surname': row[8]
+                         })
+
+    if len(text.split(' & ')) == 1:
+        text = text.split(' & ')
+    else:
+        text = text.split(' & ') + [text.replace(' & ', ' ')]
+    for word in text:
+        query = f"SELECT id, qty, word FROM find_statistics WHERE word = '{word.lower()}' LIMIT 1"
+        cursor.execute(query + ';')
+        result = cursor.fetchone()
+        if result:
+            cursor.execute(
+                f'UPDATE find_statistics SET qty = {result[1] + 1} WHERE id = {result[0]};')
+            connection.commit()
+        else:
+            cursor.execute(
+                f'INSERT INTO find_statistics (qty, word) '
+                f"VALUES(1, '{word.lower()}');")
+            connection.commit()
+
+    cursor.close()
+    connection.close()
+    response = make_response({'result': response, 'limit': limit, 'offset': offset}, 200, HEADERS)
+    return response
+
+@app.route('/find_speech', methods=['GET'])
+@requires_auth
+def find_politic_speech():
+    """Endpoint return a list of speeches searched by text
+        ---
+        tags:
+          - PolitGot
+        parameters:
+          - name: text
+            in: query
+            type: string
+            required: true
+            description: looking phrase in tweets (use _ instead of white space)
+          - name: limit
+            in: query
+            type: integer
+            required: false
+            description: TOP limit of returned tweets. If politic and politic_party specified return double amount of limit
+          - name: offset
+            in: query
+            type: integer
+            required: false
+            description: offset of returned tweets
+          - name: politic
+            in: query
+            type: string
+            required: false
+            description: Politic name in format - name_surname
+        responses:
+          200:
+            description: A list of tweets (may be filtered by politic and may be limited) max 300
+          400:
+            description: Bad parameter
+          500:
+            description: Error during connection
+        """
+
+    text = request.args.get('text', False)
+    limit = request.args.get('limit', False)
+    offset = request.args.get('offset', False)
+    politic = request.args.get('politic', False)
+    if not text:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    try:
+        text = str(text).replace('"', '').replace("'", '').replace(' ', '_')
+        if len(text.split('_')) > 1 and text.split('_')[len(text.split('_')) - 1] == '':
+            text = text.split('_')
+            text.pop()
+        else:
+            text = text.split('_')
+        text = ' & '.join(text)
+
+        if limit:
+            limit = int(limit)
+        if offset:
+            offset = int(offset)
+        if not limit or limit > 300:
+            limit = 300
+        if not offset:
+            offset = 0
+        if politic:
+            politic = politic.strip()
+            politic = politic.replace('"', '').replace("'", '')
+            politic_name, politic_surname = politic.split('_')
+            politic_name = politic_name.capitalize()
+            politic_surname = politic_surname.capitalize()
+            if '-' in politic_surname:
+                index = politic_surname.index('-')
+                politic_surname = politic_surname[:index] + '-' + politic_surname[index + 1:].capitalize()
+            if not politic_name or not politic_surname:
+                raise
+    except:
+        response = make_response({'error': 'Bad parameter'}, 400, HEADERS)
+        return response
+    connection = get_connection_database()
+    if connection.get('error'):
+        response = make_response({'error': 'Error during connection'}, 500, HEADERS)
+        return response
+    connection = connection['connection']
+    cursor = connection.cursor()
+    if politic:
+        cursor.execute(f"SELECT id "
+                       f"FROM politicians "
+                       f"WHERE name ilike '{politic_name}' AND surname ilike '{politic_surname}';")
+        result = cursor.fetchone()
+        if not result:
+            response = make_response({'error': 'No politic found'}, 200, HEADERS)
+            return response
+
+    query = f"""
+    select p.name, p.surname, speeches.speech, points.name, date
+    from parliament_speeches as speeches
+    LEFT JOIN speech_points as points on points.id = speeches.points
+    LEFT JOIN politicians p on speeches.politician = p.id
+    WHERE finder @@ to_tsquery('{text}')
+    """
+
+    if politic:
+        query += f' AND politician = {int(result[0])}'
+    query += f' ORDER BY date DESC OFFSET {offset} LIMIT {limit}'
+    cursor.execute(query + ';')
+    result = cursor.fetchall()
+
+    response = []
+    for row in result:
+        response.append({'name': row[0],
+                         'surname': row[1],
+                         'speech': row[2],
+                         'speech_point': row[3],
+                         'date': row[4],
                          })
 
     if len(text.split(' & ')) == 1:
@@ -1174,4 +1370,4 @@ def page_not_found():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)  # na prodzie off
+    app.run(debug=False)

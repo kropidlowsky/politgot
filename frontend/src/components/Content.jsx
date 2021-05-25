@@ -96,7 +96,7 @@ const Content = (props) => {
       >
         <Trends />
         <Copyright />
-      </Box>})}
+      </Box>
     </Flex>
   );
 };

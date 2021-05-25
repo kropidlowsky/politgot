@@ -70,7 +70,12 @@ const SearchBar = () => {
 
   const fetchData = () => {
     axios
-      .get<ResData>("https://politgot-umk.herokuapp.com/polit")
+      .get<ResData>("https://politgot-umk.herokuapp.com/polit", {
+        auth: {
+          username: "admin",
+          password: "secret",
+        },
+      })
       .then(function (response) {
         setNames(response.data.result);
       })
@@ -147,7 +152,6 @@ const SearchBar = () => {
                     fontWeight={"bold"}
                     w="95%"
                     p="2"
-                    borderRadius="3"
                     align="center"
                     _hover={{
                       bg: useColorModeValue("red.500", "red.500"),
@@ -155,6 +159,32 @@ const SearchBar = () => {
                     }}
                   >
                     {"Wyszukaj: '" + link + "'"}
+                  </Text>
+                </Link>
+
+                <Link
+                  bg={useColorModeValue("white", "blackAlpha.200")}
+                  p="1 0 0 0"
+                  align="center"
+                  _hover={{
+                    bg: useColorModeValue("red.500", "red.500"),
+                    color: useColorModeValue("white", "white"),
+                  }}
+                  href={"/politicians/speaches/s=" + link}
+                >
+                  <Text
+                    bg={useColorModeValue("blackAlpha.300", "blackAlpha.700")}
+                    color={useColorModeValue("blackAlpha.800", "white")}
+                    fontWeight={"bold"}
+                    w="95%"
+                    p="2"
+                    align="center"
+                    _hover={{
+                      bg: useColorModeValue("blackAlpha.700", "red.500"),
+                      color: useColorModeValue("white", "white"),
+                    }}
+                  >
+                    {"Wyszukaj w wypowiedziach: '" + link + "'"}
                   </Text>
                 </Link>
 

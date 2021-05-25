@@ -34,7 +34,12 @@ const Trends = () => {
 
   useEffect(() => {
     axios
-      .get<IResult>("https://politgot-umk.herokuapp.com/trends")
+      .get<IResult>("https://politgot-umk.herokuapp.com/trends", {
+        auth: {
+          username: "admin",
+          password: "secret",
+        },
+      })
       .then(function (response) {
         setData(response.data.result);
       })

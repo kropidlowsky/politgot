@@ -49,7 +49,15 @@ const PartiesList = () => {
 
   const fetchData = () => {
     axios
-      .get<ResData>("https://politgot-umk.herokuapp.com/parties_twitter_acc")
+      .get<ResData>(
+        "https://politgot-umk.herokuapp.com/polit_party_twitter_acc",
+        {
+          auth: {
+            username: "admin",
+            password: "secret",
+          },
+        }
+      )
       .then(function (response) {
         setData(response.data.result);
       })

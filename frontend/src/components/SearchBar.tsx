@@ -118,7 +118,9 @@ const SearchBar = () => {
         <Popover
           initialFocusRef={initialFocusRef}
           placement="bottom"
-          closeOnBlur={false}
+          closeOnBlur={true}
+          autoFocus={true}
+          trigger="hover"
         >
           <PopoverTrigger>
             <Input

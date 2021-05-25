@@ -27,7 +27,7 @@ const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
   return (
     <Link
       bg={useColorModeValue("white", "blackAlpha.200")}
-      p="1 0 0 0"
+      pt="1"
       align="center"
       _hover={{
         bg: useColorModeValue("red.500", "red.500"),
@@ -39,13 +39,14 @@ const PoliticianItem = ({ name, surname }: PoliticiansConfig) => {
         bg={useColorModeValue("white", "blackAlpha.200")}
         w="95%"
         p="2"
-        borderRadius="10"
-        boxShadow="md"
+        borderRadius="3"
         align="center"
         _hover={{
           bg: useColorModeValue("red.500", "red.500"),
           color: useColorModeValue("white", "white"),
         }}
+        borderBottom="1px solid"
+        color={useColorModeValue("blackAlpha.800", "white")}
       >
         {name} {surname}
       </Text>
@@ -85,23 +86,23 @@ const SearchBar = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  const filter = () => {
-    setFiltered(
-      names.filter((name) => {
-        let query = link;
-        query = query.toLowerCase();
 
-        return (
-          name.name.toLowerCase().indexOf(query) >= 0 ||
-          name.surname.toLowerCase().indexOf(query) >= 0
-        );
-      })
-    );
-  };
   useEffect(() => {
+    const filter = () => {
+      setFiltered(
+        names.filter((name) => {
+          let query = link;
+          query = query.toLowerCase();
+
+          return (
+            name.name.toLowerCase().indexOf(query) >= 0 ||
+            name.surname.toLowerCase().indexOf(query) >= 0
+          );
+        })
+      );
+    };
     filter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [link]);
+  }, [link, names]);
 
   const history = useHistory();
 
@@ -137,8 +138,7 @@ const SearchBar = () => {
             <PopoverBody>
               <div>
                 <Link
-                  bg={useColorModeValue("white", "blackAlpha.200")}
-                  p="1 0 0 0"
+                  pt="1"
                   align="center"
                   _hover={{
                     bg: useColorModeValue("red.500", "red.500"),
@@ -147,18 +147,19 @@ const SearchBar = () => {
                   href={"/politicians/tweety/s=" + link}
                 >
                   <Text
-                    bg={useColorModeValue("white", "blackAlpha.200")}
+                    bg={useColorModeValue("red.400", "red.400")}
+                    color={useColorModeValue("white", "white")}
+                    fontWeight={"bold"}
                     w="95%"
                     p="2"
-                    borderRadius="10"
-                    boxShadow="md"
+                    borderRadius="3"
                     align="center"
                     _hover={{
                       bg: useColorModeValue("red.500", "red.500"),
                       color: useColorModeValue("white", "white"),
                     }}
                   >
-                    {"Wyszukaj frazę: '" + link + "'"}
+                    {"Wyszukaj: '" + link + "'"}
                   </Text>
                 </Link>
 

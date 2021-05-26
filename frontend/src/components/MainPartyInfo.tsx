@@ -177,9 +177,19 @@ export default function MainPartyInfo() {
             {"Ostatnie Tweety:"}
           </chakra.p>
         </Center>{" "}
-        {data?.tweets.slice(0, 5).map((tweetData, index) => (
-          <PartyTweets key={index} {...tweetData} index={index} />
-        ))}
+        {data?.tweets.length ? (
+          data?.tweets
+            .slice(0, 5)
+            .map((tweetData, index) => (
+              <PartyTweets key={index} {...tweetData} index={index} />
+            ))
+        ) : (
+          <Center>
+            <chakra.p fontWeight={"bold"} fontSize={"20px"}>
+              {"Brak danych"}
+            </chakra.p>
+          </Center>
+        )}
       </Box>
     </Skeleton>
   );

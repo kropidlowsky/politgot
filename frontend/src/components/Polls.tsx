@@ -15,10 +15,10 @@ interface PollsData {
   abstained_vote: number;
   against_vote: number;
   all_votes: number;
-  date: Date;
   for_vote: number;
   politic_vote: string;
   title: string;
+  date: string;
   index: number;
 }
 
@@ -57,12 +57,10 @@ function PollsDraw({
         <SimpleGrid columns={1} spacing={4}>
           <Box>
             <chakra.p fontWeight={"medium"} fontSize={"20px"} pb={4}>
-              {title}
-            </chakra.p>
-          </Box>
-          <Box>
-            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
-              {"Głos: " + politic_vote}
+              {title}{" "}
+              <chakra.span fontWeight={"semibold"} fontSize={"15px"}>
+                {" - " + date.replace("00:00:00 GMT", "")}
+              </chakra.span>
             </chakra.p>
           </Box>
           <Box>
@@ -104,7 +102,7 @@ export default function Polls() {
 
   useEffect(() => {
     axios
-      .get<ResData>("http://politgot-umk.herokuapp.com/latest_pools", {
+      .get<ResData>("https://politgot-umk.herokuapp.com/latest_pools", {
         auth: {
           username: "admin",
           password: "secret",

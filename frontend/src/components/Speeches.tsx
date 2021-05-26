@@ -85,7 +85,7 @@ export default function Speeches() {
 
   useEffect(() => {
     axios
-      .get<ResData>("http://politgot-umk.herokuapp.com/latest_speeches", {
+      .get<ResData>("https://politgot-umk.herokuapp.com/latest_speeches", {
         auth: {
           username: "admin",
           password: "secret",

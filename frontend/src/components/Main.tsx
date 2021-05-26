@@ -138,7 +138,7 @@ interface Polls {
   abstained_vote: number;
   against_vote: number;
   all_votes: number;
-  date: Date;
+  date: string;
   for_vote: number;
   politic_vote: string;
   title: string;
@@ -180,7 +180,10 @@ function PollsDraw({
         <SimpleGrid columns={1} spacing={4}>
           <Box>
             <chakra.p fontWeight={"medium"} fontSize={"20px"} pb={4}>
-              {title}
+              {title}{" "}
+              <chakra.span fontWeight={"semibold"} fontSize={"15px"}>
+                {" - " + date.replace("00:00:00 GMT", "")}
+              </chakra.span>
             </chakra.p>
           </Box>
           <Box>
@@ -242,7 +245,7 @@ const Main = (props: Props) => {
       link = "https://politgot-umk.herokuapp.com/latest";
     }
     if (props.source === "parties") {
-      link = "http://politgot-umk.herokuapp.com/latest?specify=politic_party";
+      link = "https://politgot-umk.herokuapp.com/latest?specify=politic_party";
     }
     if (props.source === "search")
       link = "https://politgot-umk.herokuapp.com/find_tweet?text=" + search;
@@ -252,19 +255,19 @@ const Main = (props: Props) => {
       link = "https://politgot-umk.herokuapp.com/tweets?politic=" + tweeters;
     if (props.source === "speach") {
       link =
-        "http://politgot-umk.herokuapp.com/main_politic_info?politic=" +
+        "https://politgot-umk.herokuapp.com/main_politic_info?politic=" +
         tweeters;
       setSpeeches(true);
     }
     if (props.source === "poll") {
       link =
-        "http://politgot-umk.herokuapp.com/main_politic_info?politic=" +
+        "https://politgot-umk.herokuapp.com/main_politic_info?politic=" +
         tweeters;
       setPolls(true);
     }
     if (props.source === "party") {
       link =
-        "http://politgot-umk.herokuapp.com/parties_tweets?politic_party=" +
+        "https://politgot-umk.herokuapp.com/parties_tweets?politic_party=" +
         tweeters;
       link = link.replace(/\s+/g, "_");
     }
@@ -313,7 +316,11 @@ const Main = (props: Props) => {
             ? "Szukaj: " + search
             : props.source === "politic"
             ? "Wpisy " + tweeters.replace("_", " ")
-            : "Najnowsze wpisy"}
+            : props.source === "latest"
+            ? "Najnowsze wpisy"
+            : props.source === "party"
+            ? "Najnowsze wpisy"
+            : ""}
         </Text>
         <Text fontSize={"30px"} fontWeight={"bold"}>
           {polls
@@ -332,7 +339,7 @@ const Main = (props: Props) => {
             ))
           : data?.map((cardInfo, index) => (
               <TestmonialCard key={index} {...cardInfo} index={index} />
-            ))}
+            )) || "Brak danych"}
       </SimpleGrid>
       <Box></Box>
     </Flex>

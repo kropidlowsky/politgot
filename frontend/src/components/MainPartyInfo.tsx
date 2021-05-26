@@ -87,7 +87,7 @@ export default function MainPartyInfo() {
   useEffect(() => {
     axios
       .get<PartyData>(
-        "http://politgot-umk.herokuapp.com/party_main_info?politic_party=" +
+        "https://politgot-umk.herokuapp.com/party_main_info?politic_party=" +
           tweeters,
         {
           auth: {

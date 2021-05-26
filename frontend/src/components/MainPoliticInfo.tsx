@@ -15,6 +15,7 @@ import {
   Skeleton,
   Center,
   Box,
+  Wrap,
   // useBreakpointValue,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
@@ -255,37 +256,48 @@ export default function MainPoliticInfo() {
           <br></br>
           <br></br>
           <Center>
-            <Stack direction="row" spacing={4} align="center">
+            <Wrap align="center" maxW="50%" pb="5">
               <Link
                 href={
                   "/politicians/politic/" + data?.name + "_" + data?.surname
                 }
               >
-                <Button colorScheme="teal" variant="outline">
+                <Button
+                  bg={useColorModeValue("white", "blackAlpha.200")}
+                  _hover={{ bg: "red.500", textDecoration: "white" }}
+                  boxShadow="md"
+                >
                   Tweety
                 </Button>
               </Link>
               <Link
                 href={"/politicians/speach/" + data?.name + "_" + data?.surname}
               >
-                <Button colorScheme="teal" variant="outline">
+                <Button
+                  bg={useColorModeValue("white", "blackAlpha.200")}
+                  _hover={{ bg: "red.500" }}
+                  boxShadow="md"
+                >
                   Wypowiedzi sejmowe
                 </Button>
               </Link>
               <Link
                 href={"/politicians/poll/" + data?.name + "_" + data?.surname}
               >
-                <Button colorScheme="teal" variant="outline">
+                <Button
+                  bg={useColorModeValue("white", "blackAlpha.200")}
+                  _hover={{ bg: "red.500" }}
+                >
                   Głosowania
                 </Button>
               </Link>
-            </Stack>
+            </Wrap>
           </Center>
         </Box>
 
         <Box>
           <Box>
-            <chakra.p fontSize="2xl" fontWeight="500">
+            <chakra.p fontSize="4xl" fontWeight="800" pt="5">
               <Center>Wikipedia</Center>
             </chakra.p>
           </Box>

@@ -1,4 +1,4 @@
-import { Link } from "@chakra-ui/react";
+import { Link, useColorModeValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Center, Wrap } from "@chakra-ui/layout";
@@ -50,7 +50,12 @@ const Trends = () => {
   }, []);
   return (
     <Wrap overflow="none">
-      <Center fontSize={"36px"} color={"teal.200"}>
+      <Center
+        fontSize={"3xl"}
+        color={useColorModeValue("red.300", "red.500")}
+        textShadow={useColorModeValue("1px 1px black", "1px 1px white")}
+        fontWeight="700"
+      >
         {"Najpopularniejsze"}
       </Center>
       {data.map((trends, index) => {

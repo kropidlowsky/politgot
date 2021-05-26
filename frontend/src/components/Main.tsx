@@ -242,7 +242,7 @@ const Main = (props: Props) => {
       link = "https://politgot-umk.herokuapp.com/latest";
     }
     if (props.source === "parties") {
-      link = "http://politgot-umk.herokuapp.com/latest?specify=politic_party";
+      link = "https://politgot-umk.herokuapp.com/latest?specify=politic_party";
     }
     if (props.source === "search")
       link = "https://politgot-umk.herokuapp.com/find_tweet?text=" + search;
@@ -336,7 +336,7 @@ const Main = (props: Props) => {
             ))
           : data?.map((cardInfo, index) => (
               <TestmonialCard key={index} {...cardInfo} index={index} />
-            ))}
+            )) || "Brak danych"}
       </SimpleGrid>
       <Box></Box>
     </Flex>

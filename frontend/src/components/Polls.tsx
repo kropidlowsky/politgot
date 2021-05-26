@@ -15,10 +15,10 @@ interface PollsData {
   abstained_vote: number;
   against_vote: number;
   all_votes: number;
-  date: Date;
   for_vote: number;
   politic_vote: string;
   title: string;
+  date: string;
   index: number;
 }
 
@@ -57,7 +57,10 @@ function PollsDraw({
         <SimpleGrid columns={1} spacing={4}>
           <Box>
             <chakra.p fontWeight={"medium"} fontSize={"20px"} pb={4}>
-              {title}
+              {title}{" "}
+              <chakra.span fontWeight={"semibold"} fontSize={"15px"}>
+                {" - " + date.replace("00:00:00 GMT", "")}
+              </chakra.span>
             </chakra.p>
           </Box>
           <Box>

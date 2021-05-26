@@ -12,6 +12,10 @@ import PoliticianListDrawer from "./PoliticianListDrawer";
 import Trends from "./Trends";
 import Copyright from "./Copyright";
 import MainPoliticInfo from "./MainPoliticInfo";
+import MainPartyInfo from "./MainPartyInfo";
+import Polls from "./Polls";
+import Speeches from "./Speeches";
+
 const routes = [
   { path: "/", exact: true, pageContent: () => <Main source="latest" /> },
   {
@@ -22,7 +26,22 @@ const routes = [
   {
     path: "/politicians/speaches/s=:search",
     exact: true,
+    pageContent: () => <Main source="speaches" />,
+  },
+  {
+    path: "/politicians/politic/:tweeters",
+    exact: true,
+    pageContent: () => <Main source="politic" />,
+  },
+  {
+    path: "/politicians/speach/:tweeters",
+    exact: true,
     pageContent: () => <Main source="speach" />,
+  },
+  {
+    path: "/politicians/poll/:tweeters",
+    exact: true,
+    pageContent: () => <Main source="poll" />,
   },
   {
     path: "/politicians",
@@ -37,12 +56,27 @@ const routes = [
   {
     path: "/parties",
     exact: true,
-    pageContent: () => <Main source="latest" />,
+    pageContent: () => <Main source="parties" />,
+  },
+  {
+    path: "/parties/tweets/:tweeters",
+    exact: true,
+    pageContent: () => <Main source="party" />,
   },
   {
     path: "/parties/:tweeters",
     exact: true,
-    pageContent: () => <Main source="party" />,
+    pageContent: () => <MainPartyInfo />,
+  },
+  {
+    path: "/polls",
+    exact: true,
+    pageContent: () => <Polls></Polls>,
+  },
+  {
+    path: "/speeches",
+    exact: true,
+    pageContent: () => <Speeches />,
   },
 ];
 
@@ -83,14 +117,13 @@ const Content = (props) => {
       </Box>
       {useBreakpointValue({ xl: <Spacer /> })}
       <Box
-
         maxH="90vh"
         mt="100"
-        w="20vw"
-        ml="10"
+        w="17vw"
+        ml="5"
         borderRadius="15"
-        p="8"
-        right="20"
+        p="5"
+        right="10"
         bg={useColorModeValue("blackAlpha.50", "#2D3748")}
         position="fixed"
       >

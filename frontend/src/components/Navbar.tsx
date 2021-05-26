@@ -253,6 +253,14 @@ const NAV_ITEMS: Array<NavItem> = [
     href: "/parties",
   },
   {
+    label: "Głosowania",
+    href: "/polls",
+  },
+  {
+    label: "Przemowy",
+    href: "/speeches",
+  },
+  {
     label: "O nas",
     href: "#",
   },

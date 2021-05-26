@@ -74,7 +74,7 @@ const PartiesList = () => {
       bg={useColorModeValue("blackAlpha.50", "#2D3748")}
       borderRadius="15"
       maxH="90vh"
-      maxW="md"
+      maxW="sm"
       overflowY="auto"
       overflowX="hidden"
       p="3"

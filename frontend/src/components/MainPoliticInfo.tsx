@@ -2,7 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 import {
-  Avatar,
+  Link,
+  Stack,
+  Button,
+  SimpleGrid,
+  // Avatar,
   // Box,
   chakra,
   Flex,
@@ -32,7 +36,7 @@ function Tweets({ name, surname, message, date, index }: PoliticTweet) {
     <Skeleton isLoaded>
       <Flex
         boxShadow={"md"}
-        maxW={"30vw"}
+        maxW={"23vw"}
         direction={{ base: "column-reverse", md: "row" }}
         width={"full"}
         rounded={"3xl"}
@@ -55,7 +59,7 @@ function Tweets({ name, surname, message, date, index }: PoliticTweet) {
           textAlign={"left"}
           justifyContent={"space-between"}
         >
-          <chakra.p fontWeight={"medium"} fontSize={"15px"} pb={4}>
+          <chakra.p fontWeight={"medium"} fontSize={"20px"} pb={4}>
             {message}
           </chakra.p>
           <chakra.p fontWeight={"bold"} fontSize={14}>
@@ -87,6 +91,7 @@ function PollsDraw({
   title,
   date,
   politic_vote,
+  for_vote,
   abstained_vote,
   against_vote,
   all_votes,
@@ -94,21 +99,69 @@ function PollsDraw({
 }: Polls) {
   return (
     <Skeleton isLoaded>
-      <Flex>
-        <chakra.p>{title}</chakra.p>
-        <chakra.span>{date}</chakra.span>
-        <chakra.p>{"Głos: " + politic_vote}</chakra.p>
-        <chakra.p>
-          {"Wszystkich głosów: " +
-            all_votes +
-            " Głosów za: " +
-            against_vote +
-            " Wstrzymało się od głosu: " +
-            abstained_vote}
-        </chakra.p>
+      <Flex
+        boxShadow={"md"}
+        maxW={"23vw"}
+        direction={{ base: "column-reverse", md: "row" }}
+        width={"full"}
+        rounded={"3xl"}
+        p={10}
+        m="5"
+        justifyContent={"space-between"}
+        position={"relative"}
+        bg={useColorModeValue("white", "blackAlpha.200")}
+        _after={{
+          message: '""',
+          position: "absolute",
+          height: "21px",
+          width: "29px",
+          left: "35px",
+          top: "-10px",
+        }}
+      >
+        <SimpleGrid columns={1} spacing={4}>
+          <Box>
+            <chakra.p fontWeight={"medium"} fontSize={"20px"} pb={4}>
+              {title}
+            </chakra.p>
+          </Box>
+          <Box>
+            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+              {"Głos: " + politic_vote}
+            </chakra.p>
+          </Box>
+          <Box>
+            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+              {"Wszystkich głosów: " + all_votes}
+            </chakra.p>
+          </Box>
+          <Box>
+            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+              {" Głosów za: " + for_vote}
+            </chakra.p>
+          </Box>
+          <Box>
+            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+              {" Głosów przeciw: " + against_vote}
+            </chakra.p>
+          </Box>
+          <Box>
+            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+              {" Głosów wstrzymanych: " + abstained_vote}
+            </chakra.p>
+          </Box>
+        </SimpleGrid>
+
+        {/* <chakra.span>{date}</chakra.span> */}
       </Flex>
     </Skeleton>
   );
+}
+
+interface Speeches {
+  date: Date;
+  speech: string;
+  speech_point: string;
 }
 
 interface PoliticInfo {
@@ -122,6 +175,12 @@ interface PoliticInfo {
   profile_image: string;
   tweets: PoliticTweet[];
   error: string;
+
+  profession: string;
+  speeches: Speeches[];
+  votes: number;
+  wiki_summary: string;
+
   index: number;
 }
 
@@ -152,19 +211,25 @@ export default function MainPoliticInfo() {
   }, []);
 
   return (
-    <div>
-      <Skeleton isLoaded>
-        <Box bg={"blackAlpha.50"} p="10" borderRadius="15">
-          <Center>
-            <Avatar
-              size="2xl"
-              src={"data:image/png;base64, " + data?.profile_image}
-            />
-          </Center>
+    <Skeleton isLoaded>
+      <SimpleGrid
+        // maxW={""}
+        columns={2}
+        spacing={5}
+        bg={"blackAlpha.50"}
+        p="1"
+        borderRadius="15"
+      >
+        <Box>
           <Center>
             <chakra.p fontWeight={"bold"} fontSize={"4xl"} my="5">
               {data?.name + "  "}
               {data?.surname || " "}
+            </chakra.p>
+          </Center>
+          <Center>
+            <chakra.p fontWeight={"bold"} fontSize={"lg"}>
+              {"Pozycja: " + data?.profession || " "}
             </chakra.p>
           </Center>
           <Center>
@@ -180,32 +245,96 @@ export default function MainPoliticInfo() {
           </Center>
           <Center>
             <chakra.p fontSize="lg" fontWeight="500">
-              {" "}
               {"Wykształcenie: " + (data?.education || " ")}
             </chakra.p>
           </Center>
+          <br></br>
+          <br></br>
+          <br></br>
+          <Center>
+            <Stack direction="row" spacing={4} align="center">
+              <Link
+                href={
+                  "/politicians/politic/" + data?.name + "_" + data?.surname
+                }
+              >
+                <Button colorScheme="teal" variant="outline">
+                  Tweety
+                </Button>
+              </Link>
+              <Link
+                href={"/politicians/speach/" + data?.name + "_" + data?.surname}
+              >
+                <Button colorScheme="teal" variant="outline">
+                  Wypowiedzi sejmowe
+                </Button>
+              </Link>
+              <Link
+                href={"/politicians/poll/" + data?.name + "_" + data?.surname}
+              >
+                <Button colorScheme="teal" variant="outline">
+                  Głosowania
+                </Button>
+              </Link>
+            </Stack>
+          </Center>
         </Box>
-        <table>
-          <tr>
-            <td>
-              <Center>
-                <chakra.p fontSize="3xl" fontWeight="800" pt="10">
-                  {"Tweety:"}
-                </chakra.p>
-              </Center>
-              <br></br>
-              {data?.tweets.slice(0, 5).map((tweetData, index) => (
-                <Tweets key={index} {...tweetData} index={index} />
-              ))}
-            </td>
-            <td>
-              {data?.polls.map((pollsData, index) => (
-                <PollsDraw key={index} {...pollsData} index={index} />
-              ))}
-            </td>
-          </tr>
-        </table>
-      </Skeleton>
-    </div>
+
+        <Box>
+          <Box>
+            <chakra.p fontSize="2xl" fontWeight="500">
+              <Center>Wikipedia</Center>
+            </chakra.p>
+          </Box>
+          <Flex
+            boxShadow={"md"}
+            maxW={"24vw"}
+            direction={{ base: "column-reverse", md: "row" }}
+            width={"full"}
+            rounded={"3xl"}
+            p={10}
+            m="5"
+            justifyContent={"space-between"}
+            position={"relative"}
+            bg={useColorModeValue("white", "blackAlpha.200")}
+            _after={{
+              message: '""',
+              position: "absolute",
+              height: "21px",
+              width: "29px",
+              left: "35px",
+              top: "-10px",
+            }}
+          >
+            <chakra.p fontSize="lg" fontWeight="500">
+              {data?.wiki_summary}
+            </chakra.p>
+          </Flex>
+        </Box>
+      </SimpleGrid>
+
+      <SimpleGrid columns={2} spacing={10}>
+        <Box>
+          <Center>
+            <chakra.p fontSize="3xl" fontWeight="800" pt="10">
+              {"Ostatnie Tweety:"}
+            </chakra.p>
+          </Center>{" "}
+          {data?.tweets.slice(0, 5).map((tweetData, index) => (
+            <Tweets key={index} {...tweetData} index={index} />
+          ))}
+        </Box>
+        <Box>
+          <Center>
+            <chakra.p fontSize="3xl" fontWeight="800" pt="10">
+              {"Ostatnie głosowania:"}
+            </chakra.p>
+          </Center>{" "}
+          {data?.polls.slice(0, 5).map((pollsData, index) => (
+            <PollsDraw key={index} {...pollsData} index={index} />
+          ))}
+        </Box>
+      </SimpleGrid>
+    </Skeleton>
   );
 }

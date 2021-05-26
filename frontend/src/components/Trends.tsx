@@ -1,7 +1,7 @@
 import { Link } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Wrap } from "@chakra-ui/layout";
+import { Center, Wrap } from "@chakra-ui/layout";
 import {} from "react-router-dom";
 
 interface ITrends {
@@ -18,8 +18,9 @@ const Trend = ({ is_politic_search, phrase, index }: ITrends) => {
   return (
     <>
       <Link
-        fontSize={30 - (index % 10)}
-        fontWeight={index % 3 ? "400" : "200"}
+        p={"0px"}
+        fontSize={index < 12 ? 35 - index * 2 : 12}
+        fontWeight={index % 2 ? "400" : "200"}
         href={"/politicians/tweety/s=" + phrase}
         _hover={{ color: "red.500" }}
       >
@@ -49,6 +50,9 @@ const Trends = () => {
   }, []);
   return (
     <Wrap overflow="none">
+      <Center fontSize={"36px"} color={"teal.200"}>
+        {"Najpopularniejsze"}
+      </Center>
       {data.map((trends, index) => {
         return <Trend key={index} {...trends} index={index} />;
       })}

@@ -11,6 +11,8 @@ const routes = [
     sidebar: () => <Politicians />,
   },
   { path: "/politicians", sidebar: () => <Politicians /> },
+  { path: "/polls", sidebar: () => <Politicians /> },
+  { path: "/speeches", sidebar: () => <Politicians /> },
   {
     path: "/parties",
     sidebar: () => <PartiesList />,

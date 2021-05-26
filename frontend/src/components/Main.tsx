@@ -313,7 +313,11 @@ const Main = (props: Props) => {
             ? "Szukaj: " + search
             : props.source === "politic"
             ? "Wpisy " + tweeters.replace("_", " ")
-            : "Najnowsze wpisy"}
+            : props.source === "latest"
+            ? "Najnowsze wpisy"
+            : props.source === "party"
+            ? "Najnowsze wpisy"
+            : ""}
         </Text>
         <Text fontSize={"30px"} fontWeight={"bold"}>
           {polls

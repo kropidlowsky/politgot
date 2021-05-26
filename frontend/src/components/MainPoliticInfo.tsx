@@ -232,7 +232,7 @@ export default function MainPoliticInfo() {
           </Center>
           <Center>
             <chakra.p fontWeight={"bold"} fontSize={"lg"}>
-              {"Pozycja: " + data?.profession || " "}
+              {"Zawód: " + data?.profession || " "}
             </chakra.p>
           </Center>
           <Center>

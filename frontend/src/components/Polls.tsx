@@ -62,11 +62,6 @@ function PollsDraw({
           </Box>
           <Box>
             <chakra.p fontWeight={"bold"} fontSize={"16px"}>
-              {"Głos: " + politic_vote}
-            </chakra.p>
-          </Box>
-          <Box>
-            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
               {"Wszystkich głosów: " + all_votes}
             </chakra.p>
           </Box>

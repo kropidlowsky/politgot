@@ -1,5 +1,6 @@
 import {
   // Avatar,
+  Center,
   Box,
   chakra,
   Flex,
@@ -329,17 +330,41 @@ const Main = (props: Props) => {
             ? "Wypowiedzi w sejmie " + tweeters.replace("_", " ")
             : " "}
         </Text>
-        {polls
-          ? pollsData?.map((pollsData, index) => (
+        {polls ? (
+          pollsData?.length ? (
+            pollsData?.map((pollsData, index) => (
               <PollsDraw key={index} {...pollsData} index={index} />
             ))
-          : speeches
-          ? speechData?.map((speechData, index) => (
+          ) : (
+            <Center>
+              <chakra.p fontWeight={"bold"} fontSize={"20px"}>
+                {"Brak danych"}
+              </chakra.p>
+            </Center>
+          )
+        ) : speeches ? (
+          speechData?.length ? (
+            speechData?.map((speechData, index) => (
               <SpeechesDraw key={index} {...speechData} index={index} />
             ))
-          : data?.map((cardInfo, index) => (
-              <TestmonialCard key={index} {...cardInfo} index={index} />
-            )) || "Brak danych"}
+          ) : (
+            <Center>
+              <chakra.p fontWeight={"bold"} fontSize={"20px"}>
+                {"Brak danych"}
+              </chakra.p>
+            </Center>
+          )
+        ) : data?.length ? (
+          data?.map((cardInfo, index) => (
+            <TestmonialCard key={index} {...cardInfo} index={index} />
+          ))
+        ) : (
+          <Center>
+            <chakra.p fontWeight={"bold"} fontSize={"20px"}>
+              {"Brak danych"}
+            </chakra.p>
+          </Center>
+        )}
       </SimpleGrid>
       <Box></Box>
     </Flex>

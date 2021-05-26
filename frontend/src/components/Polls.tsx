@@ -99,7 +99,7 @@ export default function Polls() {
 
   useEffect(() => {
     axios
-      .get<ResData>("http://politgot-umk.herokuapp.com/latest_pools", {
+      .get<ResData>("https://politgot-umk.herokuapp.com/latest_pools", {
         auth: {
           username: "admin",
           password: "secret",

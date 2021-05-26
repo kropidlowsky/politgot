@@ -323,9 +323,19 @@ export default function MainPoliticInfo() {
               {"Ostatnie Tweety:"}
             </chakra.p>
           </Center>{" "}
-          {data?.tweets.slice(0, 5).map((tweetData, index) => (
-            <Tweets key={index} {...tweetData} index={index} />
-          ))}
+          {data?.tweets.length ? (
+            data?.tweets
+              .slice(0, 5)
+              .map((tweetData, index) => (
+                <Tweets key={index} {...tweetData} index={index} />
+              ))
+          ) : (
+            <Center>
+              <chakra.p fontWeight={"bold"} fontSize={"20px"}>
+                {"Brak danych"}
+              </chakra.p>
+            </Center>
+          )}
         </Box>
         <Box>
           <Center>
@@ -333,9 +343,19 @@ export default function MainPoliticInfo() {
               {"Ostatnie głosowania:"}
             </chakra.p>
           </Center>{" "}
-          {data?.polls.slice(0, 5).map((pollsData, index) => (
-            <PollsDraw key={index} {...pollsData} index={index} />
-          ))}
+          {data?.polls.length ? (
+            data?.polls
+              .slice(0, 5)
+              .map((pollsData, index) => (
+                <PollsDraw key={index} {...pollsData} index={index} />
+              ))
+          ) : (
+            <Center>
+              <chakra.p fontWeight={"bold"} fontSize={"20px"}>
+                {"Brak danych"}
+              </chakra.p>
+            </Center>
+          )}
         </Box>
       </SimpleGrid>
     </Skeleton>

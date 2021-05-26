@@ -252,19 +252,19 @@ const Main = (props: Props) => {
       link = "https://politgot-umk.herokuapp.com/tweets?politic=" + tweeters;
     if (props.source === "speach") {
       link =
-        "http://politgot-umk.herokuapp.com/main_politic_info?politic=" +
+        "https://politgot-umk.herokuapp.com/main_politic_info?politic=" +
         tweeters;
       setSpeeches(true);
     }
     if (props.source === "poll") {
       link =
-        "http://politgot-umk.herokuapp.com/main_politic_info?politic=" +
+        "https://politgot-umk.herokuapp.com/main_politic_info?politic=" +
         tweeters;
       setPolls(true);
     }
     if (props.source === "party") {
       link =
-        "http://politgot-umk.herokuapp.com/parties_tweets?politic_party=" +
+        "https://politgot-umk.herokuapp.com/parties_tweets?politic_party=" +
         tweeters;
       link = link.replace(/\s+/g, "_");
     }

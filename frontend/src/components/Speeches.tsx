@@ -92,7 +92,7 @@ export default function Speeches() {
         },
       })
       .then(function (response) {
-        //temporary fix for errors
+        //temporary fix for errors 1
         console.log(response.data.error);
         setData(response.data.result);
       })

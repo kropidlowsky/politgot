@@ -225,7 +225,15 @@ export default function MainPoliticInfo() {
       >
         <Box>
           <Center>
-            <chakra.p fontWeight={"bold"} fontSize={"4xl"} my="5">
+            <chakra.p
+              fontWeight={"bold"}
+              fontSize={"4xl"}
+              my="5"
+              textShadow={useColorModeValue(
+                "1px 1px #fcaaaa",
+                "1px 1px #fc1111"
+              )}
+            >
               {data?.name + "  "}
               {data?.surname || " "}
             </chakra.p>
@@ -294,7 +302,7 @@ export default function MainPoliticInfo() {
           </Center>
         </Box>
 
-        <Box>
+        <Box m="10">
           <Box>
             <chakra.p fontSize="4xl" fontWeight="800" pt="5">
               <Center>Wikipedia</Center>
@@ -362,7 +370,7 @@ export default function MainPoliticInfo() {
               ))
           ) : (
             <Center>
-              <chakra.p fontWeight={"bold"} fontSize={"20px"}>
+              <chakra.p fontWeight={"bold"} fontSize={"lg"}>
                 {"Brak danych"}
               </chakra.p>
             </Center>

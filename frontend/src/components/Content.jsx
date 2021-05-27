@@ -97,7 +97,8 @@ const Content = (props) => {
 
       {sidebar}
       <Box
-        wminW={useBreakpointValue({ xl: "43vw", xs: "80vw" })}
+        w={useBreakpointValue({ xl: "48vw", xs: "80vw" })}
+        
         p="8"
         my="100"
         pb="10"
@@ -116,10 +117,10 @@ const Content = (props) => {
         </Router>
       </Box>
       {useBreakpointValue({ xl: <Spacer /> })}
-      <Box
+      {useBreakpointValue({ xl: <Box
         maxH="90vh"
         mt="100"
-        w="17vw"
+        w="20vw"
         ml="5"
         borderRadius="15"
         p="5"
@@ -129,7 +130,7 @@ const Content = (props) => {
       >
         <Trends />
         <Copyright />
-      </Box>
+      </Box> })}
     </Flex>
   );
 };

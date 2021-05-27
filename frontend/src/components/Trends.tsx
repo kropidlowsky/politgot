@@ -19,7 +19,7 @@ const Trend = ({ is_politic_search, phrase, index }: ITrends) => {
     <>
       <Link
         p={"0px"}
-        fontSize={index < 12 ? 35 - index * 2 : 12}
+        fontSize={index < 12 ? 32 - index * 2 : 12}
         fontWeight={index % 2 ? "400" : "200"}
         href={"/politicians/tweety/s=" + phrase}
         _hover={{ color: "red.500" }}
@@ -49,7 +49,7 @@ const Trends = () => {
       });
   }, []);
   return (
-    <Wrap overflow="none">
+    <Wrap overflow="none" minW="90%">
       <Center
         fontSize={"3xl"}
         color={useColorModeValue("red.300", "red.500")}

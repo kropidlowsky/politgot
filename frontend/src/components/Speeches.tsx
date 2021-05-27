@@ -34,12 +34,12 @@ function SpeechesDraw({
     <Skeleton isLoaded>
       <Flex
         boxShadow={"md"}
-        maxW={"50vw"}
+        maxW={"80%"}
         direction={{ base: "column-reverse", md: "row" }}
         width={"full"}
         rounded={"3xl"}
         p={10}
-        m="5"
+        m="0 auto"
         justifyContent={"space-between"}
         position={"relative"}
         bg={useColorModeValue("white", "blackAlpha.200")}
@@ -92,7 +92,7 @@ export default function Speeches() {
         },
       })
       .then(function (response) {
-        //temporary fix for errors
+        //temporary fix for errors 1
         console.log(response.data.error);
         setData(response.data.result);
       })

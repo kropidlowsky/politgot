@@ -245,17 +245,20 @@ interface NavItem {
 
 const NAV_ITEMS: Array<NavItem> = [
   {
-    label: "Przeglądaj",
-    children: [
-      {
-        label: "Politycy",
-        href: "/politicians",
-      },
-      {
-        label: "Partie",
-        href: "/parties",
-      },
-    ],
+    label: "Politycy",
+    href: "/politicians",
+  },
+  {
+    label: "Partie",
+    href: "/parties",
+  },
+  {
+    label: "Głosowania",
+    href: "/polls",
+  },
+  {
+    label: "Przemowy",
+    href: "/speeches",
   },
   {
     label: "O nas",

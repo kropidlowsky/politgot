@@ -93,11 +93,9 @@ const SearchBar = () => {
         names.filter((name) => {
           let query = link;
           query = query.toLowerCase();
+          let both = name.name + " " + name.surname;
 
-          return (
-            name.name.toLowerCase().indexOf(query) >= 0 ||
-            name.surname.toLowerCase().indexOf(query) >= 0
-          );
+          return both.toLowerCase().indexOf(query) >= 0;
         })
       );
     };
@@ -112,13 +110,20 @@ const SearchBar = () => {
   };
 
   const initialFocusRef = useRef() as React.MutableRefObject<any>;
+
+  const [isOpen, setIsOpen] = useState(false);
+  const open = () => setIsOpen(!isOpen);
+  const close = () => setIsOpen(false);
+
   return (
     <form onSubmit={redirect}>
       <HStack>
         <Popover
           initialFocusRef={initialFocusRef}
           placement="bottom"
+          returnFocusOnClose={false}
           closeOnBlur={false}
+          isOpen={isOpen}
         >
           <PopoverTrigger>
             <Input
@@ -131,6 +136,8 @@ const SearchBar = () => {
               }}
               ref={initialFocusRef}
               autoComplete="off"
+              onBlur={close}
+              onFocus={open}
             />
           </PopoverTrigger>
           <PopoverContent color="black">
@@ -158,7 +165,7 @@ const SearchBar = () => {
                       color: useColorModeValue("white", "white"),
                     }}
                   >
-                    {"Wyszukaj: '" + link + "'"}
+                    {"Wyszukaj frazy w tweetach: '" + link + "'"}
                   </Text>
                 </Link>
 
@@ -184,7 +191,7 @@ const SearchBar = () => {
                       color: useColorModeValue("white", "white"),
                     }}
                   >
-                    {"Wyszukaj w wypowiedziach: '" + link + "'"}
+                    {"Wyszukaj frazy w wypowiedziach: '" + link + "'"}
                   </Text>
                 </Link>
 

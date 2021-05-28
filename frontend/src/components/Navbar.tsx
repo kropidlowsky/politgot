@@ -268,6 +268,6 @@ const NAV_ITEMS: Array<NavItem> = [
   },
   {
     label: "O nas",
-    href: "#",
+    href: "https://aleks-2.mat.umk.pl/nsi2020/nsi01/",
   },
 ];

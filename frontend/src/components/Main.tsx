@@ -7,14 +7,11 @@ import {
   SimpleGrid,
   useColorModeValue,
   Skeleton,
-  useBreakpointValue,
   Text,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import PoliticianListDrawer from "./PoliticianListDrawer";
-
 interface TestimonialCardProps {
   name: string;
   surname: string;
@@ -307,10 +304,6 @@ const Main = (props: Props) => {
       direction={"column"}
       width={"full"}
     >
-      {useBreakpointValue({
-        xs: <PoliticianListDrawer />,
-        sm: <PoliticianListDrawer />,
-      })}
       <SimpleGrid columns={{ base: 1, xl: 1 }} spacing={"6"} mx={"auto"}>
         <Text fontSize="4xl" fontWeight="bold">
           {props.source === "search"

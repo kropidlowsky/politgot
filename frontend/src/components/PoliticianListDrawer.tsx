@@ -16,15 +16,7 @@ const PoliticianListDrawer = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button
-        leftIcon={<ViewIcon />}
-        onClick={onOpen}
-        position="fixed"
-        top="10"
-        left="0"
-      >
-        Politycy
-      </Button>
+      <Button leftIcon={<ViewIcon />} onClick={onOpen} />
       <Drawer isOpen={isOpen} onClose={onClose} placement="left">
         <DrawerOverlay />
         <DrawerContent>

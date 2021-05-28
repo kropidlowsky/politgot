@@ -91,13 +91,13 @@ const Content = (props) => {
         ml="15"
         position="fixed"
       >
-        {useBreakpointValue({ xl: <LeftBar />, sm: <PoliticianListDrawer /> })}
+        {useBreakpointValue({ xl: <LeftBar />, lg: <LeftBar />, sm: <PoliticianListDrawer /> })}
       </Box>
-      {useBreakpointValue({ xl: <Spacer /> })}
+      {useBreakpointValue({ xl: <Spacer />, lg: <Spacer />})}
 
       {sidebar}
       <Box
-        w={useBreakpointValue({ xl: "48vw", xs: "80vw" })}
+        w={useBreakpointValue({ xl: "48vw", lg: "60vw", xs: "80vw" })}
         
         p="8"
         my="100"

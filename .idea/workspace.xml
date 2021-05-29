@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_data_inserter.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_data_inserter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_normalizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_normalizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/databse/politgot_db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/tools/databse/politgot_db.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -279,7 +280,10 @@
       <workItem from="1621676450547" duration="22550000" />
       <workItem from="1621702784245" duration="14374000" />
       <workItem from="1621758782446" duration="34435000" />
-      <workItem from="1621851270617" duration="12064000" />
+      <workItem from="1621851270617" duration="14770000" />
+      <workItem from="1621925697994" duration="10135000" />
+      <workItem from="1622017952912" duration="8261000" />
+      <workItem from="1622275891480" duration="4027000" />
     </task>
     <servers />
   </component>
@@ -300,7 +304,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/politgot$json_reader.coverage" NAME="json_reader Coverage Results" MODIFIED="1616534965842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
-    <SUITE FILE_PATH="coverage/politgot$representative_data_inserter.coverage" NAME="representative_data_inserter Coverage Results" MODIFIED="1621873931166" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
+    <SUITE FILE_PATH="coverage/politgot$representative_data_inserter.coverage" NAME="representative_data_inserter Coverage Results" MODIFIED="1622289071433" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
     <SUITE FILE_PATH="coverage/politgot$representative_crawler__1_.coverage" NAME="representative_crawler (1) Coverage Results" MODIFIED="1619977782042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
     <SUITE FILE_PATH="coverage/politgot$test__1_.coverage" NAME="test (1) Coverage Results" MODIFIED="1618044353808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles" />
     <SUITE FILE_PATH="coverage/politgot$representative_spider.coverage" NAME="representative_spider Coverage Results" MODIFIED="1618046434661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools/data_collectors/goverment/representative_profiles/representative_profiles/spiders" />

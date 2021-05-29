@@ -191,6 +191,7 @@ def download_tweets(production):
     finally:
         if (connection):
             cursor.execute("update political_parties_tweets set finder = to_tsvector(message);")
+            cursor.execute("update parliament_speeches set finder = to_tsvector(speech);")
             connection.commit()
             cursor.close()
             connection.close()
@@ -199,6 +200,4 @@ def download_tweets(production):
                 print('Błąd dla: ', error)
 
 
-
 download_tweets(production=True)
-

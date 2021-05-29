@@ -147,48 +147,48 @@ def menage_polls(politician: dict):
     insert_votes = list()
 
     polls = politician.get('głosowania')
-    for poll in polls:
-        poll_date = parse_date(poll.get('Data'))
-        votes = poll.get('głosy')
-        if votes:
-            for vote in votes:
-                topic = vote.get('Temat')
-                poll_topic = dict()
-                poll_topic[poll_topic_columns[1]] = topic
-                db_topics = read_tb('poll_topics', poll_topic_columns, poll_topic)
-                if len(db_topics) == 0:
-                    query = f"INSERT INTO poll_topics ({poll_topic_columns[1]}) VALUES ('{topic}') RETURNING id"
-                    try:
-                        cursor.execute(query)
-                        vote['id'] = cursor.fetchone()[0]
-                    except (Exception, Error) as error:
-                        print("Error while inserting poll_topics", error)
-                        connection.rollback()
-                    connection.commit()
+    if polls:
+        for poll in polls:
+            poll_date = parse_date(poll.get('Data'))
+            votes = poll.get('głosy')
+            if votes:
+                for vote in votes:
+                    topic = vote.get('Temat')
+                    poll_topic = dict()
+                    poll_topic[poll_topic_columns[1]] = topic
+                    db_topics = read_tb('poll_topics', poll_topic_columns, poll_topic)
+                    if len(db_topics) == 0:
+                        query = f"INSERT INTO poll_topics ({poll_topic_columns[1]}) VALUES ('{topic}') RETURNING id"
+                        try:
+                            cursor.execute(query)
+                            vote['id'] = cursor.fetchone()[0]
+                        except (Exception, Error) as error:
+                            print("Error while inserting poll_topics", error)
+                            connection.rollback()
+                        connection.commit()
 
-                elif len(db_topics) == 1:
-                    vote['id'] = db_topics[0].get('id')
+                    elif len(db_topics) == 1:
+                        vote['id'] = db_topics[0].get('id')
 
-                vote_dict = {
-                    poll_columns[1]: vote.get('id'),
-                    poll_columns[2]: politician.get('id'),
-                    poll_columns[3]: vote.get('Wynik'),
-                    poll_columns[4]: vote.get('Godzina'),
-                    poll_columns[5]: str(poll_date)
-                }
-                res_vote = read_tb('polls', poll_columns, vote_dict)
-                if not res_vote:
+                    vote_dict = {
+                        poll_columns[1]: vote.get('id'),
+                        poll_columns[2]: politician.get('id'),
+                        poll_columns[3]: vote.get('Wynik'),
+                        poll_columns[4]: vote.get('Godzina'),
+                        poll_columns[5]: str(poll_date)
+                    }
                     insert_votes.append(
                         "(" + ", ".join(f"'{v}'" for v in vote_dict.values()) + ")")
 
-        if insert_votes:
-            query = f"INSERT INTO polls ({', '.join(poll_columns[1:])}) VALUES " + ", ".join(insert_votes)
-            try:
-                cursor.execute(query)
-            except (Exception, Error) as error:
-                print("Error while inserting to polls", error)
-                connection.rollback()
-            connection.commit()
+            if insert_votes:
+                query = f"INSERT INTO polls ({', '.join(poll_columns[1:])}) VALUES " + ", ".join(insert_votes) +\
+                        f" ON CONFLICT ({', '.join(poll_columns[1:])}) DO NOTHING"
+                try:
+                    cursor.execute(query)
+                except (Exception, Error) as error:
+                    print("Error while inserting to polls", error)
+                    connection.rollback()
+                connection.commit()
 
 
 def menage_speeches(politician: dict):
@@ -218,13 +218,11 @@ def menage_speeches(politician: dict):
                 speech_columns[3]: speech.get('point_id'),
                 speech_columns[4]: str(parse_date(speech.get('Data')))
             }
-            db_speech = read_tb('parliament_speeches', speech_columns, speech_dict)
-            if not db_speech:
-                insert_speeches.append("(" + ", ".join(f"'{v}'" for v in speech_dict.values()) + ")")
+            insert_speeches.append("(" + ", ".join(f"'{v}'" for v in speech_dict.values()) + ")")
 
         if insert_speeches:
             query = f"INSERT INTO parliament_speeches ({', '.join(speech_columns[1:])}) VALUES " + ", ".join(
-                insert_speeches)
+                insert_speeches) + f" ON CONFLICT ({', '.join(speech_columns[1:])}) DO NOTHING"
             try:
                 cursor.execute(query)
             except (Exception, Error) as error:

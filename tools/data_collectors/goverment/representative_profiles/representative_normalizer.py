@@ -87,6 +87,7 @@ class RepresentativeNormalizer:
                 for poll in polls:
                     if poll.get('Temat'):
                         poll['Temat'] = poll.get('Temat').replace("'", '')
+                        poll['Godzina'] = poll['Godzina'] + ':00'
 
 
 if __name__ == '__main__':

@@ -34,7 +34,7 @@ function SpeechesDraw({
     <Skeleton isLoaded>
       <Flex
         boxShadow={"md"}
-        maxW={"80%"}
+        maxW={"99%"}
         direction={{ base: "column-reverse", md: "row" }}
         width={"full"}
         rounded={"3xl"}
@@ -54,17 +54,17 @@ function SpeechesDraw({
       >
         <SimpleGrid columns={1} spacing={4}>
           <Box>
-            <chakra.p fontWeight={"medium"} fontSize={"16px"} pb={4}>
-              {speech}
-            </chakra.p>
-            <chakra.p fontWeight={"bold"} fontSize={"18px"} pb={4}>
+            <chakra.p fontWeight={"bold"} fontSize={"xl"} pb={4}>
               {name + " " + surname}
             </chakra.p>
-            <chakra.p fontWeight={"semibold"} fontSize={"14px"} pb={4}>
+            <chakra.p fontWeight={"semibold"} fontSize={"sm"} pb={4}>
               {speech_point}
               <chakra.span fontWeight={"thin"} fontSize={"12px"}>
                 {" - " + date.replace("00:00:00 GMT", "")}
               </chakra.span>
+            </chakra.p>
+            <chakra.p fontWeight={"medium"} fontSize={"16px"} pb={4}>
+              {speech}
             </chakra.p>
           </Box>
         </SimpleGrid>
@@ -104,17 +104,11 @@ export default function Speeches() {
   return (
     <Flex
       textAlign={"center"}
-      pt={10}
       justifyContent={"center"}
       direction={"column"}
       width={"full"}
     >
-      <SimpleGrid
-        columns={{ base: 1, xl: 1 }}
-        spacing={"20"}
-        mt={16}
-        mx={"auto"}
-      >
+      <SimpleGrid columns={{ base: 1, xl: 1 }} spacing={"20"}>
         <Center>
           <Text fontSize="4xl" fontWeight="bold">
             {"Ostatnie przemowy sejmowe"}

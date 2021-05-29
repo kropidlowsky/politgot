@@ -36,12 +36,12 @@ function PollsDraw({
     <Skeleton isLoaded>
       <Flex
         boxShadow={"md"}
-        maxW={"46vw"}
+        w={"80%"}
         direction={{ base: "column-reverse", md: "row" }}
         width={"full"}
         rounded={"3xl"}
-        p={10}
-        m="5"
+        p={8}
+        m="0 auto"
         justifyContent={"space-between"}
         position={"relative"}
         bg={useColorModeValue("white", "blackAlpha.200")}
@@ -55,31 +55,40 @@ function PollsDraw({
         }}
       >
         <SimpleGrid columns={1} spacing={4}>
-          <Box>
-            <chakra.p fontWeight={"medium"} fontSize={"20px"} pb={4}>
+          <Box bg="blackAlpha.50" p="4" borderRadius="xl">
+            <chakra.p
+              fontWeight={"normal"}
+              fontStyle="normal"
+              fontSize={"lg"}
+              pb={4}
+            >
               {title}{" "}
-              <chakra.span fontWeight={"semibold"} fontSize={"15px"}>
+              <chakra.span
+                fontWeight={"light"}
+                fontStyle="italic"
+                fontSize={"xs"}
+              >
                 {" - " + date.replace("00:00:00 GMT", "")}
               </chakra.span>
             </chakra.p>
           </Box>
           <Box>
-            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+            <chakra.p fontWeight={"normal"} fontSize={"xl"}>
               {"Wszystkich głosów: " + all_votes}
             </chakra.p>
           </Box>
           <Box>
-            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+            <chakra.p fontWeight={"normal"} fontSize={"xl"}>
               {" Głosów za: " + for_vote}
             </chakra.p>
           </Box>
           <Box>
-            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+            <chakra.p fontWeight={"normal"} fontSize={"xl"}>
               {" Głosów przeciw: " + against_vote}
             </chakra.p>
           </Box>
           <Box>
-            <chakra.p fontWeight={"bold"} fontSize={"16px"}>
+            <chakra.p fontWeight={"normal"} fontSize={"xl"}>
               {" Głosów wstrzymanych: " + abstained_vote}
             </chakra.p>
           </Box>
@@ -121,17 +130,11 @@ export default function Polls() {
   return (
     <Flex
       textAlign={"center"}
-      pt={10}
       justifyContent={"center"}
       direction={"column"}
       width={"full"}
     >
-      <SimpleGrid
-        columns={{ base: 1, xl: 1 }}
-        spacing={"20"}
-        mt={16}
-        mx={"auto"}
-      >
+      <SimpleGrid columns={{ base: 1, xl: 1 }} spacing={"20"}>
         <Center>
           <Text fontSize="4xl" fontWeight="bold">
             {"Ostatnie głosowania"}

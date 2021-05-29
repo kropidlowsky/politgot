@@ -312,8 +312,8 @@ const Main = (props: Props) => {
             ? "Wpisy " + tweeters.replace("_", " ")
             : props.source === "latest"
             ? "Najnowsze wpisy"
-            : props.source === "party"
-            ? "Najnowsze wpisy"
+            : props.source === "parties"
+            ? "Najnowsze wpisy partii"
             : ""}
         </Text>
         <Text fontSize={"30px"} fontWeight={"bold"}>

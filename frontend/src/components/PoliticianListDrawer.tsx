@@ -1,5 +1,5 @@
-import { Button } from "@chakra-ui/button";
-import { ViewIcon } from "@chakra-ui/icons";
+import { Button, IconButton } from "@chakra-ui/button";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Drawer,
   DrawerBody,
@@ -16,7 +16,11 @@ const PoliticianListDrawer = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button leftIcon={<ViewIcon />} onClick={onOpen} />
+      <IconButton
+        icon={<AddIcon />}
+        onClick={onOpen}
+        aria-label="Pick politician"
+      />
       <Drawer isOpen={isOpen} onClose={onClose} placement="left">
         <DrawerOverlay />
         <DrawerContent>

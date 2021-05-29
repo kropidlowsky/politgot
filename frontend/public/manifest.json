@@ -1,0 +1,9 @@
+{
+  "short_name": "Politgot",
+  "name": "PolitGot 2021",
+
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

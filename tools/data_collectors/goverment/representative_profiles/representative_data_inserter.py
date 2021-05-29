@@ -164,6 +164,7 @@ def menage_polls(politician: dict):
                             vote['id'] = cursor.fetchone()[0]
                         except (Exception, Error) as error:
                             print("Error while inserting poll_topics", error)
+                            print(query)
                             connection.rollback()
                         connection.commit()
 
@@ -218,11 +219,13 @@ def menage_speeches(politician: dict):
                 speech_columns[3]: speech.get('point_id'),
                 speech_columns[4]: str(parse_date(speech.get('Data')))
             }
-            insert_speeches.append("(" + ", ".join(f"'{v}'" for v in speech_dict.values()) + ")")
+            db_speech = read_tb('parliament_speeches', speech_columns, speech_dict)
+            if not db_speech:
+                insert_speeches.append("(" + ", ".join(f"'{v}'" for v in speech_dict.values()) + ")")
 
         if insert_speeches:
             query = f"INSERT INTO parliament_speeches ({', '.join(speech_columns[1:])}) VALUES " + ", ".join(
-                insert_speeches) + f" ON CONFLICT ({', '.join(speech_columns[1:])}) DO NOTHING"
+                insert_speeches)
             try:
                 cursor.execute(query)
             except (Exception, Error) as error:

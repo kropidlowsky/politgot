@@ -20,8 +20,9 @@ interface TestimonialCardProps {
   speech: string;
   profile_image: string;
   index: number;
-  date: Date;
+  date: string;
   error: string;
+  speech_point: string;
 }
 
 function TestmonialCard({
@@ -33,6 +34,7 @@ function TestmonialCard({
   profile_image,
   date,
   error,
+  speech_point,
 }: TestimonialCardProps) {
   return (
     <Skeleton isLoaded>
@@ -60,16 +62,26 @@ function TestmonialCard({
           textAlign={"left"}
           justifyContent={"space-between"}
         >
-          <chakra.p fontWeight={"medium"} fontSize={"15px"} pb={4}>
-            {message}
-          </chakra.p>
-          <chakra.p fontWeight={"bold"} fontSize={14}>
+          <Center>
+            <chakra.p
+              fontWeight={"semibold"}
+              fontSize={"xl"}
+              pb={4}
+              fontStyle="italic"
+            >
+              {speech_point || ""}
+            </chakra.p>
+          </Center>
+          <chakra.p fontWeight={"bold"} fontSize={"md"} py="5\">
             {name + "  "}
             {surname || " "}
             <chakra.span fontWeight={"medium"} color={"gray.500"}>
               {" "}
-              - {date}
+              - {date.replace("00:00:00 GMT", "")}
             </chakra.span>
+          </chakra.p>
+          <chakra.p fontWeight={"normal"} fontSize={"md"} py={4}>
+            {message || speech}
           </chakra.p>
         </Flex>
         {/* <Avatar

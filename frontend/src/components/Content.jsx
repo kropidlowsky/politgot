@@ -8,7 +8,6 @@ import {
 } from "@chakra-ui/react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Main from "./Main";
-import PoliticianListDrawer from "./PoliticianListDrawer";
 import Trends from "./Trends";
 import Copyright from "./Copyright";
 import MainPoliticInfo from "./MainPoliticInfo";
